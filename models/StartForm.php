@@ -12,7 +12,7 @@ use yii\base\Model;
  * @property User|null $user This property is read-only.
  *
  */
-class LoginForm extends Model
+class StartForm extends Model
 {
     public $username;
     public $password;

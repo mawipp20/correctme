@@ -6,8 +6,10 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
+//use app\models\LoginForm;
+//use app\models\ContactForm;
+use app\models\LessonForm;
+
 
 class SiteController extends Controller
 {
@@ -60,8 +62,40 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new LessonForm();
+        return $this->render('lesson', [
+            'model' => $model,
+        ]);
+        //return $this->render('index');
     }
+
+    public function actionCreate()
+    {
+        $model = new LessonForm();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['thinkMonitor', 'id' => $model->startKey]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    public function actionThink()
+    {
+        $model = new LessonForm();
+        
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            //return $this->redirect(['thinkMonitor', 'id' => $model->startKey]);
+            return $this->render('about');
+        } else {
+            return $this->render('index', [
+                'model' => $model,
+            ]);
+        }
+    }
+
 
     /**
      * Login action.

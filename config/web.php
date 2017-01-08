@@ -6,10 +6,11 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'language' => 'de',
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => '',
+            'cookieValidationKey' => 'CUfeeMJnPbuDHlrF4jM7v1NaPQOozTgR',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -43,8 +44,8 @@ $config = [
             //'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
+                //"ThinkMonitor" => "site/ThinkMonitor",
             /**
-                "register" => "site/contact",
                 "UserForm" => "site/userform",
                 "hello" => "site/hello",
                 ['class' => 'yii\rest\UrlRule', 'controller' => ['book'], 'pluralize' => true],
