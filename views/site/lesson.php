@@ -18,12 +18,15 @@ use yii\widgets\ActiveForm;
     </div>
   </div>
 -->
-<link href="css/correctme.css" rel="stylesheet">
-<link href="css/lesson.css" rel="stylesheet">
-<script src="js/correctme_elements.js"></script>
 
+<h3 style="margin-top: 0.0em;"><?= _L('LESSON_WELCOME') ?></h3>
+<h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?= _L('LESSON_WELCOME_line_2') ?></h4>
 
-<h3 style="margin-top: 0.2em;"><?= _L('WELCOME') ?></h3>
+    <?php
+        foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
+            echo '<div class="alert alert-danger">' . $message . "</div>\n";
+        }
+    ?>
 
 <div class="Lesson">
 
@@ -36,7 +39,7 @@ use yii\widgets\ActiveForm;
           <div class="input-group-addon input-group-addon-lesson">
             <?= _L('numTasks_label') ?>
           </div>
-          <?= $form->field($model, 'numTasks')->textInput(['placeholder'=>_L('numTasks_placeholder')]); ?>
+          <?= $form->field($model, 'numTasks')->textInput(['placeholder'=>_L('numTasks_placeholder'), 'value' => $model->numTasks]); ?>
         </div>
 
         <div class="input-group input-group-lesson">
@@ -58,13 +61,6 @@ use yii\widgets\ActiveForm;
             <?= _L('numStudents_label') ?>
           </div>
           <?= $form->field($model, 'numStudents')->textInput(['placeholder'=>_L('numStudents_placeholder')]); ?>
-        </div>
-
-        <div class="input-group input-group-lesson">
-          <div class="input-group-addon input-group-addon-lesson">
-            <?= _L('startKey_label') ?>
-          </div>
-          <?= $form->field($model, 'startKey')->textInput(['placeholder'=>_L('startKey_placeholder')]); ?>
         </div>
 
         <!-- Rounded switch 
@@ -96,7 +92,7 @@ use yii\widgets\ActiveForm;
         ?>
 
 
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 1em;">
             <?php //echo Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
             <?php //echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
             <?= Html::submitButton(_L('lesson_btn_submit'), ['class' => 'btn btn-primary']) ?>

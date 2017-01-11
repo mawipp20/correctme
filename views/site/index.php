@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = _L("MAIN_PAGE_TITLE");
+$this->title = _L("MAIN_LAYOUT_TITLE");
 ?>
 <div class="site-index">
 

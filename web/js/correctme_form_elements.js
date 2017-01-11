@@ -4,7 +4,7 @@ function btnGroupToggle(btn, save_with_field, save_val){
     //alert($("#"+save_with_field).val());
     $(btn).parent(".btn-group").children(".btn").each(function(){
         //if(!$(this).is($(btn))){$(this).addClass("btn-default")}
-        if($(this).hasClass("btn-default")){
+        if($(this).is(btn)){
             $(this).removeClass("btn-default");
             $(this).addClass("btn-success");
         }else{

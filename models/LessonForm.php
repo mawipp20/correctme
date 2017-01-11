@@ -4,7 +4,6 @@ namespace app\models;
 
 use Yii;
 
-//include("http://".$_SERVER["HTTP_HOST"].Yii::$app->getUrlManager()->getBaseUrl().'/language/language.php');
 include('../language/language.php');
 
 
@@ -22,7 +21,9 @@ include('../language/language.php');
  * @property string $typeMixing
  * @property integer $namedPairing
  */
-class LessonForm extends \yii\db\ActiveRecord
+//class LessonForm extends \yii\db\ActiveRecord
+class LessonForm extends \app\components\ActiveRecord
+
 {
     /**
      * @inheritdoc
@@ -65,5 +66,27 @@ class LessonForm extends \yii\db\ActiveRecord
             'typeMixing' => _L('LABEL_typeMixing'),
             'namedPairing' => _L('LABEL_namedPairing'),
         ];
+    }
+
+    public function beforeValidate()
+    {
+        if (parent::beforeValidate()) {
+            $this->startKey = $this->generateUniqueRandomString("startKey", 6);
+            return true;
+        }
+    }
+    
+    public function beforeSave($insert)
+    {
+        
+        if (parent::beforeSave($insert)) {
+            if($this->isNewRecord)
+            {
+                //$this->startKey = $this->generateUniqueRandomString("startKey", 6);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }

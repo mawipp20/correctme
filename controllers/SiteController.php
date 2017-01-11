@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 use app\models\LessonForm;
 
 
-class SiteController extends Controller
+class SiteController extends \app\components\Controller
 {
     /**
      * @inheritdoc
@@ -63,10 +63,10 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $model = new LessonForm();
+        
         return $this->render('lesson', [
             'model' => $model,
         ]);
-        //return $this->render('index');
     }
 
     public function actionCreate()
@@ -74,7 +74,8 @@ class SiteController extends Controller
         $model = new LessonForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['thinkMonitor', 'id' => $model->startKey]);
+            //return $this->redirect(['thinkMonitor', 'id' => $model->startKey]);
+            $this->render('about');
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -87,12 +88,13 @@ class SiteController extends Controller
         $model = new LessonForm();
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //return $this->redirect(['thinkMonitor', 'id' => $model->startKey]);
-            return $this->render('about');
-        } else {
-            return $this->render('index', [
-                'model' => $model,
+            return $this->render('think', [
+                'model' => $this->findModel($model->startKey),
             ]);
+        } else {
+            $this_errors = $model->getErrors();
+            Yii::$app->getSession()->setFlash('error_save', print_r($this_errors, true));
+            Yii::$app->response->redirect(['site/index']);
         }
     }
 
@@ -156,4 +158,14 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    protected function findModel($id)
+    {
+        if (($model = LessonForm::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
 }
