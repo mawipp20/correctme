@@ -11,6 +11,7 @@ include('../language/language.php');
  * This is the model class for table "lesson".
  *
  * @property string $startKey
+ * @property string $teacherKey
  * @property integer $teacherId
  * @property integer $numTasks
  * @property integer $numStudents
@@ -56,6 +57,7 @@ class LessonForm extends \app\components\ActiveRecord
     {
         return [
             'startKey' => '',
+            'teacherKey' => '',
             'teacherId' => '',
             'numTasks' => '',
             'numStudents' => '',
@@ -72,6 +74,7 @@ class LessonForm extends \app\components\ActiveRecord
     {
         if (parent::beforeValidate()) {
             $this->startKey = $this->generateUniqueRandomString("startKey", 6);
+            $this->teacherKey = $this->generateUniqueRandomString("teacherKey", 6);
             return true;
         }
     }

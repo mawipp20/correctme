@@ -88,6 +88,8 @@ class SiteController extends \app\components\Controller
         $model = new LessonForm();
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->getSession()->set("startKey", $model->startKey);
+            Yii::$app->getSession()->set("teacherKey", $model->teacherKey);
             return $this->render('think', [
                 'model' => $this->findModel($model->startKey),
             ]);

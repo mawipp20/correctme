@@ -3,6 +3,12 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
+use app\assets\AppAsset;
+AppAsset::register($this);
+
+use app\assets\LessonAsset;
+LessonAsset::register($this);
+
 /* @var $this yii\web\View */
 /* @var $model app\models\Lesson */
 /* @var $form ActiveForm */
@@ -35,28 +41,47 @@ use yii\widgets\ActiveForm;
                 ,'method' => "post"    
     ]); ?>
 
-        <div class="input-group input-group-lesson">
+        <?= Html::button('<i class="fa fa-arrow-right" aria-hidden="true"></i> '._L('lesson_btn_rejoin_session'), [
+            'class' => 'btn btn-default input-group-lesson'
+            ,'onclick' => 'teacherToggleJoinRejoin(true);'
+            ]) ?>
+
+        <div class="input-group input-group-lesson cm_input_group_rejoin">
+          <div class="input-group-addon input-group-addon-lesson">
+            <?= _L('startKey_label') ?>
+          </div>
+          <?= $form->field($model, 'startKey')->textInput(['placeholder'=>_L('startKey_placeholder'), 'value' => $model->startKey]); ?>
+        </div>
+
+        <div class="input-group input-group-lesson cm_input_group_rejoin">
+          <div class="input-group-addon input-group-addon-lesson">
+            <?= _L('teacherKey_label') ?>
+          </div>
+          <?= $form->field($model, 'teacherKey')->textInput(['placeholder'=>_L('teacherKey_placeholder'), 'value' => $model->teacherKey]); ?>
+        </div>
+
+        <div class="input-group input-group-lesson cm_input_group_join">
           <div class="input-group-addon input-group-addon-lesson">
             <?= _L('numTasks_label') ?>
           </div>
           <?= $form->field($model, 'numTasks')->textInput(['placeholder'=>_L('numTasks_placeholder'), 'value' => $model->numTasks]); ?>
         </div>
 
-        <div class="input-group input-group-lesson">
+        <div class="input-group input-group-lesson cm_input_group_join">
           <div class="input-group-addon input-group-addon-lesson">
             <?= _L('thinkingMinutes_label') ?>
           </div>
           <?= $form->field($model, 'thinkingMinutes')->textInput(['placeholder'=>_L('thinkingMinutes_placeholder')]); ?>
         </div>
 
-        <div class="input-group input-group-lesson">
+        <div class="input-group input-group-lesson cm_input_group_join">
           <div class="input-group-addon input-group-addon-lesson">
             <?= _L('numTeamsize_label') ?>
           </div>
           <?= $form->field($model, 'numTeamsize')->textInput(['placeholder'=>_L('numTeamsize_placeholder')]); ?>
         </div>
 
-        <div class="input-group input-group-lesson">
+        <div class="input-group input-group-lesson cm_input_group_join">
           <div class="input-group-addon input-group-addon-lesson">
             <?= _L('numStudents_label') ?>
           </div>
@@ -71,7 +96,7 @@ use yii\widgets\ActiveForm;
         </label>
         -->
         
-        <div class="btn-group input-group-lesson">
+        <div class="btn-group input-group-lesson cm_input_group_join">
           <button type="button" class="btn btn-default" onclick='btnGroupToggle(this, "lessonform-typetasks", "text")'>
           <?= _L('typeTasks_label_short') ?></button>
           <button type="button" class="btn btn-success" onclick='btnGroupToggle(this, "lessonform-typetasks", "textarea")'>
