@@ -36,6 +36,7 @@ use yii\widgets\Breadcrumbs;
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'about', 'url' => ['/site/about']],
+            ['label' => _L('top_nav_teacher_link'), 'url' => ['/site/lesson']],
             /**
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
@@ -73,7 +74,7 @@ use yii\widgets\Breadcrumbs;
     <div class="container">
         <p class="pull-left">&copy; correctme.de <?= date('Y') ?></p>
 
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-right"></p>
     </div>
 </footer>
 

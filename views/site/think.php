@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
         Modal::begin([
-            'header' => ''.Yii::$app->getSession()->get("startKey").'',
+            'header' => ''.Yii::$app->getSession()->get("teacherKey").'',
             'toggleButton' => ['label' => _L('think_btn_show_teacher_retrieve_session_key')
                                 ,'class' => 'btn btn-default'
                                 ],
@@ -67,7 +67,6 @@ $this->params['breadcrumbs'][] = $this->title;
   </h1>
 </div>
 
-    <div id="ajaxDisplay" class="alert alert-success" style="color: black; font-size: 12px;"></div>
-    
+    <div id="studentRows"></div>
 </div>
 

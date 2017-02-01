@@ -5,9 +5,17 @@
     vertical-align: top;
     padding-top: 0.7em;
 }
+.input-group-addon-student-join{
+    text-align: right;
+    min-width:140px;
+}
+
+.input-group-addon-rejoin{
+    min-width:100px;
+}
 .input-group-lesson{
     margin-bottom: 10px;
 }
 .cm_input_group_rejoin{
-    display: none;
+    d/isplay: none;
 }

@@ -41,52 +41,65 @@ LessonAsset::register($this);
                 ,'method' => "post"    
     ]); ?>
 
-        <?= Html::button('<i class="fa fa-arrow-right" aria-hidden="true"></i> '._L('lesson_btn_rejoin_session'), [
+        <?= Html::button('<i class="fa fa-arrow-right" aria-hidden="true"></i> <span id="lesson_btn_rejoin_session">'._L('lesson_btn_rejoin_session').'</span>', [
             'class' => 'btn btn-default input-group-lesson'
-            ,'onclick' => 'teacherToggleJoinRejoin(true);'
+            ,'onclick' => 'window.document.location = "'.\Yii::$app->homeUrl.'site/session_rejoin";'
             ]) ?>
 
-        <div class="input-group input-group-lesson cm_input_group_rejoin">
-          <div class="input-group-addon input-group-addon-lesson">
-            <?= _L('startKey_label') ?>
-          </div>
-          <?= $form->field($model, 'startKey')->textInput(['placeholder'=>_L('startKey_placeholder'), 'value' => $model->startKey]); ?>
-        </div>
 
-        <div class="input-group input-group-lesson cm_input_group_rejoin">
-          <div class="input-group-addon input-group-addon-lesson">
-            <?= _L('teacherKey_label') ?>
-          </div>
-          <?= $form->field($model, 'teacherKey')->textInput(['placeholder'=>_L('teacherKey_placeholder'), 'value' => $model->teacherKey]); ?>
-        </div>
+          <?= $form->field($model, 'numTasks'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ]
+            )->textInput([
+            'placeholder'=>_L('numTasks_placeholder')
+            , 'value' => $model->numTasks
+            , 'autofocus' => 'true'
+            ,
+            ])
+            ->label(_L('numTasks_label'))
+            ; ?>
 
-        <div class="input-group input-group-lesson cm_input_group_join">
-          <div class="input-group-addon input-group-addon-lesson">
-            <?= _L('numTasks_label') ?>
-          </div>
-          <?= $form->field($model, 'numTasks')->textInput(['placeholder'=>_L('numTasks_placeholder'), 'value' => $model->numTasks]); ?>
-        </div>
 
-        <div class="input-group input-group-lesson cm_input_group_join">
-          <div class="input-group-addon input-group-addon-lesson">
-            <?= _L('thinkingMinutes_label') ?>
-          </div>
-          <?= $form->field($model, 'thinkingMinutes')->textInput(['placeholder'=>_L('thinkingMinutes_placeholder')]); ?>
-        </div>
+          <?= $form->field($model, 'thinkingMinutes'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ]
+            )->textInput([
+            'placeholder'=>_L('thinkingMinutes_placeholder')
+            , 'value' => $model->thinkingMinutes
+            ,
+            ])
+            ->label(_L('thinkingMinutes_label'))
+            ; ?>
 
-        <div class="input-group input-group-lesson cm_input_group_join">
-          <div class="input-group-addon input-group-addon-lesson">
-            <?= _L('numTeamsize_label') ?>
-          </div>
-          <?= $form->field($model, 'numTeamsize')->textInput(['placeholder'=>_L('numTeamsize_placeholder')]); ?>
-        </div>
+          <?= $form->field($model, 'numTeamsize'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ]
+            )->textInput([
+            'placeholder'=>_L('numTeamsize_placeholder')
+            , 'value' => $model->numTeamsize
+            ,
+            ])
+            ->label(_L('numTeamsize_label'))
+            ; ?>
 
-        <div class="input-group input-group-lesson cm_input_group_join">
-          <div class="input-group-addon input-group-addon-lesson">
-            <?= _L('numStudents_label') ?>
-          </div>
-          <?= $form->field($model, 'numStudents')->textInput(['placeholder'=>_L('numStudents_placeholder')]); ?>
-        </div>
+          <?= $form->field($model, 'numStudents'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ]
+            )->textInput([
+            'placeholder'=>_L('numStudents_placeholder')
+            , 'value' => $model->numStudents
+            ,
+            ])
+            ->label(_L('numStudents_label'))
+            ; ?>
 
         <!-- Rounded switch 
         <label class="switch">
@@ -96,7 +109,7 @@ LessonAsset::register($this);
         </label>
         -->
         
-        <div class="btn-group input-group-lesson cm_input_group_join">
+        <div class="btn-group input-group-lesson">
           <button type="button" class="btn btn-default" onclick='btnGroupToggle(this, "lessonform-typetasks", "text")'>
           <?= _L('typeTasks_label_short') ?></button>
           <button type="button" class="btn btn-success" onclick='btnGroupToggle(this, "lessonform-typetasks", "textarea")'>
@@ -120,8 +133,11 @@ LessonAsset::register($this);
         <div class="form-group" style="margin-top: 1em;">
             <?php //echo Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
             <?php //echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-            <?= Html::submitButton(_L('lesson_btn_submit'), ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton(_L('lesson_btn_submit'), ['class' => 'btn btn-primary', 'id'=>'lesson_btn_submit']) ?>
         </div>
     <?php ActiveForm::end(); ?>
 
-</div><!-- Lesson -->
+</div>
+<script>var _L_lesson = <?= json_encode(_L('_L_lesson')); ?>;</script>
+
+<!-- Lesson -->

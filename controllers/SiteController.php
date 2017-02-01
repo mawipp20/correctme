@@ -6,10 +6,12 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-//use app\models\LoginForm;
-//use app\models\ContactForm;
 use app\models\LessonForm;
+use app\models\StudentForm;
 
+if(!function_exists("_L")){
+    include_once(\Yii::$app->basePath.'\language\language.php');
+}
 
 class SiteController extends \app\components\Controller
 {
@@ -56,11 +58,24 @@ class SiteController extends \app\components\Controller
     }
 
     /**
-     * Displays homepage.
+     * Displays teacher lesson page.
      *
      * @return string
      */
     public function actionIndex()
+    {
+        $model = new StudentForm();
+        return $this->render('student_join', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays teacher lesson page.
+     *
+     * @return string
+     */
+    public function actionLesson()
     {
         $model = new LessonForm();
         
@@ -68,6 +83,16 @@ class SiteController extends \app\components\Controller
             'model' => $model,
         ]);
     }
+
+    public function actionSession_rejoin()
+    {
+        $model = new LessonForm();
+        
+        return $this->render('session_rejoin', [
+            'model' => $model,
+        ]);
+    }
+
 
     public function actionCreate()
     {
@@ -86,19 +111,47 @@ class SiteController extends \app\components\Controller
     public function actionThink()
     {
         $model = new LessonForm();
-        
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->getSession()->set("startKey", $model->startKey);
-            Yii::$app->getSession()->set("teacherKey", $model->teacherKey);
-            return $this->render('think', [
-                'model' => $this->findModel($model->startKey),
-            ]);
-        } else {
-            $this_errors = $model->getErrors();
-            Yii::$app->getSession()->setFlash('error_save', print_r($this_errors, true));
-            Yii::$app->response->redirect(['site/index']);
+
+        $request = Yii::$app->request;
+        $request_params = $request->get("LessonForm");
+
+        if ($request->isGet)  {
+            $model->load($request->get());
+            $row = LessonForm::find()->where(
+                    [    'startKey'=>$request_params["startKey"]
+                        ,'teacherKey'=>$request_params["teacherKey"]
+                    ]
+                    )->one();
+                    
+            //var_dump($row);
+            //var_dump($request->get());
+            //die();
+            if(!is_null($row)){
+                return $this->render('think', [
+                    'model' => $row,
+                ]);
+            } else {
+                //$this_errors = $model->getErrors();
+                Yii::$app->getSession()->setFlash('error_save', _L("join_session_login_error_flash"));
+                Yii::$app->response->redirect(['site/session_rejoin']);
+            }
+            
         }
-    }
+        
+        if ($request->isPost) {
+            if ($model->load($request->post()) && $model->save()) {
+                    Yii::$app->getSession()->set("startKey", $model->startKey);
+                    Yii::$app->getSession()->set("teacherKey", $model->teacherKey);
+                    return $this->render('think', [
+                        'model' => $this->findModel($model->startKey),
+                    ]);
+                } else {
+                    $this_errors = $model->getErrors();
+                    Yii::$app->getSession()->setFlash('error_save', print_r($this_errors, true));
+                    Yii::$app->response->redirect(['site/index']);
+                }
+            }
+        }
 
 
     /**

@@ -19,8 +19,13 @@ function getThinkingStudents(){
 }
 
 function displayThinkingStudents(data){
-            for(var key in data){               
-                //text += key + ":" + data[key] + "<br>";
-            }
-            $("#ajaxDisplay").html(JSON.stringify(data));
+    for(var i = 0; i < data.length; i++){
+        var templateStudentRow = '<div data-id="' + data[i]["id"] + '" class="row studentRow studentRow' + data[i]["status"] + '"></div>';
+        var newStudentRow = $(templateStudentRow);
+        newStudentRow.append($("<div class='col-xs-6 col-sm-3 col-md-2 studentName'>" + data[i]["name"] + "</div>"));
+        newStudentRow.append($("<div class='col-xs-6 col-sm-9 col-md-10 answers_completed'>" + data[i]["id"] + "</div>"));
+        
+        $("#studentRows").append(newStudentRow);
+        //newStudentRow.html(JSON.stringify(data[i]));
+    } 
 }

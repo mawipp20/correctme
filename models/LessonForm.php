@@ -4,9 +4,6 @@ namespace app\models;
 
 use Yii;
 
-include('../language/language.php');
-
-
 /**
  * This is the model class for table "lesson".
  *
@@ -22,7 +19,12 @@ include('../language/language.php');
  * @property string $typeMixing
  * @property integer $namedPairing
  */
-//class LessonForm extends \yii\db\ActiveRecord
+
+if(!function_exists("_L")){
+    include_once(\Yii::$app->basePath.'\language\language.php');
+}
+
+
 class LessonForm extends \app\components\ActiveRecord
 
 {
@@ -40,7 +42,7 @@ class LessonForm extends \app\components\ActiveRecord
     public function rules()
     {
         return [
-            [['numTasks', 'numTeamsize', 'thinkingMinutes', 'numStudents', 'startKey'], 'required'],
+            [['numTasks', 'numTeamsize', 'thinkingMinutes', 'numStudents', 'startKey'], 'required', 'message' => _L('lesson_input_required_message')],
             [['numTasks'], 'integer', 'min'=>1, 'max'=>10],
             [['numStudents'], 'integer', 'min'=>2, 'max'=>50],
             [['numTeamsize'], 'integer', 'min'=>2, 'max'=>6],
@@ -73,8 +75,12 @@ class LessonForm extends \app\components\ActiveRecord
     public function beforeValidate()
     {
         if (parent::beforeValidate()) {
-            $this->startKey = $this->generateUniqueRandomString("startKey", 6);
-            $this->teacherKey = $this->generateUniqueRandomString("teacherKey", 6);
+            if($this->startKey == ""){
+                $this->startKey = $this->generateUniqueRandomString("startKey", 6);
+            }
+            if($this->teacherKey == ""){
+                $this->teacherKey = $this->generateUniqueRandomString("teacherKey", 6);
+            }
             return true;
         }
     }
