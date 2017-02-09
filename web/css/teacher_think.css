@@ -1,0 +1,36 @@
+
+
+.studentRow{
+    font-size: 14pt;
+    border-bottom: 1px solid grey;
+    padding-bottom: 0.4em;
+    padding-top: 0.4em;
+}
+.studentRow div{
+
+}
+.studentRow .studentName{
+    font-weight: bold;
+}
+.studentRow .answers_completed{
+    background: rgb(130,255,130);
+}
+.studentRow .answers_completed{
+    background: rgb(130,255,130);
+}
+
+.studentRowfinished{
+    background: rgb(130,255,130);
+}
+.studentRowempty{
+    background: rgb(230,230,230);
+}
+.studentRowworking{
+    background: white;
+}
+.studentRowworking{
+    background: white;
+}
+.studentRowcancelled{
+    background: rgb(255,255,120);
+}
