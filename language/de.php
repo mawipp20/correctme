@@ -48,6 +48,7 @@ function _L($phrase){
             
             ,'student_join_key_required_message' => '... fragen Sie bitte nach'
             ,'student_join_name_required_message' => 'Bitte geben Sie Ihren Vornamen ein'
+            ,'student_join_name_already_existing' => 'Dieser Name wird schon benutzt.'
             
             ,'student_join_btn_submit' => 'mitmachen'
             

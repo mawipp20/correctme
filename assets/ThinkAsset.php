@@ -18,9 +18,9 @@ class ThinkAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/think.css',
+        'css/teacher_think.css',
     ];
     public $js = [
-        'js/correctme_think.js',
+        'js/teacher_think.js',
     ];
 }

@@ -7,7 +7,8 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LessonForm;
-use app\models\StudentForm;
+//use app\models\StudentJoinForm;
+//use app\models\StudentForm;
 
 if(!function_exists("_L")){
     include_once(\Yii::$app->basePath.'\language\language.php');
@@ -57,21 +58,10 @@ class SiteController extends \app\components\Controller
         ];
     }
 
-    /**
-     * Displays teacher lesson page.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
-        $model = new StudentForm();
-        return $this->render('student_join', [
-            'model' => $model,
-        ]);
-    }
+
 
     /**
-     * Displays teacher lesson page.
+     * Displays teacher lesson create page.
      *
      * @return string
      */
@@ -84,6 +74,11 @@ class SiteController extends \app\components\Controller
         ]);
     }
 
+    /**
+     * Displays teacher rejoin running session with starKey and teacherKey
+     *
+     * @return string
+     */
     public function actionSession_rejoin()
     {
         $model = new LessonForm();
@@ -93,20 +88,16 @@ class SiteController extends \app\components\Controller
         ]);
     }
 
-
-    public function actionCreate()
+    /**
+     * Displays about page.
+     *
+     * @return string
+     */
+    public function actionAbout()
     {
-        $model = new LessonForm();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //return $this->redirect(['thinkMonitor', 'id' => $model->startKey]);
-            $this->render('about');
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+        return $this->render('about');
     }
+
 
     public function actionThink()
     {
@@ -123,15 +114,12 @@ class SiteController extends \app\components\Controller
                     ]
                     )->one();
                     
-            //var_dump($row);
-            //var_dump($request->get());
-            //die();
             if(!is_null($row)){
                 return $this->render('think', [
                     'model' => $row,
                 ]);
             } else {
-                //$this_errors = $model->getErrors();
+                $this_errors = $model->getErrors();
                 Yii::$app->getSession()->setFlash('error_save', _L("join_session_login_error_flash"));
                 Yii::$app->response->redirect(['site/session_rejoin']);
             }
@@ -142,16 +130,35 @@ class SiteController extends \app\components\Controller
             if ($model->load($request->post()) && $model->save()) {
                     Yii::$app->getSession()->set("startKey", $model->startKey);
                     Yii::$app->getSession()->set("teacherKey", $model->teacherKey);
+                    
+                    /** create the requested numTasks number of tasks */
+                    for($i = 1; $i <= $model->numTasks; $i++){
+                        \Yii::$app->db->createCommand()->insert('task', [
+                            'startKey' => $model->startKey,
+                            'type' => $model->typeTasks,
+                            'num' => $i,
+                        ])->execute();
+                    }
+                    
                     return $this->render('think', [
-                        'model' => $this->findModel($model->startKey),
+                        'model' => $this->findLesson($model->startKey),
                     ]);
                 } else {
                     $this_errors = $model->getErrors();
                     Yii::$app->getSession()->setFlash('error_save', print_r($this_errors, true));
-                    Yii::$app->response->redirect(['site/index']);
+                    Yii::$app->response->redirect(['site/lesson']);
                 }
             }
         }
+
+    protected function findLesson($id)
+    {
+        if (($model = LessonForm::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
 
 
     /**
@@ -202,25 +209,6 @@ class SiteController extends \app\components\Controller
         return $this->render('contact', [
             'model' => $model,
         ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
-
-    protected function findModel($id)
-    {
-        if (($model = LessonForm::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
     }
 
 }

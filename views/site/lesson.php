@@ -43,7 +43,7 @@ LessonAsset::register($this);
 
         <?= Html::button('<i class="fa fa-arrow-right" aria-hidden="true"></i> <span id="lesson_btn_rejoin_session">'._L('lesson_btn_rejoin_session').'</span>', [
             'class' => 'btn btn-default input-group-lesson'
-            ,'onclick' => 'window.document.location = "'.\Yii::$app->homeUrl.'site/session_rejoin";'
+            ,'onclick' => 'window.document.location = "'.\Yii::$app->homeUrl[0].'/session_rejoin";'
             ]) ?>
 
 

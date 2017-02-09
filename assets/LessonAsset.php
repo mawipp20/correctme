@@ -18,9 +18,8 @@ class LessonAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/lesson.css',
+        'css/teacher_lesson.css',
     ];
     public $js = [
-        //'js/correctme_lesson.js',
     ];
 }
