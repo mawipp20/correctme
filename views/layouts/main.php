@@ -24,10 +24,10 @@ use yii\widgets\Breadcrumbs;
 
 <div class="wrap">
     <?php
+    
     NavBar::begin([
         'brandLabel' => 'correctme.de',
         //'brandUrl' => Yii::$app->homeUrl,
-        //'brandUrl' => "",
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
@@ -37,35 +37,12 @@ use yii\widgets\Breadcrumbs;
         'items' => [
             ['label' => 'about', 'url' => ['/site/about']],
             ['label' => _L('top_nav_teacher_link'), 'url' => ['/site/lesson']],
-            /**
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-            */
         ],
     ]);
     NavBar::end();
     ?>
 
     <div class="container">
-        <?php
-        /** 
-        echo Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ])
-        */
-        ?>
         <?= $content ?>
     </div>
 </div>

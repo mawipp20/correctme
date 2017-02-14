@@ -20,6 +20,8 @@ function _L($phrase){
             'BRAND_LABEL' => 'correctme.de'
             ,'gen_btn_close_dialog' => 'schließen'
             ,'top_nav_teacher_link' => 'Lehrer/in'
+            ,'top_nav_student_cancel' => 'beenden'
+            ,'top_nav_student_finish' => 'fertig + beenden'
             
             );
     $_sub_arrays["_L_general"] = $_L_general;       
@@ -41,10 +43,10 @@ function _L($phrase){
             'student_join_title' => 'Als Lernende/r'
             
             ,'student_join_startKey_label' => 'Zugangsschlüssel'
-            ,'student_join_startKey_placeholder' => 'erhalten Sie von der Lehrerperson'
+            ,'student_join_startKey_placeholder' => ''
 
-            ,'student_join_name_label' => 'Echter Name'
-            ,'student_join_name_placeholder' => 'Vorname u. ggf. Anfang-Nachname'
+            ,'student_join_name_label' => 'Echter Vorname'
+            ,'student_join_name_placeholder' => ''
             
             ,'student_join_key_required_message' => '... fragen Sie bitte nach'
             ,'student_join_name_required_message' => 'Bitte geben Sie Ihren Vornamen ein'

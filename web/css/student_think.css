@@ -1,8 +1,24 @@
-
-
+.navbar-student-btn{
+    margin-left: 15px;   
+    margin-bottom: 0.0em;   
+}
 .taskId{
     display: inline;
+    margin-right:1em;
+    font-size: large;
+    font-weight: bold;
+    color: #286090;
+    p/adding: 0.5em;
+    b/ackground-color:#286090;
+    c/olor: white;
 }
 .task_text{
     display: inline;
+}
+.task_label{
+    padding: 1em;
+    font-size: larger;
+}
+.btn_task{
+    margin-right: 0.4em;
 }

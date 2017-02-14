@@ -20,7 +20,9 @@ class StudentAsset extends AssetBundle
     public $css = [
         'css/student_think.css',
     ];
+    
     public $js = [
         'js/student_think.js',
+        'js/jquery.autogrowtextarea.min.js',
     ];
 }

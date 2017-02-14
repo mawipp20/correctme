@@ -77,8 +77,10 @@ class StudentController extends \app\components\Controller
      */
     public function actionThink()
     {
-        $model = new StudentForm();
         
+        $this->layout = 'student';
+        
+        $model = new StudentForm();
 
         $request = Yii::$app->request;
 
@@ -86,20 +88,25 @@ class StudentController extends \app\components\Controller
         
         if ($request->isPost) {            
             if($model->load($request->post(), "StudentJoinForm")){
-                if(!is_null(StudentForm::find()->where(
+                
+                $student_with_the_same_name = StudentForm::find()->where(
                                 [    'startKey'=>$model->startKey
                                     ,'name'=>$model->name
                                 ]
-                                )->one()
-                            )
+                                )->one();
+                                
+                if(!is_null($student_with_the_same_name)
                         ){
-                        $model->addErrors(array(_L('student_join_name_already_existing')));    
-                        };
+                            $student_with_the_same_name->delete();
+                            //$model->addErrors(array(_L('student_join_name_already_existing')));    
+                        }
             }
             
             if (!$model->hasErrors() && $model->save()) {
                     Yii::$app->getSession()->set("startKey", $model->startKey);
                     Yii::$app->getSession()->set("studentKey", $model->studentKey);
+                    
+                    $this->view->params['model'] = $model;
                     
                     return $this->render('student_think', [
                         'model' => $this->findStudent($model->startKey, $model->studentKey),
