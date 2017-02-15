@@ -1,16 +1,12 @@
+.navbar-student .navbar-brand{color: white;}
 .navbar-student-btn{
     margin-left: 15px;   
     margin-bottom: 0.0em;   
 }
 .taskId{
-    display: inline;
+    d/isplay: inline;
     margin-right:1em;
-    font-size: large;
-    font-weight: bold;
-    color: #286090;
-    p/adding: 0.5em;
-    b/ackground-color:#286090;
-    c/olor: white;
+    c/olor: #286090;
 }
 .task_text{
     display: inline;
@@ -20,5 +16,29 @@
     font-size: larger;
 }
 .btn_task{
-    margin-right: 0.4em;
+    margin-right: 0.3em;
+    margin-bottom: 0.3em;
+}
+.btn_task:hover{
+    border:1px solid black;
+}
+.btn_task_move{
+    color: black;
+    cursor: pointer;
+}
+.btn_task_move:hover{
+    color: black;
+    cursor: pointer;
+    border:1px solid black;
+}
+
+.btn_task_inactive{
+    color: transparent;
+    cursor: default;
+    border-color: transparent;
+}
+.btn_task_inactive:hover{
+    color: transparent;
+    cursor: default;
+    border-color: transparent;
 }

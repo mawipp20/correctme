@@ -75,6 +75,8 @@ use yii\widgets\Breadcrumbs;
     </div>
 </div>
 
+<!--
+
 <footer class="footer">
     <div class="container">
         <p class="pull-left">&copy; correctme.de <?= date('Y') ?></p>
@@ -82,6 +84,8 @@ use yii\widgets\Breadcrumbs;
         <p class="pull-right"></p>
     </div>
 </footer>
+
+-->
 
 <?php $this->endBody() ?>
 </body>

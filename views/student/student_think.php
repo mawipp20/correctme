@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
 -->
 
     <div id="displayTasks"></div>
-
+    <div id="taskNav"><div>
 
 </div>
 

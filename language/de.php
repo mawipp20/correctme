@@ -21,7 +21,7 @@ function _L($phrase){
             ,'gen_btn_close_dialog' => 'schließen'
             ,'top_nav_teacher_link' => 'Lehrer/in'
             ,'top_nav_student_cancel' => 'beenden'
-            ,'top_nav_student_finish' => 'fertig + beenden'
+            ,'top_nav_student_finish' => 'fertig!'
             
             );
     $_sub_arrays["_L_general"] = $_L_general;       
