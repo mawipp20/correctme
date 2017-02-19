@@ -104,17 +104,17 @@ LessonAsset::register($this);
         <!-- Rounded switch 
         <label class="switch">
           <?php //echo $form->field($model, 'typeTasks')->checkbox(); ?>
-          <input id="lessonform-typetasks" name="LessonForm[typeTasks]" value="1" type="checkbox">
+          <input id="Lesson-typetasks" name="Lesson[typeTasks]" value="1" type="checkbox">
           <div class="slider round"></div>
         </label>
         -->
         
         <div class="btn-group input-group-lesson">
-          <button type="button" class="btn btn-default" onclick='btnGroupToggle(this, "lessonform-typetasks", "text")'>
+          <button type="button" class="btn btn-default" onclick='btnGroupToggle(this, "Lesson-typetasks", "text")'>
           <?= _L('typeTasks_label_short') ?></button>
-          <button type="button" class="btn btn-success" onclick='btnGroupToggle(this, "lessonform-typetasks", "textarea")'>
+          <button type="button" class="btn btn-success" onclick='btnGroupToggle(this, "Lesson-typetasks", "textarea")'>
           <?= _L('typeTasks_label_long') ?></button>
-          <input id="lessonform-typetasks" name="LessonForm[typeTasks]" value="textarea" type="hidden">
+          <input id="Lesson-typetasks" name="Lesson[typeTasks]" value="textarea" type="hidden">
         </div>        
         
 

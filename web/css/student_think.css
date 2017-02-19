@@ -42,3 +42,6 @@
     cursor: default;
     border-color: transparent;
 }
+#countdown_server_save{
+    margin-bottom:1em;
+}

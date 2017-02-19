@@ -6,6 +6,7 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'homeUrl' => ['student/index'],
+    'defaultRoute' => 'student/index',
     'bootstrap' => ['log'],
     'language' => 'de',
     'components' => [

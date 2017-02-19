@@ -22,6 +22,7 @@ function _L($phrase){
             ,'top_nav_teacher_link' => 'Lehrer/in'
             ,'top_nav_student_cancel' => 'beenden'
             ,'top_nav_student_finish' => 'fertig!'
+            ,'error_server_connect' => 'Es konnte keine Verbindung zum Server hergestellt werden.'
             
             );
     $_sub_arrays["_L_general"] = $_L_general;       
@@ -117,8 +118,25 @@ function _L($phrase){
             ,'think_dialog_teacherKey_info_text' => 'Benuten Sie dieses Kennwort, falls Ihr Browser ungewollt beendet wird und Sie diese Moderationsseite wieder aufrufen wollen.'
             
     );
+
+
+    /** students's Think-Phase page */
+    
+    static $_L_student_think = array(
+    
+            'student_think_title' => 'Einzelarbeitsphase'
+            ,'student_think_countdown_server_save' => 'automatische Speicherung in # Sekunden'
             
-    $_sub_arrays["_L_think"] = $_L_think;
+    );
+    $_sub_arrays["_L_student_think"] = $_L_student_think;
+
+
+
+
+
+
+
+            
     
     if(array_key_exists($phrase,$_sub_arrays)){return $_sub_arrays[$phrase];}       
 

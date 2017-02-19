@@ -1,19 +1,71 @@
-var state = {
+var lesson = {
     "startKey":""
+    ,"numTasks":""
+    ,"numTeamsize":""
+    ,"thinkingMinutes":""
+    ,"typeTasks":""
+    ,"typeMixing":""
+    ,"earlyPairing":""
+
+/**
+not yet used
+ * @property string $teacherKey
+ * @property string $name
+ * @property string $stats
+ * @property string $status
+ * @property string $lastchange
+ * @property string $insert_timestamp
+ */
+};
+var student = {
+    "id":""
+    ,"name":""
     ,"studentKey":""
-    ,"numTasks":0
-    ,"taskNum":1
-    ,"taskId":0
+/**
+not yet used
+ * @property string $startKey
+ * @property integer $position
+ * @property string $stats
+ * @property string $status
+*/    
+};
+var task_all = {};
+function taskO(){
+    this.taskId = "";
+    this.num = "";
+    this.type = "";
+    this.answer_text = "";
+}
+var task = new taskO();
+
+var answer_all = {};
+function answerO(){
+    this.startKey = "";
+    this.taskId = "";
+    this.studentId = "";
+    this.answer_text = "";
+    this.answer_text = "";
+    this.status = "empty"
+}
+var answer = new answerO();
+
+var state = {
+    "error":""
+    ,"eventPageX":0
+    ,"program_version":""
     ,"goto_taskNum":1
     ,"numNavButtons":5 /** is adapted to window width */
-    ,"eventPageX":0
-    ,};
+    ,"do_save":1
+    ,"do_get_data_all":1
+    ,"do_server_retrieve":0
+    };
 
 const BLANK = "&nbsp;";
 
 $(document).ready(function() {
-    state["startKey"] = $("[name=startKey]").val();
-    state["studentKey"] = $("[name=studentKey]").val();
+    lesson["startKey"] = $("[name=startKey]").val();
+    student["studentKey"] = $("[name=studentKey]").val();
+    state["program_version"] = "dev";
     getTask();
 });
 
@@ -23,7 +75,7 @@ function getTask(){
     
     $("#taskNav").empty();
     var taskNavWait = '<div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i> ';
-    if(state["taskId"]!=0){
+    if(task["taskId"]!=0){
         taskNavWait += state["goto_taskNum"];
     }
     taskNavWait += '</div>';
@@ -32,115 +84,147 @@ function getTask(){
         $('#taskNavWait').css('padding-left', state["eventPageX"] - $('#taskNavWait').position().left - 40);
     }
 
-    /** getting new data */
+    /** saving locally and moving to the next required task */ 
 
-    var data = state;
-    data["answer_text"] = $("#answer_text").val();
+
+    /* getting and preparing the answer_text and the answer_status */
+    var this_answer_text = "";
+    var this_answer_status = "empty";
+    if(typeof answer["status"] == "undefined"){
+        this_answer_status = answer["status"];
+    }    
+    if($("#answer_text").length > 0){
+        this_answer_text = $("#answer_text").val();
+        /** changing answer status from empty to working when there is an answer_text */
+        if(   answer["status"] == "empty"
+            & this_answer_text!=""
+            ){                
+                this_answer_status = "working";
+        }
+    }
     
-    console.log(data);
+
+    if( !state["do_server_retrieve"]
+        & typeof task_all[task.num] != "undefined"
+        & typeof task_all[state["goto_taskNum"]] != "undefined"
+        ){
+        
+        /** saving */
+        var this_task = task_all[task.num];
+        answer.startKey = lesson.startKey;
+        answer.studentId = student.studentId;
+        answer.taskId = this_task.taskId;
+        answer.answer_text = this_answer_text;
+        answer.status = this_answer_status;
+        
+        answer_all[task.num] = answer;
+        
+        /** moving on */
+        task = task_all[state["goto_taskNum"]];
+        if(typeof answer_all[state["goto_taskNum"]] != "undefined"){
+            answer = answer_all[state["goto_taskNum"]];
+        }else{
+            answer = new taskO();
+        }
+        
+        displayTasks();
+        return;
+        
+    }
+
+    /** connecting to server using restcorrectme REST service to save and get fresh data */
+    
+    query = {};
+    query["startKey"] = lesson["startKey"];
+    query["studentKey"] = student["studentKey"];
+    query["taskId"] = task["taskId"];
+    query["goto_taskNum"] = state["goto_taskNum"];
+    query["answer_text"] = this_answer_text;
+    query["answer_status"] = this_answer_status;
+    query["do_save"] = state["do_save"];
+    query["do_get_data_all"] = state["do_get_data_all"];
+    
+    console.log(query);
     
     $.ajax({
         url: 'http://localhost/restcorrectme/web/student/think',
         type: 'POST',
-        data: data,
+        data: query,
         success: function(data) {
-            if(data["error"] != ""){alert(data["error"] + data["debug"]);}
-            state["taskNum"] = data["task"]["num"];
-            state["taskId"] = data["task"]["taskId"];
-            state["taskNum"] = data["task"]["num"];
-            state["numTasks"] = data["lesson"]["numTasks"];
-            state["numNavButtons"] = data["lesson"]["numTasks"];
-            var maxNumNavButtons = Math.floor(($(window).width() / 100));
-            if(maxNumNavButtons % 2 == 0){maxNumNavButtons += 1;}
-            if(state["numNavButtons"] > maxNumNavButtons){state["numNavButtons"] = maxNumNavButtons;}
-            displayTasks(data);
+            
+            lesson = data["lesson"];
+            student = data["student"];
+            task_all = data["task_all"];
+            answer_all = data["answer_all"];
+            task = data["task"];
+            answer = data["answer"];
+            
+            state["error"] = data["error"];
+            state["debug"] = data["debug"];
+            
+            displayTasks();
+        },
+
+        error: function(xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            if(state["program_version"]=="dev"){
+                state["error"] = 'server error';
+            }else{
+                state["error"] = err.Message;
+            }
+            displayTasks();
         }
     });
 }
 
-function displayTasks(data){
+function displayTasks(){
     
-    /**
-    
-    data is with example
-    
-    Object ( [error] => "errorMessage in case there is an error"
-             [debug] => "if not empty this string is displayed in an bootstrap warning alert"
-    
-            [task] => Object (  [taskId] => 1 
-                                [startKey] => y6dgse
-                                [num] => 1
-                                [type] => textarea
-                                [task_text] => Erste Aufgabe
-                        
-                                [answer_text] => ... of this student, derived from table "answer" and put into the task object 
-                        
-                                )
-                                
-            [lesson] => Object ( [startKey] => y6dgse
-                                [teacherKey] => ci4hxe
-                                [teacherId] => 0 
-                                [numTasks] => 3 
-                                [numStudents] => 21 
-                                [numTeamsize] => 3 
-                                [thinkingMinutes] => 15 
-                                [typeTasks] => textarea 
-                                [earlyPairing] => 0 
-                                [typeMixing] => random 
-                                [namedPairing] => 1 
-                                [insert_timestamp] => 2017-02-08 11:03:21 )
-                                
-            [student] => Object ([id] => 47 
-                                [startKey] => y6dgse 
-                                [name] => Streetview B.5 
-                                [studentKey] => s-fpu8wc 
-                                [position] => 1 
-                                [stats] => 
-                                [status] => empty 
-                                [lastchange] => 2017-02-09 10:24:54 
-                                [insert_timestamp] => 2017-02-09 10:24:54
-                                 ) ) 
-    */    
+    /** adapt the number of direct navigation buttons according to numTask and window size */
+    state["numNavButtons"] = lesson["numTasks"];
+    var maxNumNavButtons = Math.floor(($(window).width() / 100));
+    if(maxNumNavButtons % 2 == 0){maxNumNavButtons += 1;}
+    if(state["numNavButtons"] > maxNumNavButtons){state["numNavButtons"] = maxNumNavButtons;}
     
 
+    /** clear container */
     $("#displayTasks").html("");
     
     /** in case there is an error */
-    if(data["error"] != "" ){
+    if(state["error"] != "" ){
         var msg = $('<div class="alert alert-danger"></div>');
-        msg.html(data["error"]);
+        msg.html(state["error"]);
         $("#displayTasks").append(msg);
-        return;
     }
     
     /** for debugging by developers */
-    if(data["debug"] != "" ){
+    if(state["debug"] != "" ){
         var msg = $('<div class="alert alert-warning"></div>');
-        msg.html(data["debug"]);
+        msg.html(state["debug"]);
         $("#displayTasks").append(msg);
     }
     
     
     /** Answer input */
-
-    var templateTaskRow = '<div data-id="' + data["task"]["taskId"] + '" class="form-group"></div>';
-    var task = $(templateTaskRow);
+    var taskDisplay = $('<div data-id="' + task["taskId"] + '" class="form-group"></div>');
     
     var label_str = '<label for="answer_text" class="task_label"><span class="taskId">';
-    label_str += data["task"]["taskId"] + '.</span><span class="task_text">' + data["task"]["task_text"] + '</span></label>';
-    task.append($(label_str));
+    label_str += task["num"] + '.</span><span class="task_text">' + task["task_text"] + '</span></label>';
+    taskDisplay.append($(label_str));
     
     var texarea_rows = 1;
-    if(data['lesson']['typeTasks'] == "textarea"){
+    if(lesson['typeTasks'] == "textarea"){
         texarea_rows = 5;
     }
     var textarea_str = '<textarea class="form-control text-area" rows="' + texarea_rows + '" id="answer_text">';
-    textarea_str += data["task"]["answer_text"] + '</textarea>';
+    textarea_str += answer["answer_text"] + '</textarea>';
     
-    task.append($(textarea_str));
-    $("#displayTasks").append(task);
+    taskDisplay.append($(textarea_str));
+    $("#displayTasks").append(taskDisplay);
     
-    $(".text-area").autoGrow();   
+    $(".text-area").autoGrow();
+    
+    $("#answer_text").focus();
+       
     
     displayTaskNavigation();
         
@@ -152,16 +236,29 @@ function displayTaskNavigation(){
     
     $("#taskNav").empty();
     
-    var curNum = state["taskNum"];
-    var numTasks = state["numTasks"];
+    var curNum = task["num"];
+    var numTasks = lesson["numTasks"];
     var numButtonsNextToCurNum = (state["numNavButtons"] - 1)/2;
     var numButtons = state["numNavButtons"];
         
     var taskNav = $('#taskNav');
     
+    /** save button 
+
+    taskNav.append($('<button type="button" id="btn_save" class="btn btn-success btn_task">speichern</button>'));
+    taskNav.children("button").last().on("click", "", function( event ) {
+        state["eventPageX"] = event.pageX;
+        state["goto_taskNum"] = task["num"];
+        getTask();
+    });
+    taskNav.children("button").last().wrap($('<div id="btn_save_wrap"></div>'));
+*/    
+    
+    taskNav.append($('<div id="countdown_server_save">' + _L["student_think_countdown_server_save"] + '</div>'));
+    
     /** back to 1 button */
     
-    if(state["numTasks"] > state["numNavButtons"]){
+    if(lesson["numTasks"] > state["numNavButtons"]){
         btn_class = 'btn btn_task btn_task_move';
         taskNav.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-backward" aria-hidden="true" style="font-size:smaller;"></i></button>'));
         if(curNum == 1){
@@ -175,7 +272,6 @@ function displayTaskNavigation(){
         }
     }
     
-
     /** back button */
       
     taskNav.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-caret-left" aria-hidden="true"></i></button>'));
@@ -184,7 +280,7 @@ function displayTaskNavigation(){
     }else{
         taskNav.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
-            state["goto_taskNum"] = state["taskNum"] - 1;
+            state["goto_taskNum"] = task["num"] - 1;
             getTask();
         });
     }    
@@ -221,7 +317,6 @@ function displayTaskNavigation(){
         taskNav.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
             state["goto_taskNum"] = $(this).attr("data-num");
-            //alert(state["goto_taskNum"]);
             getTask();
         });
         
@@ -230,28 +325,28 @@ function displayTaskNavigation(){
     /** foward button */
     
     btn_class = 'btn btn_task btn_task_move';
-    taskNav.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-caret-right" aria-hidden="true"></i></button>'));
+    taskNav.append($('<button type="button" id="btn_task_move_forward" class="btn btn_task btn_task_move"><i class="fa fa-caret-right" aria-hidden="true"></i></button>'));
     if(curNum == numTasks){
         taskNav.children("button").last().addClass('btn_task_inactive');
     }else{
         taskNav.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
-            state["goto_taskNum"] = state["taskNum"] + 1;
+            state["goto_taskNum"] = task["num"] + 1;
             getTask();
         });
     }
 
     /** foward to end button */
     
-    if(state["numTasks"] > state["numNavButtons"] & stopAt < state["numTasks"]){
+    if(lesson["numTasks"] > state["numNavButtons"] & stopAt < lesson["numTasks"]){
         btn_class = 'btn btn_task btn_task_move';
-        taskNav.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-forward" style="font-size:smaller;" aria-hidden="true"></i><b>' + blanks(2) + state["numTasks"] + '</b></button>'));
+        taskNav.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-forward" style="font-size:smaller;" aria-hidden="true"></i><b>' + blanks(2) + lesson["numTasks"] + '</b></button>'));
         if(curNum == numTasks){
             taskNav.children("button").last().addClass('btn_task_inactive');
         }else{
             taskNav.children("button").last().on("click", "", function( event ) {
                 state["eventPageX"] = event.pageX;
-                state["goto_taskNum"] = state["numTasks"];
+                state["goto_taskNum"] = lesson["numTasks"];
                 getTask();
             });
         }

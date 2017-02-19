@@ -7,7 +7,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\StudentJoinForm;
-use app\models\StudentForm;
+use app\models\Student;
 
 if(!function_exists("_L")){
     include_once(\Yii::$app->basePath.'\language\language.php');
@@ -80,7 +80,7 @@ class StudentController extends \app\components\Controller
         
         $this->layout = 'student';
         
-        $model = new StudentForm();
+        $model = new Student();
 
         $request = Yii::$app->request;
 
@@ -89,7 +89,7 @@ class StudentController extends \app\components\Controller
         if ($request->isPost) {            
             if($model->load($request->post(), "StudentJoinForm")){
                 
-                $student_with_the_same_name = StudentForm::find()->where(
+                $student_with_the_same_name = Student::find()->where(
                                 [    'startKey'=>$model->startKey
                                     ,'name'=>$model->name
                                 ]
@@ -126,9 +126,9 @@ class StudentController extends \app\components\Controller
         /** let existing students rejoin with studentKey (they got from the teacher) when their session is lost */
 
         if ($request->isGet)  {
-            $request_params = $request->get("LessonForm");
+            $request_params = $request->get("Lesson");
             $model->load($request->get());
-            $row = LessonForm::find()->where(
+            $row = Lesson::find()->where(
                     [    'startKey'=>$request_params["startKey"]
                         ,'studentKey'=>$request_params["studentKey"]
                     ]
@@ -154,7 +154,7 @@ class StudentController extends \app\components\Controller
 
     protected function findStudent($startKey, $studentKey)
     {
-        $model = StudentForm::find()->where(
+        $model = Student::find()->where(
                 [    'startKey'=>$startKey
                     ,'studentKey'=>$studentKey
                 ]

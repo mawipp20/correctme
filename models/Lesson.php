@@ -25,7 +25,7 @@ if(!function_exists("_L")){
 }
 
 
-class LessonForm extends \app\components\ActiveRecord
+class Lesson extends \app\components\ActiveRecord
 
 {
     /**

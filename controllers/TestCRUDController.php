@@ -3,14 +3,14 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\LessonForm;
+use app\models\Lesson;
 use app\models\testCrudSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * TestCRUDController implements the CRUD actions for LessonForm model.
+ * TestCRUDController implements the CRUD actions for Lesson model.
  */
 class TestCRUDController extends Controller
 {
@@ -30,7 +30,7 @@ class TestCRUDController extends Controller
     }
 
     /**
-     * Lists all LessonForm models.
+     * Lists all Lesson models.
      * @return mixed
      */
     public function actionIndex()
@@ -45,7 +45,7 @@ class TestCRUDController extends Controller
     }
 
     /**
-     * Displays a single LessonForm model.
+     * Displays a single Lesson model.
      * @param string $id
      * @return mixed
      */
@@ -57,13 +57,13 @@ class TestCRUDController extends Controller
     }
 
     /**
-     * Creates a new LessonForm model.
+     * Creates a new Lesson model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new LessonForm();
+        $model = new Lesson();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->startKey]);
@@ -75,7 +75,7 @@ class TestCRUDController extends Controller
     }
 
     /**
-     * Updates an existing LessonForm model.
+     * Updates an existing Lesson model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -94,7 +94,7 @@ class TestCRUDController extends Controller
     }
 
     /**
-     * Deletes an existing LessonForm model.
+     * Deletes an existing Lesson model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -107,15 +107,15 @@ class TestCRUDController extends Controller
     }
 
     /**
-     * Finds the LessonForm model based on its primary key value.
+     * Finds the Lesson model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return LessonForm the loaded model
+     * @return Lesson the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = LessonForm::findOne($id)) !== null) {
+        if (($model = Lesson::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

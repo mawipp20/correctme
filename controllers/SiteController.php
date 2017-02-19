@@ -6,7 +6,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\models\LessonForm;
+use app\models\Lesson;
 //use app\models\StudentJoinForm;
 //use app\models\StudentForm;
 
@@ -67,7 +67,7 @@ class SiteController extends \app\components\Controller
      */
     public function actionLesson()
     {
-        $model = new LessonForm();
+        $model = new Lesson();
         
         return $this->render('lesson', [
             'model' => $model,
@@ -81,7 +81,7 @@ class SiteController extends \app\components\Controller
      */
     public function actionSession_rejoin()
     {
-        $model = new LessonForm();
+        $model = new Lesson();
         
         return $this->render('session_rejoin', [
             'model' => $model,
@@ -101,14 +101,14 @@ class SiteController extends \app\components\Controller
 
     public function actionThink()
     {
-        $model = new LessonForm();
+        $model = new Lesson();
 
         $request = Yii::$app->request;
-        $request_params = $request->get("LessonForm");
+        $request_params = $request->get("Lesson");
 
         if ($request->isGet)  {
             $model->load($request->get());
-            $row = LessonForm::find()->where(
+            $row = Lesson::find()->where(
                     [    'startKey'=>$request_params["startKey"]
                         ,'teacherKey'=>$request_params["teacherKey"]
                     ]
@@ -153,7 +153,7 @@ class SiteController extends \app\components\Controller
 
     protected function findLesson($id)
     {
-        if (($model = LessonForm::findOne($id)) !== null) {
+        if (($model = Lesson::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
