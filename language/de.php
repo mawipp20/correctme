@@ -125,18 +125,12 @@ function _L($phrase){
     static $_L_student_think = array(
     
             'student_think_title' => 'Einzelarbeitsphase'
-            ,'student_think_countdown_server_save' => 'automatische Speicherung in # Sekunden'
+            ,'student_think_working_time' => '# Minuten Einzelarbeit'
+            ,'student_think_countdown_server_save' => 'um # auf dem Server gespeichert'
             
     );
     $_sub_arrays["_L_student_think"] = $_L_student_think;
 
-
-
-
-
-
-
-            
     
     if(array_key_exists($phrase,$_sub_arrays)){return $_sub_arrays[$phrase];}       
 

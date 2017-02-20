@@ -1,3 +1,9 @@
+/**
+
+next is: auto-save
+
+
+*/
 var lesson = {
     "startKey":""
     ,"numTasks":""
@@ -32,7 +38,7 @@ not yet used
 var task_all = {};
 function taskO(){
     this.taskId = "";
-    this.num = "";
+    this.num = "1";
     this.type = "";
     this.answer_text = "";
 }
@@ -55,9 +61,7 @@ var state = {
     ,"program_version":""
     ,"goto_taskNum":1
     ,"numNavButtons":5 /** is adapted to window width */
-    ,"do_save":1
-    ,"do_get_data_all":1
-    ,"do_server_retrieve":0
+    ,"rest_status":"" /** empty string means display tasks for the first time; 0 = not in connection; 1 waiting for rest answer */
     };
 
 const BLANK = "&nbsp;";
@@ -66,7 +70,7 @@ $(document).ready(function() {
     lesson["startKey"] = $("[name=startKey]").val();
     student["studentKey"] = $("[name=studentKey]").val();
     state["program_version"] = "dev";
-    getTask();
+    rest_service();
 });
 
 function getTask(){
@@ -84,13 +88,12 @@ function getTask(){
         $('#taskNavWait').css('padding-left', state["eventPageX"] - $('#taskNavWait').position().left - 40);
     }
 
-    /** saving locally and moving to the next required task */ 
-
+    /** saving moving to the next required task */ 
 
     /* getting and preparing the answer_text and the answer_status */
     var this_answer_text = "";
     var this_answer_status = "empty";
-    if(typeof answer["status"] == "undefined"){
+    if(typeof answer["status"] != "undefined"){
         this_answer_status = answer["status"];
     }    
     if($("#answer_text").length > 0){
@@ -103,46 +106,46 @@ function getTask(){
         }
     }
     
-
-    if( !state["do_server_retrieve"]
-        & typeof task_all[task.num] != "undefined"
-        & typeof task_all[state["goto_taskNum"]] != "undefined"
-        ){
+    if( typeof task_all[task.num] != "undefined" ){
         
         /** saving */
         var this_task = task_all[task.num];
         answer.startKey = lesson.startKey;
-        answer.studentId = student.studentId;
+        answer.studentId = student.id;
         answer.taskId = this_task.taskId;
         answer.answer_text = this_answer_text;
         answer.status = this_answer_status;
         
         answer_all[task.num] = answer;
         
-        /** moving on */
-        task = task_all[state["goto_taskNum"]];
-        if(typeof answer_all[state["goto_taskNum"]] != "undefined"){
-            answer = answer_all[state["goto_taskNum"]];
-        }else{
-            answer = new taskO();
-        }
-        
-        displayTasks();
-        return;
-        
     }
+
+    /** moving on */
+    if(typeof task_all[state["goto_taskNum"]] != "undefined"){
+        task = task_all[state["goto_taskNum"]];
+    }else{
+        task = new taskO();
+    }
+
+    if(typeof answer_all[state["goto_taskNum"]] != "undefined"){
+        answer = answer_all[state["goto_taskNum"]];
+    }else{
+        answer = new answerO();
+    }
+    
+    displayTasks();
+    state["error"] = "";
+    state["debug"] = ""; 
+}
+
+function rest_service(){
 
     /** connecting to server using restcorrectme REST service to save and get fresh data */
     
     query = {};
     query["startKey"] = lesson["startKey"];
     query["studentKey"] = student["studentKey"];
-    query["taskId"] = task["taskId"];
-    query["goto_taskNum"] = state["goto_taskNum"];
-    query["answer_text"] = this_answer_text;
-    query["answer_status"] = this_answer_status;
-    query["do_save"] = state["do_save"];
-    query["do_get_data_all"] = state["do_get_data_all"];
+    query["answer_all"] = answer_all;
     
     console.log(query);
     
@@ -156,13 +159,13 @@ function getTask(){
             student = data["student"];
             task_all = data["task_all"];
             answer_all = data["answer_all"];
-            task = data["task"];
-            answer = data["answer"];
             
             state["error"] = data["error"];
             state["debug"] = data["debug"];
+            if(state["rest_status"] == ""){
+                getTask();
+            }
             
-            displayTasks();
         },
 
         error: function(xhr, status, error) {
@@ -172,9 +175,9 @@ function getTask(){
             }else{
                 state["error"] = err.Message;
             }
-            displayTasks();
         }
     });
+    
 }
 
 function displayTasks(){
@@ -227,6 +230,7 @@ function displayTasks(){
        
     
     displayTaskNavigation();
+    displayLessonInfo();
         
 }
 
@@ -244,7 +248,6 @@ function displayTaskNavigation(){
     var taskNav = $('#taskNav');
     
     /** save button 
-
     taskNav.append($('<button type="button" id="btn_save" class="btn btn-success btn_task">speichern</button>'));
     taskNav.children("button").last().on("click", "", function( event ) {
         state["eventPageX"] = event.pageX;
@@ -252,9 +255,7 @@ function displayTaskNavigation(){
         getTask();
     });
     taskNav.children("button").last().wrap($('<div id="btn_save_wrap"></div>'));
-*/    
-    
-    taskNav.append($('<div id="countdown_server_save">' + _L["student_think_countdown_server_save"] + '</div>'));
+    */    
     
     /** back to 1 button */
     
@@ -305,7 +306,7 @@ function displayTaskNavigation(){
            
         var btn_class = "";
         if(i == curNum){
-            btn_class = 'btn-primary';
+            btn_class = 'btn-primary btn_task_current';
         }
         var btn_text = i;
         if(i == numTasks){
@@ -314,11 +315,13 @@ function displayTaskNavigation(){
         
         var btn = $('<button type="button" data-num="' + i + '" class="btn ' + btn_class + ' btn_task">' + btn_text + '</button>');
         taskNav.append(btn);
-        taskNav.children("button").last().on("click", "", function( event ) {
-            state["eventPageX"] = event.pageX;
-            state["goto_taskNum"] = $(this).attr("data-num");
-            getTask();
-        });
+        if(i != curNum){
+            taskNav.children("button").last().on("click", "", function( event ) {
+                state["eventPageX"] = event.pageX;
+                state["goto_taskNum"] = $(this).attr("data-num");
+                getTask();
+            });
+        }
         
     }
     
@@ -352,6 +355,14 @@ function displayTaskNavigation(){
         }
     }
 
+}
+
+function displayLessonInfo(){
+
+    var lessonInfo = $('#lessonInfo');
+    lessonInfo.append($('<div id="info_working_time">' + _L["student_think_working_time"] + '</div>'));
+    lessonInfo.append($('<div id="student_think_countdown_server_save">' + _L["student_think_countdown_server_save"] + '</div>'));
+        
 }
 
 function blanks(numBlanks){

@@ -42,6 +42,13 @@
     cursor: default;
     border-color: transparent;
 }
+.btn_task_current{
+    cursor: default;
+}
+.btn_task_current:hover{
+    background-color: rgb(51,122,183);
+    border-color:transparent;
+}
 #countdown_server_save{
     margin-bottom:1em;
 }
