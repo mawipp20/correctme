@@ -9,6 +9,8 @@ AppAsset::register($this);
 use app\assets\LessonAsset;
 LessonAsset::register($this);
 
+$this->title = _L("session_rejoin_title");
+
 /* @var $this yii\web\View */
 /* @var $model app\models\Lesson */
 /* @var $form ActiveForm */
@@ -32,18 +34,20 @@ LessonAsset::register($this);
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
             echo '<div class="alert alert-danger">' . $message . "</div>\n";
         }
+       
     ?>
 
 <div class="Lesson">
 
     <?php $form = ActiveForm::begin([
                 'action' => ['think']
-                ,'method' => "get"    
+                ,'method' => 'get'
+                //,'options' => ['onsubmit' => 'teacherKey_to_ASCII_codes();']    
     ]); ?>
 
         <?= Html::button('<i class="fa fa-arrow-right" aria-hidden="true"></i> '._L('rejoin_session_btn_new_session'), [
             'class' => 'btn btn-default input-group-lesson'
-            ,'onclick' => 'window.document.location = "index";'
+            ,'onclick' => 'window.document.location = "lesson";'
             ]) ?>
 
           <?= $form->field($model, 'startKey'
@@ -66,7 +70,7 @@ LessonAsset::register($this);
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
-          )->textInput(['placeholder'=>_L('teacherKey_placeholder'), 'value' => $model->teacherKey])
+          )->passwordInput(['placeholder'=>_L('teacherKey_placeholder'), 'value' => $model->teacherKey])
           ->label(_L('teacherKey_label'))
           ; ?>
 

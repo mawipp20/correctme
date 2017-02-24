@@ -21,6 +21,7 @@ class ThinkAsset extends AssetBundle
         'css/teacher_think.css',
     ];
     public $js = [
+        'js/jquery-progresspiesvg/js/min/jquery-progresspiesvg-min.js',
         'js/teacher_think.js',
     ];
 }

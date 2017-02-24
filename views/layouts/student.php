@@ -32,11 +32,23 @@ use yii\widgets\Breadcrumbs;
             'class' => 'navbar-inverse navbar-fixed-top navbar-student',
         ],
     ]);
+/**
+    echo Nav::widget([
+        'options' => ['class' => 'navbar-nav navbar-left'],
+        'items' => [
+            ['label' => _L('top_nav_student_minutes')
+                , 'url' => null
+                , 'options' => [
+                    'class' => 'navbar-student'
+                    ,'id' => 'top_nav_student_minutes'
+                    ]
+            ],
+        ],
+    ]);
+*/
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            //['label' => 'about', 'url' => ['/site/about']],
-            //['label' => _L('top_nav_teacher_link'), 'url' => ['/student/finish']],
             ['label' => _L('top_nav_student_cancel'), 'url' => ['/student/cancel']],
             '<button class="btn btn-success navbar-btn navbar-student-btn"'
             .' onclick=\'window.location.href="'.\Yii::$app->getUrlManager()->getBaseUrl().'/site/about";\''

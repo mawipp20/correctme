@@ -1,12 +1,15 @@
 /**
 
-next is: auto-save
+- Was ist bei nur einer Aufgabe mit der Navigation?
+- Alles fertig Button in Betrieb nehmen
+- Aufgaben eingeben / hochladen
+
 
 
 */
 var lesson = {
     "startKey":""
-    ,"numTasks":""
+    ,"lesson.numTasks":""
     ,"numTeamsize":""
     ,"thinkingMinutes":""
     ,"typeTasks":""
@@ -50,47 +53,81 @@ function answerO(){
     this.taskId = "";
     this.studentId = "";
     this.answer_text = "";
-    this.answer_text = "";
     this.status = "empty"
 }
 var answer = new answerO();
 
 var state = {
-    "error":""
-    ,"eventPageX":0
-    ,"program_version":""
-    ,"goto_taskNum":1
+    "error":"" 
+    ,"eventPageX":0 /** position where a nav button was clicked to place the waiting for answer symbol nearby */
+    ,"program_version":"" /** can be set to "dev" for debugging */
+    ,"goto_taskNum":1 /** number of the requested task */
     ,"numNavButtons":5 /** is adapted to window width */
     ,"rest_status":"" /** empty string means display tasks for the first time; 0 = not in connection; 1 waiting for rest answer */
+    ,"restInterval_seconds":10
+    ,"hasChanges":0
+    ,"lastSaved":0
+    ,"millisecondsServerMinusClient":false /** difference in time between server and client, used for the minutes countdown */ 
     };
 
 const BLANK = "&nbsp;";
+var restInterval;
 
 $(document).ready(function() {
     lesson["startKey"] = $("[name=startKey]").val();
     student["studentKey"] = $("[name=studentKey]").val();
     state["program_version"] = "dev";
     rest_service();
+    restInterval = setInterval(function() {
+        saveAnswer();
+        rest_service();
+        //if (/* stop */) clearInterval(restInterval)       
+    }, state["restInterval_seconds"] * 1000);
 });
 
 function getTask(){
     
     /** taskNav: spinning loading sign next to position of last click */
     
-    $("#taskNav").empty();
+    $("#taskNav_first").empty();
+    $("#taskNav_second").empty();
+    
     var taskNavWait = '<div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i> ';
     if(task["taskId"]!=0){
         taskNavWait += state["goto_taskNum"];
     }
     taskNavWait += '</div>';
-    $('#taskNav').append($(taskNavWait));
+    $('#taskNav_first').append($(taskNavWait));
     if(state["eventPageX"]!=0){
         $('#taskNavWait').css('padding-left', state["eventPageX"] - $('#taskNavWait').position().left - 40);
     }
 
-    /** saving moving to the next required task */ 
 
-    /* getting and preparing the answer_text and the answer_status */
+    /** save */
+    saveAnswer();
+
+    /** moving on to the next required task */
+    if(typeof task_all[state["goto_taskNum"]] != "undefined"){
+        task = task_all[state["goto_taskNum"]];
+    }else{
+        task = new taskO();
+    }
+
+    if(typeof answer_all[state["goto_taskNum"]] != "undefined"){
+        answer = answer_all[state["goto_taskNum"]];
+    }else{
+        answer = new answerO();
+    }
+    
+    displayTasks();
+    state["error"] = "";
+    state["debug"] = ""; 
+}
+
+function saveAnswer(){
+
+    /** save the task  */ 
+
     var this_answer_text = "";
     var this_answer_status = "empty";
     if(typeof answer["status"] != "undefined"){
@@ -120,25 +157,27 @@ function getTask(){
         
     }
 
-    /** moving on */
-    if(typeof task_all[state["goto_taskNum"]] != "undefined"){
-        task = task_all[state["goto_taskNum"]];
-    }else{
-        task = new taskO();
-    }
-
-    if(typeof answer_all[state["goto_taskNum"]] != "undefined"){
-        answer = answer_all[state["goto_taskNum"]];
-    }else{
-        answer = new answerO();
-    }
     
-    displayTasks();
-    state["error"] = "";
-    state["debug"] = ""; 
 }
 
 function rest_service(){
+
+    /** called by interval every 10 seconds (or more depending on server work load)  */
+
+    saveAnswer();
+    
+    if(state['millisecondsServerMinusClient']!==false){
+        displayLessonInfo();
+    }
+
+
+    /* stop if the last query (rest_status) is still going on or when there are no changes */
+    if(   state["rest_status"] == 1
+        | state["hasChanges"] === false
+    ){
+        return;
+    }
+
 
     /** connecting to server using restcorrectme REST service to save and get fresh data */
     
@@ -149,11 +188,18 @@ function rest_service(){
     
     console.log(query);
     
+    var this_do_getTasks_first_time = false;
+    if(state["rest_status"] === ""){this_do_getTasks_first_time = true;}
+    
+    state["rest_status"] = 1;
+    
     $.ajax({
         url: 'http://localhost/restcorrectme/web/student/think',
         type: 'POST',
         data: query,
         success: function(data) {
+            
+            state["rest_status"] = 0;
             
             lesson = data["lesson"];
             student = data["student"];
@@ -162,13 +208,23 @@ function rest_service(){
             
             state["error"] = data["error"];
             state["debug"] = data["debug"];
-            if(state["rest_status"] == ""){
+            state["lastSaved"] = data["lastSaved"];
+            
+            state["hasChanges"] = false;
+            
+            if(this_do_getTasks_first_time){
                 getTask();
+            }
+            if(state['millisecondsServerMinusClient']===false){
+                var this_now_client = new Date();
+                var this_now_server = Date.parse(state["lastSaved"]);
+                state['millisecondsServerMinusClient'] = this_now_server - this_now_client.getTime();
             }
             
         },
 
         error: function(xhr, status, error) {
+            state["rest_status"] = 0;
             var err = eval("(" + xhr.responseText + ")");
             if(state["program_version"]=="dev"){
                 state["error"] = 'server error';
@@ -183,8 +239,8 @@ function rest_service(){
 function displayTasks(){
     
     /** adapt the number of direct navigation buttons according to numTask and window size */
-    state["numNavButtons"] = lesson["numTasks"];
-    var maxNumNavButtons = Math.floor(($(window).width() / 100));
+    state["numNavButtons"] = lesson.numTasks;
+    var maxNumNavButtons = Math.floor(($(window).width() / 80));
     if(maxNumNavButtons % 2 == 0){maxNumNavButtons += 1;}
     if(state["numNavButtons"] > maxNumNavButtons){state["numNavButtons"] = maxNumNavButtons;}
     
@@ -218,7 +274,7 @@ function displayTasks(){
     if(lesson['typeTasks'] == "textarea"){
         texarea_rows = 5;
     }
-    var textarea_str = '<textarea class="form-control text-area" rows="' + texarea_rows + '" id="answer_text">';
+    var textarea_str = '<textarea class="form-control text-area" rows="' + texarea_rows + '" id="answer_text" oninput="textarea_oninput(this);">';
     textarea_str += answer["answer_text"] + '</textarea>';
     
     taskDisplay.append($(textarea_str));
@@ -236,87 +292,110 @@ function displayTasks(){
 
 function displayTaskNavigation(){
     
+    
+    var taskNav_first = $('#taskNav_first');
+    var taskNav_second = $('#taskNav_second');
+    
+    taskNav_first.empty();
+    taskNav_second.empty();
+    
+    if(lesson.numTasks == 1){return;}
+        
     /** task navigation buttons */
     
-    $("#taskNav").empty();
-    
-    var curNum = task["num"];
-    var numTasks = lesson["numTasks"];
     var numButtonsNextToCurNum = (state["numNavButtons"] - 1)/2;
-    var numButtons = state["numNavButtons"];
+
+    /** finish and back button */
+    
+    get_btn_finished_move(false);
         
-    var taskNav = $('#taskNav');
-    
-    /** save button 
-    taskNav.append($('<button type="button" id="btn_save" class="btn btn-success btn_task">speichern</button>'));
-    taskNav.children("button").last().on("click", "", function( event ) {
-        state["eventPageX"] = event.pageX;
-        state["goto_taskNum"] = task["num"];
-        getTask();
-    });
-    taskNav.children("button").last().wrap($('<div id="btn_save_wrap"></div>'));
-    */    
-    
-    /** back to 1 button */
-    
-    if(lesson["numTasks"] > state["numNavButtons"]){
-        btn_class = 'btn btn_task btn_task_move';
-        taskNav.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-backward" aria-hidden="true" style="font-size:smaller;"></i></button>'));
-        if(curNum == 1){
-            taskNav.children("button").last().addClass('btn_task_inactive');
-        }else{
-            taskNav.children("button").last().on("click", "", function( event ) {
-                state["eventPageX"] = event.pageX;
-                state["goto_taskNum"] = 1;
-                getTask();
-            });
-        }
-    }
-    
     /** back button */
+    
+    // _L['student_think_btn_back']
       
-    taskNav.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-caret-left" aria-hidden="true"></i></button>'));
-    if(curNum == 1){
-        taskNav.children("button").last().addClass('btn_task_inactive');
+    taskNav_first.append($('<button type="button" class="btn btn-lg btn_task btn_task_move">' + '<i class="fa fa-caret-left" aria-hidden="true"></i>' + '</button>'));
+    if(task.num == 1){
+        //taskNav_first.children("button").last().addClass('btn_task_inactive');
     }else{
-        taskNav.children("button").last().on("click", "", function( event ) {
+        taskNav_first.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
             state["goto_taskNum"] = task["num"] - 1;
             getTask();
         });
     }    
 
+    /** foward button */
+    
+    // _L['student_think_btn_forward']
+    
+    taskNav_first.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task">' + '<i class="fa fa-caret-right" aria-hidden="true"></i>' + '</button>'));
+    if(task.num == lesson.numTasks){
+        taskNav_first.children("button").last().addClass('btn_task_inactive');
+    }else{
+        taskNav_first.children("button").last().on("click", "", function( event ) {
+            state["eventPageX"] = event.pageX;
+            state["goto_taskNum"] = task["num"] + 1;
+            getTask();
+        });
+    }
+
+
+    /** finish and forward button */
+    
+    get_btn_finished_move(true);
+
+    
+    /** back to 1 button */
+    
+    if(lesson.numTasks > state["numNavButtons"]){
+        btn_class = 'btn btn_task btn_task_move';
+        taskNav_second.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-backward" aria-hidden="true" style="font-size:smaller;"></i></button>'));
+        if(task.num == 1){
+            taskNav_second.children("button").last().addClass('btn_task_inactive');
+        }else{
+            taskNav_second.children("button").last().on("click", "", function( event ) {
+                state["eventPageX"] = event.pageX;
+                state["goto_taskNum"] = 1;
+                getTask();
+            });
+        }
+    }
+       
     /** add numbered buttons */
     
-    var startAt = curNum - numButtonsNextToCurNum;
-    if(startAt > (numTasks - state["numNavButtons"] + 1)){startAt = numTasks - state["numNavButtons"] + 1;}
+    var startAt = task.num - numButtonsNextToCurNum;
+    if(startAt > (lesson.numTasks - state["numNavButtons"] + 1)){startAt = lesson.numTasks - state["numNavButtons"] + 1;}
     if(startAt < 1){startAt = 1;}
     
-    var stopAt = curNum + numButtonsNextToCurNum;
-    if(stopAt < numButtons){
-        stopAt = numButtons;
+    var stopAt = task.num + numButtonsNextToCurNum;
+    if(stopAt < state["numNavButtons"]){
+        stopAt = state["numNavButtons"];
     }
-    if(stopAt > numTasks){
-        stopAt = numTasks;
+    if(stopAt > lesson.numTasks){
+        stopAt = lesson.numTasks;
     }
     
     for(var i = startAt; i <= stopAt; i++){
         
-        if(i > numTasks){break;}
+        if(i > lesson.numTasks){break;}
            
         var btn_class = "";
-        if(i == curNum){
+        if(i == task.num){
             btn_class = 'btn-primary btn_task_current';
+        }else if (typeof answer_all[i] != 'undefined'){
+            if(answer_all[i]['status'] == 'finished'){
+                btn_class = 'btn_task_finished';
+            }
         }
         var btn_text = i;
-        if(i == numTasks){
+        if(i == lesson.numTasks){
             btn_text += '.';
         }
         
         var btn = $('<button type="button" data-num="' + i + '" class="btn ' + btn_class + ' btn_task">' + btn_text + '</button>');
-        taskNav.append(btn);
-        if(i != curNum){
-            taskNav.children("button").last().on("click", "", function( event ) {
+        taskNav_second.append(btn);
+        if(i != task.num){
+            taskNav_second.children("button").last().on("click", "", function( event ) {
                 state["eventPageX"] = event.pageX;
                 state["goto_taskNum"] = $(this).attr("data-num");
                 getTask();
@@ -325,31 +404,17 @@ function displayTaskNavigation(){
         
     }
     
-    /** foward button */
-    
-    btn_class = 'btn btn_task btn_task_move';
-    taskNav.append($('<button type="button" id="btn_task_move_forward" class="btn btn_task btn_task_move"><i class="fa fa-caret-right" aria-hidden="true"></i></button>'));
-    if(curNum == numTasks){
-        taskNav.children("button").last().addClass('btn_task_inactive');
-    }else{
-        taskNav.children("button").last().on("click", "", function( event ) {
-            state["eventPageX"] = event.pageX;
-            state["goto_taskNum"] = task["num"] + 1;
-            getTask();
-        });
-    }
-
     /** foward to end button */
     
-    if(lesson["numTasks"] > state["numNavButtons"] & stopAt < lesson["numTasks"]){
+    if(lesson.numTasks > state["numNavButtons"] & stopAt < lesson.numTasks){
         btn_class = 'btn btn_task btn_task_move';
-        taskNav.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-forward" style="font-size:smaller;" aria-hidden="true"></i><b>' + blanks(2) + lesson["numTasks"] + '</b></button>'));
-        if(curNum == numTasks){
-            taskNav.children("button").last().addClass('btn_task_inactive');
+        taskNav_second.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-forward" style="font-size:smaller;" aria-hidden="true"></i><b>' + blanks(2) + lesson.numTasks + '</b></button>'));
+        if(task.num == lesson.numTasks){
+            taskNav_second.children("button").last().addClass('btn_task_inactive');
         }else{
-            taskNav.children("button").last().on("click", "", function( event ) {
+            taskNav_second.children("button").last().on("click", "", function( event ) {
                 state["eventPageX"] = event.pageX;
-                state["goto_taskNum"] = lesson["numTasks"];
+                state["goto_taskNum"] = lesson.numTasks;
                 getTask();
             });
         }
@@ -359,14 +424,108 @@ function displayTaskNavigation(){
 
 function displayLessonInfo(){
 
-    var lessonInfo = $('#lessonInfo');
-    lessonInfo.append($('<div id="info_working_time">' + _L["student_think_working_time"] + '</div>'));
-    lessonInfo.append($('<div id="student_think_countdown_server_save">' + _L["student_think_countdown_server_save"] + '</div>'));
-        
+
+    var info = _L["student_think_working_time"];
+    
+    var insertDate = Date.parse(lesson['insert_timestamp']);    
+    var server_now = new Date();
+    server_now = server_now.getTime() + state["millisecondsServerMinusClient"];
+
+    var minutesLeft = parseInt(lesson['thinkingMinutes']) - Math.floor((server_now - insertDate) / 60000);
+    
+      
+    var is_overtime = false;
+    if(parseInt(minutesLeft) >= 0){
+        info = info.replace('#', '<b>' + minutesLeft + '</b>');
+    }else{
+        is_overtime = true;
+        info = _L["student_think_working_overtime"].replace('#', '<b>' + minutesLeft * (-1) + '</b>');
+    } 
+    
+    //info += blanks(3) + '<i class="fa fa-floppy-o" aria-hidden="true"></i>';
+
+    
+    var lessonInfo = $('.lessonInfo');
+    lessonInfo.html(info);
+    if(is_overtime){
+        lessonInfo.addClass('lessonInfo_warning');
+    }else{
+        lessonInfo.removeClass('lessonInfo_warning');
+    }
+
 }
 
 function blanks(numBlanks){
     var ret = "";
     for(i=0;i<numBlanks;i++){ret += BLANK;}
     return ret;
+}
+
+function textarea_oninput(elem){
+    state["hasChanges"] = true;
+    var this_answer_status_before = answer["status"];
+    if($(elem).val()!=''){
+        answer["status"] = 'working';
+    }else{
+        answer["status"] = 'empty';
+    }
+    if(this_answer_status_before != answer["status"]){
+        saveAnswer();
+        displayTaskNavigation();
+    }
+}
+
+function get_btn_finished_move(forward){
+    
+    taskNav_first = $('#taskNav_first');
+    
+    /** check the status of the current task */   
+    this_answer_is_finished = false;
+    if(typeof answer_all[task.num] != 'undefined'){
+        if(answer_all[task.num]["status"] == 'finished'){
+            this_answer_is_finished = true;
+        }
+    }
+        
+    /** finish and save button */
+    btn_class = 'btn btn-lg btn_task';
+    if(this_answer_is_finished){
+        btn_class += ' btn-success';
+    }
+    if( answer['status'] == 'empty'
+        | (!forward & task.num == 1)
+        | (forward & task.num == lesson.numTasks)
+    ){
+        btn_class += ' invisible';
+    }
+    
+    var this_step = 0;
+    var str = '<button type="button" id="student_think_btn_task_finished" class="' + btn_class + '">';
+    if(forward & task.num < lesson.numTasks){
+        this_step = 1;
+        str += '<i class="fa fa-check';
+        if(!this_answer_is_finished){str += ' fa-check-cm';}
+        str += '" aria-hidden="true"></i>';
+        /**
+        _L['student_think_btn_task_finished'];
+        <i class="fa fa-caret-right" aria-hidden="true"></i>
+        */
+    }
+    if(!forward & task.num > 1){
+        this_step = -1;
+        str += '<i class="fa fa-check';
+        if(!this_answer_is_finished){str += ' fa-check-cm';}
+        str += '" aria-hidden="true"></i>';
+    }
+    str += '</button>';
+    taskNav_first.append($(str));
+    taskNav_first.children("button").last().on("click", "", function( event ) {
+        answer["status"] = "finished";
+        state["hasChanges"] = true;
+        saveAnswer();
+        state["eventPageX"] = event.pageX;
+        state["goto_taskNum"] = task["num"] + this_step;
+        getTask();
+    });
+    
 }

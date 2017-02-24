@@ -24,8 +24,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= Html::hiddenInput('studentKey', Yii::$app->getSession()->get("studentKey"))  ?>
 
     <div id="displayTasks"></div>
-    <div id="taskNav"><div>
-    <div id="lessonInfo"><div>
+    <div id="taskNav_first" class="text-center"></div>
+    <div class="lessonInfo" id="lessonInfo"></div>
+    <div id="taskNav_second"></div>
 
 </div>
 

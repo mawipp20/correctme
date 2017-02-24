@@ -68,5 +68,8 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
     <div id="studentRows"></div>
+    
+    <p>You have achieved 25 points out of 50 (<span class="pie">15</span>%)</p>
+    
 </div>
 

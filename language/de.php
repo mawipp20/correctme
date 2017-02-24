@@ -66,6 +66,8 @@ function _L($phrase){
             ,'LESSON_WELCOME' => 'Kontrolliertes Kooperatives Lernen'
             ,'LESSON_WELCOME_line_2' => ''
             
+            ,'session_rejoin_title' => 'Laufende Session'
+            
             ,'lesson_input_required_message' => 'wird benötigt'
         
             ,'startKey_label' => 'Session'
@@ -115,9 +117,10 @@ function _L($phrase){
             ,'think_dialog_startKey_info_text' => 'Eindeutiger Login-Schlüssel zur Bekanntgabe an die Lernenden.'
             
             ,'think_btn_show_teacher_retrieve_session_key' => 'Moderation-Kennwort anzeigen'
-            ,'think_dialog_teacherKey_info_text' => 'Benuten Sie dieses Kennwort, falls Ihr Browser ungewollt beendet wird und Sie diese Moderationsseite wieder aufrufen wollen.'
+            ,'think_dialog_teacherKey_info_text' => 'Benutzen Sie dieses Kennwort, falls Ihr Browser ungewollt beendet wird und Sie diese Moderationsseite wieder aufrufen wollen.'
             
     );
+    $_sub_arrays["_L_think"] = $_L_think;
 
 
     /** students's Think-Phase page */
@@ -125,8 +128,11 @@ function _L($phrase){
     static $_L_student_think = array(
     
             'student_think_title' => 'Einzelarbeitsphase'
-            ,'student_think_working_time' => '# Minuten Einzelarbeit'
-            ,'student_think_countdown_server_save' => 'um # auf dem Server gespeichert'
+            ,'student_think_working_time' => 'noch etwa # Minuten'
+            ,'student_think_btn_back' => 'zurück'
+            ,'student_think_btn_forward' => 'weiter'
+            ,'student_think_btn_task_finished' => 'fertig'
+            ,'student_think_working_overtime' => 'Die geplante Zeit ist seit # Minuten beendet.'
             
     );
     $_sub_arrays["_L_student_think"] = $_L_student_think;

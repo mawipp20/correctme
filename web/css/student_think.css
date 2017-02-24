@@ -1,4 +1,5 @@
 .navbar-student .navbar-brand{color: white;}
+
 .navbar-student-btn{
     margin-left: 15px;   
     margin-bottom: 0.0em;   
@@ -45,6 +46,10 @@
 .btn_task_current{
     cursor: default;
 }
+.btn_task_finished{
+    background-color: rgb(92,184,92);
+    color: white;
+}
 .btn_task_current:hover{
     background-color: rgb(51,122,183);
     border-color:transparent;
@@ -52,3 +57,28 @@
 #countdown_server_save{
     margin-bottom:1em;
 }
+.lessonInfo{
+    color: grey;
+    font-size: 85%;
+}
+.lessonInfo_warning{
+    color: darkred;
+}
+#taskNav_first{
+    margin-bottom: 1em;
+}
+#taskNav_second{
+    margin-bottom: 1em;    
+}
+#lessonInfo{
+    margin-bottom: 1em;    
+}
+.invisible{
+    visibility: hidden;
+}
+.fa-check-cm{
+    color:rgb(92,184,92)    
+}
+
+
+

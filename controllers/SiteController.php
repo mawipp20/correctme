@@ -6,6 +6,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\base\DynamicModel;
 use app\models\Lesson;
 //use app\models\StudentJoinForm;
 //use app\models\StudentForm;
@@ -82,9 +83,13 @@ class SiteController extends \app\components\Controller
     public function actionSession_rejoin()
     {
         $model = new Lesson();
+
+        //$model_teacherKey_validate = new DynamicModel(compact('teacherKey'));
+        //$model_teacherKey_validate->addRule('teacherKey', 'required', ['message' => _L('lesson_input_required_message')]);
         
         return $this->render('session_rejoin', [
-            'model' => $model,
+             'model' => $model
+            //,'model_teacherKey_validate' => $model_teacherKey_validate
         ]);
     }
 
