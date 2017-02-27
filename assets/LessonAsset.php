@@ -21,5 +21,6 @@ class LessonAsset extends AssetBundle
         'css/teacher_lesson.css',
     ];
     public $js = [
+        'js/teacher_lesson.js',
     ];
 }

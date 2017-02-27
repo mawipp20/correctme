@@ -23,6 +23,24 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= Html::hiddenInput('startKey', Yii::$app->getSession()->get("startKey"))  ?>
     <?= Html::hiddenInput('studentKey', Yii::$app->getSession()->get("studentKey"))  ?>
 
+
+
+    <?php
+        Modal::begin([
+            'header' => _L('student_think_messageHelpHeader'),
+            'id'=>'student_think_btn_help',
+            'toggleButton' => ['label' => 'not displayed'
+                                ,'class' => 'display_none'
+                                ,'id' => 'student_think_help_message_btn_toggle'
+                                ],
+        ]);
+        echo "<div id='modalContent'>"._L('student_think_messageHelpText')."</div>";
+        echo '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">'._L('gen_btn_close_dialog').'</button></div>';
+        Modal::end();
+    ?>
+
+
+
     <div id="displayTasks"></div>
     <div id="taskNav_first" class="text-center"></div>
     <div class="lessonInfo" id="lessonInfo"></div>

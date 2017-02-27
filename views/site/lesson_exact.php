@@ -28,8 +28,9 @@ $this->title = _L("lesson_title");
 <div class="Lesson">
 
 <ul class="nav nav-tabs" style="margin-bottom: 20px;">
-  <li class="active"><a href="#"><?= _L('lesson_nav_tab_quick') ?></a></li>
-  <li><a href="lesson_exact"><?= _L('lesson_nav_tab_exact') ?></a></li>
+  <li><a href="lesson"><?= _L('lesson_nav_tab_quick') ?></a></li>
+  <li class="active"><a href="#"><?= _L('lesson_nav_tab_exact') ?></a></li>
+  <li><a href="lesson_paste"><?= _L('lesson_nav_tab_paste') ?></a></li>
   <li><a href="lesson_upload"><?= _L('lesson_nav_tab_upload') ?></a></li>
 </ul>
 
@@ -38,23 +39,9 @@ $this->title = _L("lesson_title");
                 'validateOnChange'=>true,
                 'validateOnBlur'=>false,
                 'action' => ['think'],
-                'method' => "post", 
+                'method' => 'post',
                 'id' => 'lesson_form',
     ]); ?>
-
-          <?= $form->field($model, 'numTasks'
-            , [
-            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
-            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-            ]
-            )->textInput([
-            'placeholder'=>_L('numTasks_placeholder')
-            , 'value' => $model->numTasks
-            , 'autofocus' => 'true'
-            ,
-            ])
-            ->label(_L('numTasks_label'))
-            ; ?>
 
 
           <?= $form->field($model, 'thinkingMinutes'
@@ -96,34 +83,55 @@ $this->title = _L("lesson_title");
             ->label(_L('numStudents_label'))
             ; ?>
 
-            
-        <!--
-        <div class="btn-group input-group-lesson">
-          <button type="button" class="btn btn-default" onclick='btnGroupToggle(this, "Lesson-typetasks", "text")'>
-          <?php //echo _L('typeTasks_label_short') ?></button>
-          <button type="button" class="btn btn-success" onclick='btnGroupToggle(this, "Lesson-typetasks", "textarea")'>
-          <?php // echo _L('typeTasks_label_long') ?></button>
-          <input id="Lesson-typetasks" name="Lesson[typeTasks]" value="textarea" type="hidden">
-        </div>        
-        -->
 
+            <?=  $form->field($model, 'numTasks')->hiddenInput(['value'=> 1])->label(false); ?>       
+
+
+    <h4 style="margin-top: 1.5em; margin-bottom: 1em; "><?= _L('lesson_tasks_title'); ?></h4>
+
+
+    <div id="tasks">
+        
+        <div class='input-group task'>
+        <label class="input-group-addon input-group-addon-tasks">
+
+            <div class="dropdown task_type" data-task-type="text">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><?= _L('lesson_tasks_type_text'); ?>
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a data-task-type="textarea" href="#"
+                     onclick="dropdown_task_type(this); return false;"><?php echo _L('lesson_tasks_type_text').'&nbsp;&nbsp;'; ?></a></li>
+                    <li><a data-task-type="how_often" href="#"
+                     onclick="dropdown_task_type(this); return false;"><?php echo _L('lesson_tasks_type_how_often').'&nbsp;&nbsp;'; ?></a></li>
+                    <li><a data-task-type="how_true" href="#"
+                     onclick="dropdown_task_type(this); return false;"><?php echo _L('lesson_tasks_type_how_true').'&nbsp;&nbsp;'; ?></a></li>
+                </ul>
+            </div>
+        
+        
+        </label>
+        <input type="text" class="form-control task_input"
+            oninput='taskOnInput(this);'
+            style="border-bottom-left-radius: 4px;border-top-left-radius: 4px;"
+            placeholder="<?php echo _L('lesson_tasks_input_placeholder');?>" />
+        </div>
+            
+    </div>    
+            
         <?php //echo $form->field($model, 'earlyPairing') ?>
         <?php //echo $form->field($model, 'namedPairing') ?>
         <?php //echo $form->field($model, 'typeTasks') ?>
         <?php //echo $form->field($model, 'typeMixing') ?>
-        <?php /** echo $form->field($model, 'namedPairing')->checkbox(array( 
-                                                'labelOptions'=>array('style'=>'padding:5px;'), 
-                                                'disabled'=>true 
-                                                ));
-            */
-        ?>
 
-
-        <div class="form-group" style="margin-top: 1em;">
-            <?php //echo Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
-            <?php //echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-            <?= Html::submitButton(_L('lesson_btn_submit'), ['class' => 'btn btn-primary', 'id'=>'lesson_btn_submit']) ?>
+        <div class="form-group" style="margin-top: 2em; display: none;">
+            <?php echo  Html::submitButton(_L('lesson_btn_submit')
+            , [
+                'class' => 'btn btn-primary',
+                'id'=>'lesson_btn_submit',
+                'onsubmit' => 'lesson_exact_onsubmit();'
+                ]) ?>
         </div>
+       
     <?php ActiveForm::end(); ?>
 
 </div>

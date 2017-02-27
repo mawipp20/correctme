@@ -42,13 +42,21 @@ class Lesson extends \app\components\ActiveRecord
     public function rules()
     {
         return [
-            [['numTasks', 'numTeamsize', 'thinkingMinutes', 'numStudents', 'startKey'], 'required', 'message' => _L('lesson_input_required_message')],
-            [['numTasks'], 'integer', 'min'=>1, 'max'=>10],
-            [['numStudents'], 'integer', 'min'=>2, 'max'=>50],
-            [['numTeamsize'], 'integer', 'min'=>2, 'max'=>6],
-            [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>600],
-            [['startKey'], 'string', 'max' => 12, 'min' => 6],
-            [['typeTasks', 'typeMixing'], 'string', 'max' => 20],
+
+            [['numTasks'], 'required', 'message' => _L('numTasks_required')],
+            [['numTasks'], 'integer', 'min'=>1, 'max'=>20, 'message' => '1 - 20'],
+
+            [['thinkingMinutes'], 'required', 'message' => _L('thinkingMinutes_required')],
+            [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>600, 'message' => '2 - 600'],
+
+            [['numTeamsize'], 'required', 'message' => _L('numTeamsize_required')],
+            [['numTeamsize'], 'integer', 'min'=>2, 'max'=>6, 'message' => '2 - 6'],
+
+            [['numStudents'], 'required', 'message' => _L('numStudents_required')],
+            [['numStudents'], 'integer', 'min'=>2, 'max'=>50, 'message' => '2 - 50'],
+
+            //[['startKey'], 'string', 'max' => 12, 'min' => 6],
+            //[['typeTasks', 'typeMixing'], 'string', 'max' => 20],
         ];
     }
 
@@ -80,6 +88,9 @@ class Lesson extends \app\components\ActiveRecord
             }
             if($this->teacherKey == ""){
                 $this->teacherKey = $this->generateUniqueRandomString("teacherKey", 6);
+            }
+            if($this->typeTasks == ""){
+                $this->typeTasks = 'textarea';
             }
             return true;
         }

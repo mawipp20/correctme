@@ -15,7 +15,7 @@ LessonAsset::register($this);
 ?>
 
 <h3 style="margin-top: 0.0em;"><?= _L('student_join_title') ?></h3>
-<h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?= _L('LESSON_WELCOME_line_2') ?></h4>
+<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo _L('LESSON_WELCOME_line_2'); ?></h4> -->
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {

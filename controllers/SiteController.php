@@ -62,7 +62,7 @@ class SiteController extends \app\components\Controller
 
 
     /**
-     * Displays teacher lesson create page.
+     * Displays teacher quick lesson create page.
      *
      * @return string
      */
@@ -71,6 +71,21 @@ class SiteController extends \app\components\Controller
         $model = new Lesson();
         
         return $this->render('lesson', [
+            'model' => $model,
+        ]);
+    }
+
+
+    /**
+     * Displays teacher exact lesson create page.
+     *
+     * @return string
+     */
+    public function actionLesson_exact()
+    {
+        $model = new Lesson();
+        
+        return $this->render('lesson_exact', [
             'model' => $model,
         ]);
     }

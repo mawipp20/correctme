@@ -18,10 +18,15 @@ function _L($phrase){
     static $_L_general = array(
         
             'BRAND_LABEL' => 'correctme.de'
+            ,'MAIN_LAYOUT_TITLE' => 'correctme.de - kooperatives Lernen mit Übersicht'
+            ,'LESSON_WELCOME' => 'Kontrolliertes Kooperatives Lernen'
+            
             ,'gen_btn_close_dialog' => 'schließen'
-            ,'top_nav_teacher_link' => 'Lehrer/in'
+            ,'top_nav_teacher_about' => 'Info'
+            ,'top_nav_teacher_new' => 'Neu'
+            ,'top_nav_reacher_running' => 'Laufend'
             ,'top_nav_student_cancel' => 'beenden'
-            ,'top_nav_student_finish' => 'fertig!'
+            ,'top_nav_student_finish' => 'abschließen'
             ,'error_server_connect' => 'Es konnte keine Verbindung zum Server hergestellt werden.'
             
             );
@@ -62,36 +67,51 @@ function _L($phrase){
     
     static $_L_lesson = array(
     
-            'MAIN_LAYOUT_TITLE' => 'correctme.de - kooperatives Lernen mit Übersicht'
-            ,'LESSON_WELCOME' => 'Kontrolliertes Kooperatives Lernen'
-            ,'LESSON_WELCOME_line_2' => ''
+            'lesson_title' => 'correctme Lehrer'
+            
+            //'LESSON_WELCOME_line_2' => ''
+            
+            ,'lesson_nav_tab_quick' => 'sofort'
+            ,'lesson_nav_tab_exact' => 'eingeben'
+            ,'lesson_nav_tab_paste' => 'Strg+v'
+            ,'lesson_nav_tab_upload' => 'hochladen'
+
+            ,'lesson_tasks_title' => 'Aufgaben oder Fragen eingeben'
+            ,'lesson_tasks_type_text' => 'Aufgabe'
+            ,'lesson_tasks_type_how_true' => 'Skala zutreffend'
+            ,'lesson_tasks_type_how_often' => 'Skala Häufigkeit'
+            ,'lesson_tasks_input_placeholder' => ''
+            
+            
             
             ,'session_rejoin_title' => 'Laufende Session'
             
-            ,'lesson_input_required_message' => 'wird benötigt'
-        
             ,'startKey_label' => 'Session'
             ,'startKey_placeholder' => 'vorhandenes Kennwort'
-            
+       
             ,'teacherKey_label' => 'Moderation'
             ,'teacherKey_placeholder' => 'vorhandenes Kennwort'
             
-            ,'numTasks_label' => 'Anzahl der Aufgaben'
-            ,'numTasks_placeholder' => '1-10'
+            ,'numTasks_label' => 'Aufgaben'
+            ,'numTasks_placeholder' => 'Anzahl'
+            ,'numTasks_required' => 'Anzahl der Aufgaben'
+
+            ,'numStudents_label' => 'Alle Lernenden'
+            ,'numStudents_placeholder' => 'Anzahl'
+            ,'numStudents_required' => 'Anzahl aller anwesenden Schüler/innen'
             
-            ,'numStudents_label' => 'Anzahl aller Lernenden'
-            ,'numStudents_placeholder' => '2-50'
+            ,'numTeamsize_label' => 'Gruppen'
+            ,'numTeamsize_placeholder' => 'Größe'
+            ,'numTeamsize_required' => 'Größe der Gruppen für die Austauschphase'
             
-            ,'numTeamsize_label' => 'Pairing-Gruppengröße'
-            ,'numTeamsize_placeholder' => '2-6'
-            
-            ,'thinkingMinutes_label' => 'Einzelarbeitsphase'
+            ,'thinkingMinutes_label' => 'Einzelarbeitszeit'
             ,'thinkingMinutes_placeholder' => 'Minuten'
+            ,'thinkingMinutes_required' => 'Minuten'
             
             ,'typeTasks_label_short' => 'Kurze Antwortfelder'
             ,'typeTasks_label_long' => 'Lange Antwortfelder'
             
-            ,'lesson_btn_submit' => "Einzelarbeitsphase starten"
+            ,'lesson_btn_submit' => "Einzelarbeit starten"
             ,'lesson_btn_rejoin_session' => "Laufende Sessions"
             
             ,'rejoin_session_btn_new_session' => "Neue Session"
@@ -129,9 +149,11 @@ function _L($phrase){
     
             'student_think_title' => 'Einzelarbeitsphase'
             ,'student_think_working_time' => 'noch etwa # Minuten'
-            ,'student_think_btn_back' => 'zurück'
-            ,'student_think_btn_forward' => 'weiter'
-            ,'student_think_btn_task_finished' => 'fertig'
+            ,'student_think_messageHelpHeader' => 'Deine LehrerIn kann gleich sehen, dass du bei dieser Aufgabe nicht weiterkommst.'
+            ,'student_think_messageHelpText' => 'Vielleicht schaust du dir inzwischen die anderen Aufgabe an?'
+            //,'student_think_btn_back' => 'zurück'
+            //,'student_think_btn_forward' => 'weiter'
+            //,'student_think_btn_task_finished' => 'fertig'
             ,'student_think_working_overtime' => 'Die geplante Zeit ist seit # Minuten beendet.'
             
     );

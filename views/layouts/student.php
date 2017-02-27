@@ -49,7 +49,7 @@ use yii\widgets\Breadcrumbs;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => _L('top_nav_student_cancel'), 'url' => ['/student/cancel']],
+            //['label' => _L('top_nav_student_cancel'), 'url' => ['/student/cancel']],
             '<button class="btn btn-success navbar-btn navbar-student-btn"'
             .' onclick=\'window.location.href="'.\Yii::$app->getUrlManager()->getBaseUrl().'/site/about";\''
             .'>'

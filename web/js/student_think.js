@@ -43,7 +43,7 @@ function taskO(){
     this.taskId = "";
     this.num = "1";
     this.type = "";
-    this.answer_text = "";
+    this.text = "";
 }
 var task = new taskO();
 
@@ -64,10 +64,11 @@ var state = {
     ,"goto_taskNum":1 /** number of the requested task */
     ,"numNavButtons":5 /** is adapted to window width */
     ,"rest_status":"" /** empty string means display tasks for the first time; 0 = not in connection; 1 waiting for rest answer */
-    ,"restInterval_seconds":10
+    ,"restInterval_seconds":10 /** interval when the the rest service is called */
     ,"hasChanges":0
     ,"lastSaved":0
     ,"millisecondsServerMinusClient":false /** difference in time between server and client, used for the minutes countdown */ 
+    ,"messageHelpButtonShown":false /** has the info message about the call for help already been shown */ 
     };
 
 const BLANK = "&nbsp;";
@@ -264,12 +265,29 @@ function displayTasks(){
     
     
     /** Answer input */
-    var taskDisplay = $('<div data-id="' + task["taskId"] + '" class="form-group"></div>');
     
-    var label_str = '<label for="answer_text" class="task_label"><span class="taskId">';
-    label_str += task["num"] + '.</span><span class="task_text">' + task["task_text"] + '</span></label>';
+/**    
+    <div class="row">
+  <div class="col-md-8">.col-md-8</div>
+  <div class="col-md-4">.col-md-4</div>
+</div>
+*/
+    
+    var taskDisplay = $('<div data-id="' + task["taskId"] + '" class="form-group"></div>').appendTo($("#displayTasks"));
+    
+    var label_str = '';
+    label_str += '<div class="row task_label">';
+    label_str += '<div class="col-xs-1 col-sm-1 col-md-1">';
+    label_str += '<span class="taskId">' + task["num"] + '.</span>';
+    label_str += '</div>';
+    label_str += '<div class="col-xs-9 col-sm-9 col-md-10 no_padding_right no_padding_left">';
+    label_str += '<span class="task_text">' + task["task_text"] + '</span>';
+    label_str += '</div><div id="displayBtnHelp" style="text-align:right;" class="col-xs-2 col-sm-2 col-md-1 no_padding_left"></div>';
+    label_str += '</div>';
     taskDisplay.append($(label_str));
-    
+
+
+   
     var texarea_rows = 1;
     if(lesson['typeTasks'] == "textarea"){
         texarea_rows = 5;
@@ -278,7 +296,9 @@ function displayTasks(){
     textarea_str += answer["answer_text"] + '</textarea>';
     
     taskDisplay.append($(textarea_str));
-    $("#displayTasks").append(taskDisplay);
+    
+    
+    //$("#displayTasks").append(taskDisplay);
     
     $(".text-area").autoGrow();
     
@@ -292,7 +312,6 @@ function displayTasks(){
 
 function displayTaskNavigation(){
     
-    
     var taskNav_first = $('#taskNav_first');
     var taskNav_second = $('#taskNav_second');
     
@@ -305,30 +324,31 @@ function displayTaskNavigation(){
     
     var numButtonsNextToCurNum = (state["numNavButtons"] - 1)/2;
 
-    /** finish and back button */
-    
-    get_btn_finished_move(false);
-        
     /** back button */
     
     // _L['student_think_btn_back']
       
-    taskNav_first.append($('<button type="button" class="btn btn-lg btn_task btn_task_move">' + '<i class="fa fa-caret-left" aria-hidden="true"></i>' + '</button>'));
+    taskNav_first.append($('<button type="button" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-left" aria-hidden="true"></i>' + '</button>'));
     if(task.num == 1){
-        //taskNav_first.children("button").last().addClass('btn_task_inactive');
+        taskNav_first.children("button").last().addClass('btn_task_inactive');
     }else{
         taskNav_first.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
             state["goto_taskNum"] = task["num"] - 1;
             getTask();
         });
-    }    
+    }
+        
+    /** finished button */
+    
+    show_btn_finished();
+
 
     /** foward button */
     
     // _L['student_think_btn_forward']
     
-    taskNav_first.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task">' + '<i class="fa fa-caret-right" aria-hidden="true"></i>' + '</button>'));
+    taskNav_first.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-right" aria-hidden="true"></i>' + '</button>'));
     if(task.num == lesson.numTasks){
         taskNav_first.children("button").last().addClass('btn_task_inactive');
     }else{
@@ -339,17 +359,11 @@ function displayTaskNavigation(){
         });
     }
 
-
-    /** finish and forward button */
-    
-    get_btn_finished_move(true);
-
-    
-    /** back to 1 button */
+    /** back to start button */
     
     if(lesson.numTasks > state["numNavButtons"]){
         btn_class = 'btn btn_task btn_task_move';
-        taskNav_second.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-backward" aria-hidden="true" style="font-size:smaller;"></i></button>'));
+        taskNav_second.append($('<button type="button" class="btn btn_task"><i class="fa fa-step-backward" aria-hidden="true" style="font-size:smaller;"></i></button>'));
         if(task.num == 1){
             taskNav_second.children("button").last().addClass('btn_task_inactive');
         }else{
@@ -407,8 +421,8 @@ function displayTaskNavigation(){
     /** foward to end button */
     
     if(lesson.numTasks > state["numNavButtons"] & stopAt < lesson.numTasks){
-        btn_class = 'btn btn_task btn_task_move';
-        taskNav_second.append($('<button type="button" class="btn btn_task btn_task_move"><i class="fa fa-step-forward" style="font-size:smaller;" aria-hidden="true"></i><b>' + blanks(2) + lesson.numTasks + '</b></button>'));
+        btn_class = 'btn btn_task btn_task_move1';
+        taskNav_second.append($('<button type="button" class="btn btn_task btn_task_move1"><i class="fa fa-step-forward" style="font-size:smaller;" aria-hidden="true"></i><b>' + blanks(2) + lesson.numTasks + '</b></button>'));
         if(task.num == lesson.numTasks){
             taskNav_second.children("button").last().addClass('btn_task_inactive');
         }else{
@@ -419,6 +433,42 @@ function displayTaskNavigation(){
             });
         }
     }
+
+    /** append "Help with this task" button */
+    
+    var displayBtnHelp = $('#displayBtnHelp').empty();
+    var this_symbol = 'fa-life-ring';
+    var this_style = 'color:red;border:1px solid blue;background:white;'
+    if(answer["status"] == "help"){
+        this_symbol = 'fa-user-o';
+        this_style += 'color:black;border:1px solid black;background:yellow;';        
+    }
+    var str = '<button type="button" style="' + this_style + '" id="student_think_btn_task_help" class="btn btn_task">';
+    str += '<i class="fa ' + this_symbol + '" aria-hidden="true"></i>';
+    str += '</button>';
+    displayBtnHelp.append($(str));
+    displayBtnHelp.children("button").last().on("click", "", function( event ) {
+        if(answer["status"] == "help"){
+            if(answer["status"]["answer_text"]==''){
+                answer["status"] = "empty";
+            }else{
+                answer["status"] = "working";
+            }
+        }else{
+            answer["status"] = "help";
+        }
+        state["hasChanges"] = true;
+        saveAnswer();
+        state["eventPageX"] = event.pageX;
+        state["goto_taskNum"] = task["num"];
+        getTask();
+        if(!state['messageHelpButtonShown']){
+            $('#student_think_help_message_btn_toggle').click();
+            state['messageHelpButtonShown'] = true;
+        }
+    });
+
+
 
 }
 
@@ -464,6 +514,7 @@ function blanks(numBlanks){
 function textarea_oninput(elem){
     state["hasChanges"] = true;
     var this_answer_status_before = answer["status"];
+    console.log(this_answer_status_before);
     if($(elem).val()!=''){
         answer["status"] = 'working';
     }else{
@@ -475,7 +526,7 @@ function textarea_oninput(elem){
     }
 }
 
-function get_btn_finished_move(forward){
+function show_btn_finished(){
     
     taskNav_first = $('#taskNav_first');
     
@@ -492,24 +543,23 @@ function get_btn_finished_move(forward){
     if(this_answer_is_finished){
         btn_class += ' btn-success';
     }
+    /**
     if( answer['status'] == 'empty'
         | (!forward & task.num == 1)
         | (forward & task.num == lesson.numTasks)
     ){
         btn_class += ' invisible';
     }
+    */
     
     var this_step = 0;
     var str = '<button type="button" id="student_think_btn_task_finished" class="' + btn_class + '">';
+/**
     if(forward & task.num < lesson.numTasks){
         this_step = 1;
         str += '<i class="fa fa-check';
         if(!this_answer_is_finished){str += ' fa-check-cm';}
         str += '" aria-hidden="true"></i>';
-        /**
-        _L['student_think_btn_task_finished'];
-        <i class="fa fa-caret-right" aria-hidden="true"></i>
-        */
     }
     if(!forward & task.num > 1){
         this_step = -1;
@@ -517,15 +567,27 @@ function get_btn_finished_move(forward){
         if(!this_answer_is_finished){str += ' fa-check-cm';}
         str += '" aria-hidden="true"></i>';
     }
+*/    
+    
+    str += '<i class="fa fa-check';
+    if(!this_answer_is_finished){str += ' fa-check-cm';}
+    str += '" aria-hidden="true"></i>';
     str += '</button>';
     taskNav_first.append($(str));
     taskNav_first.children("button").last().on("click", "", function( event ) {
-        answer["status"] = "finished";
+        if(answer["status"] == "finished"){
+            if(answer.answer_text == ""){
+                answer["status"] = "empty";
+            }else{
+                answer["status"] = "working";
+            }
+        }else{
+            answer["status"] = "finished";
+        }
         state["hasChanges"] = true;
         saveAnswer();
         state["eventPageX"] = event.pageX;
         state["goto_taskNum"] = task["num"] + this_step;
         getTask();
     });
-    
 }

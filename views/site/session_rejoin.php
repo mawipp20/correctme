@@ -27,8 +27,8 @@ $this->title = _L("session_rejoin_title");
   </div>
 -->
 
-<h3 style="margin-top: 0.0em;"><?= _L('LESSON_WELCOME') ?></h3>
-<h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?= _L('LESSON_WELCOME_line_2') ?></h4>
+<h3 style="padding-top: 0em; margin-top: 0em;"><?= _L('LESSON_WELCOME') ?></h3>
+<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo _L('LESSON_WELCOME_line_2'); ?></h4> -->
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
@@ -44,11 +44,6 @@ $this->title = _L("session_rejoin_title");
                 ,'method' => 'get'
                 //,'options' => ['onsubmit' => 'teacherKey_to_ASCII_codes();']    
     ]); ?>
-
-        <?= Html::button('<i class="fa fa-arrow-right" aria-hidden="true"></i> '._L('rejoin_session_btn_new_session'), [
-            'class' => 'btn btn-default input-group-lesson'
-            ,'onclick' => 'window.document.location = "lesson";'
-            ]) ?>
 
           <?= $form->field($model, 'startKey'
             , [

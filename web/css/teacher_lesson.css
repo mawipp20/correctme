@@ -5,6 +5,11 @@
     vertical-align: top;
     padding-top: 0.7em;
 }
+.input-group-addon-tasks{
+    padding:0em;
+    background:transparent;
+    border-width: 0px
+}
 .input-group-addon-student-join{
     text-align: right;
     min-width:140px;
@@ -16,6 +21,10 @@
 .input-group-lesson{
     margin-bottom: 10px;
 }
-.cm_input_group_rejoin{
-    d/isplay: none;
+.task_type{
+    margin-right: 0.5em;
+}
+.task_text{
+     border-bottom-left-radius: 4px;
+     border-top-left-radius: 4px;
 }

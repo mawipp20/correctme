@@ -4,17 +4,13 @@
     margin-left: 15px;   
     margin-bottom: 0.0em;   
 }
-.taskId{
-    d/isplay: inline;
-    margin-right:1em;
-    c/olor: #286090;
-}
 .task_text{
     display: inline;
 }
 .task_label{
-    padding: 1em;
-    font-size: larger;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    f/ont-size: larger;
 }
 .btn_task{
     margin-right: 0.3em;
@@ -33,16 +29,12 @@
     border:1px solid black;
 }
 
-.btn_task_inactive{
-    color: transparent;
+.btn_task_inactive, .btn_task_inactive:hover, .btn_task_inactive:active, .btn_task_inactive:visited{
+    c/olor: transparent;
     cursor: default;
     border-color: transparent;
 }
-.btn_task_inactive:hover{
-    color: transparent;
-    cursor: default;
-    border-color: transparent;
-}
+
 .btn_task_current{
     cursor: default;
 }
@@ -73,12 +65,21 @@
 #lessonInfo{
     margin-bottom: 1em;    
 }
-.invisible{
-    visibility: hidden;
+#student_think_btn_task_help{
+    margin-left: 2em;
 }
 .fa-check-cm{
     color:rgb(92,184,92)    
 }
 
+
+.invisible{visibility: hidden;}
+.background_yellow{background-color: yellow;}
+.background_white{background-color: white;}
+.border_1px{border:1px solid black;}
+.no_padding_right{padding-right: 0em;}
+.no_padding_left{padding-left: 0em;}
+.display_none{display:none;}
+.display_inline{display:inline;}
 
 
