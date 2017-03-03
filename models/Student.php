@@ -4,7 +4,9 @@ namespace app\models;
 
 use Yii;
 
+/**
 if(!function_exists("_L")){include_once(\Yii::$app->basePath.'\language\language.php');}
+*/
 
 /**
  * This is the model class for table "student".

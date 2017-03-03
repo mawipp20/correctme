@@ -1,12 +1,18 @@
 <?php
 
-class Language{
-    
+namespace app\components;
+
+use Yii;
+use yii\base\Component;
+use yii\base\InvalidConfigException;
+
+class Language extends Component {
+ 
     public $L_sections = array();
     public $L = array();
     public $country = "en";
 
-    function __construct()
+    public function init()
     {
 
         if (!isset($_SESSION["_LANGUAGE"])) {
@@ -28,10 +34,11 @@ class Language{
             $this->country = $_SESSION["_LANGUAGE"];
         }
 
-        if (file_exists('../language/'.$_SESSION["_LANGUAGE"].'.ini')) {
-            $this->L_sections = parse_ini_file('../language/'.$this->country.'.ini', true);
+        $this_language_file = \Yii::$app->basePath.'\language\\'.$this->country.'.ini';
+        if (file_exists($this_language_file)) {
+            $this->L_sections = parse_ini_file($this_language_file, true);
             foreach($this->L_sections as $section => $arr){
-                $this->L = array_merge($this->L_sections, $arr);
+                $this->L = array_merge($this->L, $arr);
             }
         }else{
             die('! missing language file: '.$_SESSION["_LANGUAGE"].'.ini');
@@ -43,35 +50,6 @@ class Language{
         if(array_key_exists($phrase, $this->L_sections)){return $this->L_sections;}       
         return (!array_key_exists($phrase,$this->L)) ? $phrase : $this->L[$phrase];
     }    
-    
+ 
 }
-
-/**
-$correctme_Language = new correctme_Language;
-
-var_dump($correctme_Language->get("student_join_btn_submit"));
-
-die();
-
-function Yii::$app->_L->get($phrase){
-    die(print_r($correctme_Language->_L, true));
-    //global \$_L;
-    global $_L_sections;
-    if(!is_array($_L)){return $phrase;}
-    if(array_key_exists($phrase, $_L_sections)){return $_L_sections;}       
-    return (!array_key_exists($phrase,$_L)) ? $phrase : $_L[$phrase];
-
-}
-
-
-
-
-/**
-if (file_exists('../language/'.$_SESSION["_LANGUAGE"].'.php')) {
-    include('../language/'.$_SESSION["_LANGUAGE"].'.php');
-} else {
-    include('../language/de.php');
-}
-*/
-
 ?>

@@ -9,9 +9,7 @@
  * 
  */
 
-function _L($phrase){
-    
-    return false;
+function Yii::$app->_L->get($phrase){
     
     $_sub_arrays = array();
     

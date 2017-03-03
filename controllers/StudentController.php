@@ -9,10 +9,6 @@ use yii\filters\VerbFilter;
 use app\models\StudentJoinForm;
 use app\models\Student;
 
-if(!function_exists("_L")){
-    include_once(\Yii::$app->basePath.'\language\language.php');
-}
-
 class StudentController extends \app\components\Controller
 {
     /**
@@ -98,7 +94,7 @@ class StudentController extends \app\components\Controller
                 if(!is_null($student_with_the_same_name)
                         ){
                             $student_with_the_same_name->delete();
-                            //$model->addErrors(array(_L('student_join_name_already_existing')));    
+                            //$model->addErrors(array(Yii::$app->_L->get('student_join_name_already_existing')));    
                         }
             }
             
@@ -140,7 +136,7 @@ class StudentController extends \app\components\Controller
                 ]);
             } else {
                 $this_errors = $model->getErrors();
-                Yii::$app->getSession()->setFlash('error_save', _L("join_session_login_error_flash"));
+                Yii::$app->getSession()->setFlash('error_save', Yii::$app->_L->get("join_session_login_error_flash"));
                 Yii::$app->response->redirect(['student/student_rejoin']);
             }
             

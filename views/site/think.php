@@ -13,7 +13,7 @@ use app\assets\ThinkAsset;
 ThinkAsset::register($this);
 
 
-$this->title = _L("THINK_TITLE");
+$this->title = Yii::$app->_L->get("THINK_TITLE");
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -28,15 +28,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
         Modal::begin([
-            'header' => '<h2>'._L('think_dialog_startKey_info_header').'</h2>',
+            'header' => '<h2>'.Yii::$app->_L->get('think_dialog_startKey_info_header').'</h2>',
             'toggleButton' => ['label' => '<h3><i class="fa fa-sign-in" aria-hidden="true"></i><h3>'
                                 ,'style' => 'background-color: transparent; border-width: 0px; color: rgb(150,150,150);'
                                 ],
             //'clientOptions' => ['style' => 'background-color:orange;'],
         ]);
     
-        echo "<div id='modalContent'><h4>"._L('think_dialog_startKey_info_text')."</h4></div>";
-        echo '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">'._L('gen_btn_close_dialog').'</button></div>';
+        echo "<div id='modalContent'><h4>".Yii::$app->_L->get('think_dialog_startKey_info_text')."</h4></div>";
+        echo '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">'.Yii::$app->_L->get('gen_btn_close_dialog').'</button></div>';
         Modal::end();
     ?>
 
@@ -47,17 +47,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
         Modal::begin([
             'header' => ''.Yii::$app->getSession()->get("teacherKey").'',
-            'toggleButton' => ['label' => _L('think_btn_show_teacher_retrieve_session_key')
+            'toggleButton' => ['label' => Yii::$app->_L->get('think_btn_show_teacher_retrieve_session_key')
                                 ,'class' => 'btn btn-default'
                                 ],
         ]);
     
-        echo "<div id='modalContent'><h4>"._L('think_dialog_teacherKey_info_text')."</h4></div>";
-        echo '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">'._L('gen_btn_close_dialog').'</button></div>';
+        echo "<div id='modalContent'><h4>".Yii::$app->_L->get('think_dialog_teacherKey_info_text')."</h4></div>";
+        echo '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">'.Yii::$app->_L->get('gen_btn_close_dialog').'</button></div>';
         Modal::end();
     ?>
     
-        <?= Html::button(_L('think_btn_submit'), [
+        <?= Html::button(Yii::$app->_L->get('think_btn_submit'), [
             'class' => 'btn btn-primary'
             ,'onclick' => 'getThinkingStudents();'
             ]) ?>
@@ -66,6 +66,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
   </h1>
 </div>
+
+    <?php
+        foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
+            echo '<div class="alert alert-danger">' . $message . "</div>\n";
+        }
+    ?>
+
 
     <div id="studentRows"></div>
     

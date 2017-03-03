@@ -10,13 +10,29 @@ use yii\base\DynamicModel;
 use app\models\Lesson;
 //use app\models\StudentJoinForm;
 //use app\models\StudentForm;
+//var_dump(Yii::$app->_L->get('error_server_connect'));
 
+//die(print_r(Yii::$app->getComponents()));
+
+//die(Yii::$app->language->get("error_server_connect"));
+
+//Yii::$app->message->display('I am Yii2.0 Programmer');
+
+//var_dump(Yii::$app->request);
+//var_dump(Yii::$app->message);
+//var_dump(Yii::$app->_L->get("error_server_connect"));
+//die();
+
+//die();
+
+/**
 if(!function_exists("_L")){
     include_once(\Yii::$app->basePath.'\language\language.php');
 }
-
+*/
 class SiteController extends \app\components\Controller
 {
+
     /**
      * @inheritdoc
      */
@@ -68,6 +84,7 @@ class SiteController extends \app\components\Controller
      */
     public function actionLesson()
     {
+
         $model = new Lesson();
         
         return $this->render('lesson', [
@@ -100,10 +117,10 @@ class SiteController extends \app\components\Controller
         $model = new Lesson();
 
         //$model_teacherKey_validate = new DynamicModel(compact('teacherKey'));
-        //$model_teacherKey_validate->addRule('teacherKey', 'required', ['message' => _L('lesson_input_required_message')]);
+        //$model_teacherKey_validate->addRule('teacherKey', 'required', ['message' => Yii::$app->_L->get('lesson_input_required_message')]);
         
         return $this->render('session_rejoin', [
-             'model' => $model
+             'model' => $model,
             //,'model_teacherKey_validate' => $model_teacherKey_validate
         ]);
     }
@@ -140,7 +157,7 @@ class SiteController extends \app\components\Controller
                 ]);
             } else {
                 $this_errors = $model->getErrors();
-                Yii::$app->getSession()->setFlash('error_save', _L("join_session_login_error_flash"));
+                Yii::$app->getSession()->setFlash('error_save', Yii::$app->_L->get("join_session_login_error_flash"));
                 Yii::$app->response->redirect(['site/session_rejoin']);
             }
             
@@ -151,12 +168,26 @@ class SiteController extends \app\components\Controller
                     Yii::$app->getSession()->set("startKey", $model->startKey);
                     Yii::$app->getSession()->set("teacherKey", $model->teacherKey);
                     
+                    $post = Yii::$app->request->post();
+                    $new_tasks = array();
+                    if(isset($post["new_tasks"])){
+                        $new_tasks = json_decode(Yii::$app->request->post("new_tasks"));
+                    }
+
                     /** create the requested numTasks number of tasks */
                     for($i = 1; $i <= $model->numTasks; $i++){
+                        $this_type = $model->typeTasks;
+                        $this_text = '';
+                        if(isset($new_tasks->$i)){
+                            //Yii::$app->getSession()->setFlash('error_save', print_r($new_tasks, true));
+                            $this_type = $new_tasks->$i->type;
+                            $this_text = $new_tasks->$i->task_text;
+                        }
                         \Yii::$app->db->createCommand()->insert('task', [
                             'startKey' => $model->startKey,
-                            'type' => $model->typeTasks,
                             'num' => $i,
+                            'type' => $this_type,
+                            'task_text' => $this_text,
                         ])->execute();
                     }
                     

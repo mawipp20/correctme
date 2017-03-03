@@ -20,8 +20,9 @@ use Yii;
  * @property integer $namedPairing
  */
 
+/**
 if(!function_exists("_L")){include_once(\Yii::$app->basePath.'\language\language.php');}
-
+*/
 
 class StudentJoinForm extends \app\components\ActiveRecord
 
@@ -40,9 +41,9 @@ class StudentJoinForm extends \app\components\ActiveRecord
     public function rules()
     {
         return [
-            [['startKey'], 'required', 'message' => _L('student_join_key_required_message')],
-            [['name'], 'required', 'message' => _L('student_join_name_required_message')],
-            [['startKey'], 'string', 'min' => 6, 'message' => _L('student_join_key_required_message')],
+            [['startKey'], 'required', 'message' => Yii::$app->_L->get('student_join_key_required_message')],
+            [['name'], 'required', 'message' => Yii::$app->_L->get('student_join_name_required_message')],
+            [['startKey'], 'string', 'min' => 6, 'message' => Yii::$app->_L->get('student_join_key_required_message')],
         ];
     }
 

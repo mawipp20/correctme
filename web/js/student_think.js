@@ -43,7 +43,7 @@ function taskO(){
     this.taskId = "";
     this.num = "1";
     this.type = "";
-    this.text = "";
+    this.task_text = "";
 }
 var task = new taskO();
 

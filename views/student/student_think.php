@@ -13,7 +13,7 @@ use app\assets\StudentAsset;
 StudentAsset::register($this);
 
 
-$this->title = _L("student_think_title");
+$this->title = Yii::$app->_L->get("student_think_title");
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -27,15 +27,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
         Modal::begin([
-            'header' => _L('student_think_messageHelpHeader'),
+            'header' => Yii::$app->_L->get('student_think_messageHelpHeader'),
             'id'=>'student_think_btn_help',
             'toggleButton' => ['label' => 'not displayed'
                                 ,'class' => 'display_none'
                                 ,'id' => 'student_think_help_message_btn_toggle'
                                 ],
         ]);
-        echo "<div id='modalContent'>"._L('student_think_messageHelpText')."</div>";
-        echo '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">'._L('gen_btn_close_dialog').'</button></div>';
+        echo "<div id='modalContent'>".Yii::$app->_L->get('student_think_messageHelpText')."</div>";
+        echo '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">'.Yii::$app->_L->get('gen_btn_close_dialog').'</button></div>';
         Modal::end();
     ?>
 
@@ -48,5 +48,5 @@ $this->params['breadcrumbs'][] = $this->title;
 
 </div>
 
-<script>var _L = <?= json_encode(_L('_L_student_think')); ?>;</script>
+<script>var _L = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;</script>
 

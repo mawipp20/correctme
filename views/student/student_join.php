@@ -25,8 +25,8 @@ LessonAsset::register($this);
   </div>
 -->
 
-<h3 style="margin-top: 0.0em;"><?= _L('student_join_title') ?></h3>
-<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo _L('LESSON_WELCOME_line_2'); ?></h4> -->
+<h3 style="margin-top: 0.0em;"><?= Yii::$app->_L->get('student_join_title') ?></h3>
+<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo Yii::$app->_L->get('LESSON_WELCOME_line_2'); ?></h4> -->
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
@@ -37,8 +37,10 @@ LessonAsset::register($this);
 <div class="Lesson">
 
     <?php $form = ActiveForm::begin([
-                'action' => ['think']
-                ,'method' => "post"    
+                'action' => ['think'],
+                'method' => "post",    
+                'validateOnChange'=>true,
+                'validateOnBlur'=>false,
     ]); ?>
 
           <?= $form->field($model, 'startKey'
@@ -47,12 +49,12 @@ LessonAsset::register($this);
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
             )->textInput([
-            'placeholder'=>_L('student_join_startKey_placeholder')
+            'placeholder'=>Yii::$app->_L->get('student_join_startKey_placeholder')
             , 'value' => $model->startKey
             , 'autofocus' => 'true'
             ,
             ])
-            ->label(_L('student_join_startKey_label'))
+            ->label(Yii::$app->_L->get('student_join_startKey_label'))
             ; ?>
 
           <?= $form->field($model, 'name'
@@ -61,21 +63,21 @@ LessonAsset::register($this);
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
             )->textInput([
-            'placeholder'=>_L('student_join_name_placeholder')
+            'placeholder'=>Yii::$app->_L->get('student_join_name_placeholder')
             , 'value' => $model->name
             , 'autofocus' => 'true'
             ,
             ])
-            ->label(_L('student_join_name_label'))
+            ->label(Yii::$app->_L->get('student_join_name_label'))
             ; ?>
 
 
         <div class="form-group" style="margin-top: 1em;">
-            <?= Html::submitButton(_L('student_join_btn_submit'), ['class' => 'btn btn-primary', 'id'=>'student_join_btn_submit']) ?>
+            <?= Html::submitButton(Yii::$app->_L->get('student_join_btn_submit'), ['class' => 'btn btn-primary', 'id'=>'student_join_btn_submit']) ?>
         </div>
     <?php ActiveForm::end(); ?>
 
 </div>
-<script>var _L_lesson = <?= json_encode(_L('_L_lesson')); ?>;</script>
+<script>var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;</script>
 
 <!-- Lesson -->

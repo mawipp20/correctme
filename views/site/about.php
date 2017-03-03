@@ -10,11 +10,11 @@ $this->title = 'About';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-about">
-    <h3><?= _L('about_title') ?></h3>
+    <h3><?= Yii::$app->_L->get('about_title') ?></h3>
 
 
     <p>
-        <?= _L('about_text') ?>
+        <?= Yii::$app->_L->get('about_text') ?>
     </p>
 
 </div>

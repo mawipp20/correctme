@@ -9,7 +9,7 @@ AppAsset::register($this);
 use app\assets\LessonAsset;
 LessonAsset::register($this);
 
-$this->title = _L("lesson_title");
+$this->title = Yii::$app->_L->get("lesson_title");
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Lesson */
@@ -17,7 +17,7 @@ $this->title = _L("lesson_title");
 ?>
 
 
-<h3 style="margin-top: 0em; margin-bottom: 20px;"><?= _L('LESSON_WELCOME') ?></h3>
+<h3 style="margin-top: 0em; margin-bottom: 20px;"><?= Yii::$app->_L->get('LESSON_WELCOME') ?></h3>
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
@@ -28,9 +28,9 @@ $this->title = _L("lesson_title");
 <div class="Lesson">
 
 <ul class="nav nav-tabs" style="margin-bottom: 20px;">
-  <li class="active"><a href="#"><?= _L('lesson_nav_tab_quick') ?></a></li>
-  <li><a href="lesson_exact"><?= _L('lesson_nav_tab_exact') ?></a></li>
-  <li><a href="lesson_upload"><?= _L('lesson_nav_tab_upload') ?></a></li>
+  <li class="active"><a href="#"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
+  <li><a href="lesson_exact"><?= Yii::$app->_L->get('lesson_nav_tab_exact') ?></a></li>
+  <li><a href="lesson_upload"><?= Yii::$app->_L->get('lesson_nav_tab_upload') ?></a></li>
 </ul>
 
     <?php $form = ActiveForm::begin([
@@ -48,12 +48,12 @@ $this->title = _L("lesson_title");
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
             )->textInput([
-            'placeholder'=>_L('numTasks_placeholder')
+            'placeholder'=>Yii::$app->_L->get('numTasks_placeholder')
             , 'value' => $model->numTasks
             , 'autofocus' => 'true'
             ,
             ])
-            ->label(_L('numTasks_label'))
+            ->label(Yii::$app->_L->get('numTasks_label'))
             ; ?>
 
 
@@ -63,11 +63,11 @@ $this->title = _L("lesson_title");
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
             )->textInput([
-            'placeholder'=>_L('thinkingMinutes_placeholder')
+            'placeholder'=>Yii::$app->_L->get('thinkingMinutes_placeholder')
             , 'value' => $model->thinkingMinutes
             ,
             ])
-            ->label(_L('thinkingMinutes_label'))
+            ->label(Yii::$app->_L->get('thinkingMinutes_label'))
             ; ?>
 
           <?= $form->field($model, 'numTeamsize'
@@ -76,11 +76,11 @@ $this->title = _L("lesson_title");
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
             )->textInput([
-            'placeholder'=>_L('numTeamsize_placeholder')
+            'placeholder'=>Yii::$app->_L->get('numTeamsize_placeholder')
             , 'value' => $model->numTeamsize
             ,
             ])
-            ->label(_L('numTeamsize_label'))
+            ->label(Yii::$app->_L->get('numTeamsize_label'))
             ; ?>
 
           <?= $form->field($model, 'numStudents'
@@ -89,20 +89,20 @@ $this->title = _L("lesson_title");
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
             )->textInput([
-            'placeholder'=>_L('numStudents_placeholder')
+            'placeholder'=>Yii::$app->_L->get('numStudents_placeholder')
             , 'value' => $model->numStudents
             ,
             ])
-            ->label(_L('numStudents_label'))
+            ->label(Yii::$app->_L->get('numStudents_label'))
             ; ?>
 
             
         <!--
         <div class="btn-group input-group-lesson">
           <button type="button" class="btn btn-default" onclick='btnGroupToggle(this, "Lesson-typetasks", "text")'>
-          <?php //echo _L('typeTasks_label_short') ?></button>
+          <?php //echo Yii::$app->_L->get('typeTasks_label_short') ?></button>
           <button type="button" class="btn btn-success" onclick='btnGroupToggle(this, "Lesson-typetasks", "textarea")'>
-          <?php // echo _L('typeTasks_label_long') ?></button>
+          <?php // echo Yii::$app->_L->get('typeTasks_label_long') ?></button>
           <input id="Lesson-typetasks" name="Lesson[typeTasks]" value="textarea" type="hidden">
         </div>        
         -->
@@ -122,11 +122,11 @@ $this->title = _L("lesson_title");
         <div class="form-group" style="margin-top: 1em;">
             <?php //echo Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
             <?php //echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-            <?= Html::submitButton(_L('lesson_btn_submit'), ['class' => 'btn btn-primary', 'id'=>'lesson_btn_submit']) ?>
+            <?= Html::submitButton(Yii::$app->_L->get('lesson_btn_submit'), ['class' => 'btn btn-primary', 'id'=>'lesson_btn_submit']) ?>
         </div>
     <?php ActiveForm::end(); ?>
 
 </div>
-<script>var _L_lesson = <?= json_encode(_L('_L_lesson')); ?>;</script>
+<script>var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;</script>
 
 <!-- Lesson -->

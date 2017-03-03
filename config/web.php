@@ -17,6 +17,12 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        '_L' => [
+            'class' => 'app\components\Language',
+        ],
+        'test' => [
+            'class' => 'app\components\TestComponent',
+        ],
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,

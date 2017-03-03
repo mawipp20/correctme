@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Language;
 
 /**
  * This is the model class for table "lesson".
@@ -20,10 +21,11 @@ use Yii;
  * @property integer $namedPairing
  */
 
+/**
 if(!function_exists("_L")){
     include_once(\Yii::$app->basePath.'\language\language.php');
 }
-
+*/
 
 class Lesson extends \app\components\ActiveRecord
 
@@ -31,6 +33,8 @@ class Lesson extends \app\components\ActiveRecord
     /**
      * @inheritdoc
      */
+    
+    
     public static function tableName()
     {
         return 'lesson';
@@ -43,16 +47,16 @@ class Lesson extends \app\components\ActiveRecord
     {
         return [
 
-            [['numTasks'], 'required', 'message' => _L('numTasks_required')],
+            [['numTasks'], 'required', 'message' => Yii::$app->_L->get('numTasks_required')],
             [['numTasks'], 'integer', 'min'=>1, 'max'=>20, 'message' => '1 - 20'],
-
-            [['thinkingMinutes'], 'required', 'message' => _L('thinkingMinutes_required')],
+            
+            [['thinkingMinutes'], 'required', 'message' => Yii::$app->_L->get('thinkingMinutes_required')],
             [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>600, 'message' => '2 - 600'],
 
-            [['numTeamsize'], 'required', 'message' => _L('numTeamsize_required')],
+            [['numTeamsize'], 'required', 'message' => Yii::$app->_L->get('numTeamsize_required')],
             [['numTeamsize'], 'integer', 'min'=>2, 'max'=>6, 'message' => '2 - 6'],
 
-            [['numStudents'], 'required', 'message' => _L('numStudents_required')],
+            [['numStudents'], 'required', 'message' => Yii::$app->_L->get('numStudents_required')],
             [['numStudents'], 'integer', 'min'=>2, 'max'=>50, 'message' => '2 - 50'],
 
             //[['startKey'], 'string', 'max' => 12, 'min' => 6],
@@ -65,6 +69,7 @@ class Lesson extends \app\components\ActiveRecord
      */
     public function attributeLabels()
     {
+        global $_L;
         return [
             'startKey' => '',
             'teacherKey' => '',
@@ -74,9 +79,9 @@ class Lesson extends \app\components\ActiveRecord
             'numTeamsize' => '',
             'thinkingMinutes' => '',
             'typeTasks' => '',
-            'earlyPairing' => _L('LABEL_earlyPairing'),
-            'typeMixing' => _L('LABEL_typeMixing'),
-            'namedPairing' => _L('LABEL_namedPairing'),
+            'earlyPairing' => Yii::$app->_L->get('LABEL_earlyPairing'),
+            'typeMixing' => Yii::$app->_L->get('LABEL_typeMixing'),
+            'namedPairing' => Yii::$app->_L->get('LABEL_namedPairing'),
         ];
     }
 

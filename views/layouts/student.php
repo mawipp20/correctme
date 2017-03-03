@@ -36,7 +36,7 @@ use yii\widgets\Breadcrumbs;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-left'],
         'items' => [
-            ['label' => _L('top_nav_student_minutes')
+            ['label' => Yii::$app->_L->get('top_nav_student_minutes')
                 , 'url' => null
                 , 'options' => [
                     'class' => 'navbar-student'
@@ -49,11 +49,11 @@ use yii\widgets\Breadcrumbs;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            //['label' => _L('top_nav_student_cancel'), 'url' => ['/student/cancel']],
+            //['label' => Yii::$app->_L->get('top_nav_student_cancel'), 'url' => ['/student/cancel']],
             '<button class="btn btn-success navbar-btn navbar-student-btn"'
             .' onclick=\'window.location.href="'.\Yii::$app->getUrlManager()->getBaseUrl().'/site/about";\''
             .'>'
-            ._L('top_nav_student_finish').'</button>',
+            .Yii::$app->_L->get('top_nav_student_finish').'</button>',
             /**
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],

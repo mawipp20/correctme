@@ -21,6 +21,8 @@ class LessonAsset extends AssetBundle
         'css/teacher_lesson.css',
     ];
     public $js = [
+        'js/jquery.autogrowtextarea.js',
+        //'js/autosize.js',
         'js/teacher_lesson.js',
     ];
 }
