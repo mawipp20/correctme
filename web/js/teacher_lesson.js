@@ -7,6 +7,19 @@ function taskO(){
 }
 
 $(document).ready(function() {
+
+    if(typeof uploadedTasks != "undefined"){
+            
+        /** reverse order of task as they are inserted on top */    
+        var tempArr = [];
+        for (var key in uploadedTasks){tempArr.push(key);}
+        for(var i = 0; i < tempArr.length; i++) {
+            var this_question = tempArr[i];
+            addTask(this_question, type = uploadedTasks[this_question], atBottom = false);  
+        }
+        $('#lesson_btn_submit').closest('.form-group').show();
+    }
+    
     if($('#tasks').length > 0){
         var this_input = $('.task_input');
         var this_btn_type = $('.task_type').children("button").first();                
@@ -22,14 +35,18 @@ $(document).ready(function() {
                 if(!this_task.is($("#tasks").children(".task").last())){
                     this_task.next().find(".task_type").children("button").first().focus();
                     //event.stopPropagation();
-                }//display_btn_task_text_analyse(this);
+                }
             }
         });
     }
+    if($('#lessonupload-lessonfile').length > 0){
+        $('#lessonupload-lessonfile').val('');
+        $('#lessonFile-info').html('&nbsp;');
+    }    
     $('#lesson_form').on('beforeValidate', function (e) {
         console.log("lesson_exact_validate");
         return lesson_exact_validate_tasks();
-    });    
+    });
 });
 
 function dropdown_task_type(elem){
@@ -56,17 +73,33 @@ function taskOnInput(elem){
     if(!input_is_empty){$('#lesson_btn_submit').closest('.form-group').show();}
 
     /** if working on the last input element then add one more */
-    var this_task = $(elem).closest('.task');
-    if(!input_is_empty & this_task.is($('#tasks').children('.task').last())){
-        var this_newTask = this_task.clone(true);
-        this_newTask.find(".task_input").val('');
-        this_newTask.find(".task_input").attr('placeholder', '');
-        this_newTask.find(".btn_analyse_task_text").remove();
-        this_newTask.appendTo($('#tasks'));
-        this_newTask.find(".task_input").autoGrow();
+    if(!input_is_empty & $(elem).closest('.task').is($('#tasks').children('.task').last())){
+        addTask(text = "", type = "clone", atBottom = true);
     }
     
     
+}
+
+function addTask(text, type, atBottom){
+    /** type can be "clone" so that the type of the last task is copied  */
+    var last_task = $("#tasks").children('.task').last();
+    var this_newTask = last_task.clone(true);
+    this_newTask.find(".task_input").val(text);
+    this_newTask.find(".task_input").attr('data-text-length', text.length);
+    if(type != "clone"){
+        this_newTask.find(".task_type").attr("data-task-type", type);
+        console.log('lesson_tasks_type_' + type);
+        this_newTask.find(".task_type").find("button").html(_L_lesson['lesson_tasks_type_' + type] + ' <span class="caret"></span>');
+    }
+    this_newTask.find(".task_input").attr('placeholder', '');
+    this_newTask.find(".btn_analyse_task_text").remove();
+    if(atBottom){
+        this_newTask.appendTo($('#tasks'));
+    }else{
+        var first_task = $("#tasks").children('.task').first();
+        first_task.before(this_newTask);
+    }
+    this_newTask.find(".task_input").autoGrow();
 }
 
 function display_btn_task_text_analyse(elem){
@@ -86,7 +119,6 @@ function display_btn_task_text_analyse(elem){
 
 function task_remove(elem){
     var this_task = $(elem).closest('.task');
-    //var this_prevent_delete = false;
 
     if( $("#tasks").children(".task").length > 1
     ){
@@ -135,7 +167,6 @@ function split_task_text(elem){
             this_newTask.find(".btn_analyse_task_text").remove();
             this_newTask.insertAfter(this_task);
             this_newTask.find(".task_input").autoGrow();
-            //this_newTask.find(".task_input").autosize();
         }
     }
     this_task.remove();
@@ -166,4 +197,16 @@ function lesson_exact_validate_tasks(){
     $('#new_tasks').val(JSON.stringify(new_tasks));  
     $('#lesson-numtasks').val(this_num);
     return ret;
+}
+function lesson_file_onchange(e){
+    $('#lessonFile-info').css("color", "black");
+    $('#lessonFile-info').html($(e).val());
+}
+function lesson_upload_on_submit(e){
+    if($('#lessonupload-lessonfile').val()!=""){
+        e.form.submit();
+    }else{
+        $('#lessonFile-info').html(_L_lesson["lesson_upload_no_file_picked_warning"]);
+        $('#lessonFile-info').css("color", "red");
+    }
 }

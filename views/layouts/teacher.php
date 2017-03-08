@@ -35,8 +35,9 @@ use yii\widgets\Breadcrumbs;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => Yii::$app->_L->get('top_nav_go_teacher'), 'url' => ['/site/lesson']],
             ['label' => Yii::$app->_L->get('top_nav_teacher_about'), 'url' => ['/site/about']],
+            ['label' => Yii::$app->_L->get('top_nav_teacher_new'), 'url' => ['/site/lesson']],
+            ['label' => Yii::$app->_L->get('top_nav_teacher_running'), 'url' => ['/site/session_rejoin']],
         ],
     ]);
     NavBar::end();

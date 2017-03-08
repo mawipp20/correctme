@@ -74,9 +74,8 @@ class StudentController extends \app\components\Controller
     public function actionThink()
     {
         
-        $this->layout = 'student';
-        
         $model = new Student();
+        $this->layout = 'student';
 
         $request = Yii::$app->request;
 
@@ -124,7 +123,7 @@ class StudentController extends \app\components\Controller
         if ($request->isGet)  {
             $request_params = $request->get("Lesson");
             $model->load($request->get());
-            $row = Lesson::find()->where(
+            $row = Student::find()->where(
                     [    'startKey'=>$request_params["startKey"]
                         ,'studentKey'=>$request_params["studentKey"]
                     ]

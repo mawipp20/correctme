@@ -24,7 +24,7 @@ function Yii::$app->_L->get($phrase){
             ,'gen_btn_close_dialog' => 'schließen'
             ,'top_nav_teacher_about' => 'Info'
             ,'top_nav_teacher_new' => 'Neu'
-            ,'top_nav_reacher_running' => 'Laufend'
+            ,'top_nav_teacher_running' => 'Laufend'
             ,'top_nav_student_cancel' => 'beenden'
             ,'top_nav_student_finish' => 'abschließen'
             ,'error_server_connect' => 'Es konnte keine Verbindung zum Server hergestellt werden.'

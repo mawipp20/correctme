@@ -22,11 +22,18 @@ $this->title = Yii::$app->_L->get("lesson_title");
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
-            echo '<div class="alert alert-danger">' . $message . "</div>\n";
+            $this_class = "alert ";
+            if(substr($key, 0, 6) == "error_"){$this_class .= "alert-danger";}
+            if(substr($key, 0, 8) == "warning_"){$this_class .= "alert-warning";}
+            if(substr($key, 0, 8) == "success_"){$this_class .= "alert-success";}
+            echo '<div class="'.$this_class.'">' . $message . "</div>\n";
         }
     ?>
 
 <div class="Lesson">
+
+<?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>
+
 
 <ul class="nav nav-tabs" style="margin-bottom: 20px;">
   <li><a href="lesson"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
@@ -44,7 +51,10 @@ $this->title = Yii::$app->_L->get("lesson_title");
     ]); ?>
 
 
-          <?= $form->field($model, 'thinkingMinutes'
+          <?php
+            $autofocus = false;
+            if($model->thinkingMinutes == ""){$autofocus = true;}
+            echo $form->field($model, 'thinkingMinutes'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
@@ -52,12 +62,15 @@ $this->title = Yii::$app->_L->get("lesson_title");
             )->textInput([
             'placeholder'=>Yii::$app->_L->get('thinkingMinutes_placeholder')
             , 'value' => $model->thinkingMinutes
-            , 'autofocus' => 'true'
+            , 'autofocus' => $autofocus
             ])
             ->label(Yii::$app->_L->get('thinkingMinutes_label'))
             ; ?>
 
-          <?= $form->field($model, 'numTeamsize'
+          <?php
+            $this_autofocus = false;
+            if($model->numTeamsize == "" & !$autofocus){$this_autofocus = true; $autofocus = true;}
+            echo $form->field($model, 'numTeamsize'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
@@ -65,12 +78,15 @@ $this->title = Yii::$app->_L->get("lesson_title");
             )->textInput([
             'placeholder'=>Yii::$app->_L->get('numTeamsize_placeholder')
             , 'value' => $model->numTeamsize
-            ,
+            , 'autofocus' => $this_autofocus
             ])
             ->label(Yii::$app->_L->get('numTeamsize_label'))
             ; ?>
 
-          <?= $form->field($model, 'numStudents'
+          <?php
+            $this_autofocus = false;
+            if($model->numStudents == "" & !$autofocus){$this_autofocus = true; $autofocus = true;}
+            echo $form->field($model, 'numStudents'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
@@ -78,7 +94,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
             )->textInput([
             'placeholder'=>Yii::$app->_L->get('numStudents_placeholder')
             , 'value' => $model->numStudents
-            ,
+            , 'autofocus' => $this_autofocus
             ])
             ->label(Yii::$app->_L->get('numStudents_label'))
             ; ?>
@@ -102,12 +118,12 @@ $this->title = Yii::$app->_L->get("lesson_title");
                 <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"><?= Yii::$app->_L->get('lesson_tasks_type_text'); ?>
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                    <li><a data-task-type="textarea" href="#"
+                    <li><a data-task-type="text" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_text').'&nbsp;&nbsp;'; ?></a></li>
                     <li><a data-task-type="how_often" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how_often').'&nbsp;&nbsp;'; ?></a></li>
+                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how-often').'&nbsp;&nbsp;'; ?></a></li>
                     <li><a data-task-type="how_true" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how_true').'&nbsp;&nbsp;'; ?></a></li>
+                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how-true').'&nbsp;&nbsp;'; ?></a></li>
                 </ul>
             </div>
         
@@ -124,11 +140,6 @@ $this->title = Yii::$app->_L->get("lesson_title");
         </label>    
         </div>
     </div>    
-            
-        <?php //echo $form->field($model, 'earlyPairing') ?>
-        <?php //echo $form->field($model, 'namedPairing') ?>
-        <?php //echo $form->field($model, 'typeTasks') ?>
-        <?php //echo $form->field($model, 'typeMixing') ?>
 
         <div class="form-group" style="margin-top: 2em; display: none;">
             <?php echo  Html::submitButton(Yii::$app->_L->get('lesson_btn_submit')
@@ -142,6 +153,12 @@ $this->title = Yii::$app->_L->get("lesson_title");
     <?php ActiveForm::end(); ?>
 
 </div>
-<script>var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;</script>
+<script>
+var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;
+var uploadedTasks = <?= json_encode($uploadedTasks); ?>;
+</script>
+
+<?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>
+
 
 <!-- Lesson -->

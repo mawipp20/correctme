@@ -33,6 +33,12 @@ class Lesson extends \app\components\ActiveRecord
     /**
      * @inheritdoc
      */
+     
+    public $lessonFile; 
+    public $taskTypes = array(  "text",
+                                "how-often",
+                                "how-true",
+                                ); 
     
     
     public static function tableName()
@@ -59,6 +65,8 @@ class Lesson extends \app\components\ActiveRecord
             [['numStudents'], 'required', 'message' => Yii::$app->_L->get('numStudents_required')],
             [['numStudents'], 'integer', 'min'=>2, 'max'=>50, 'message' => '2 - 50'],
 
+            [['lessonFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'ini'],
+
             //[['startKey'], 'string', 'max' => 12, 'min' => 6],
             //[['typeTasks', 'typeMixing'], 'string', 'max' => 20],
         ];
@@ -69,7 +77,6 @@ class Lesson extends \app\components\ActiveRecord
      */
     public function attributeLabels()
     {
-        global $_L;
         return [
             'startKey' => '',
             'teacherKey' => '',
@@ -114,4 +121,16 @@ class Lesson extends \app\components\ActiveRecord
             return false;
         }
     }
+    /**
+    public function upload_lesson()
+    {
+
+        if ($this->validate()) {
+            //$this->lessonFile->saveAs('uploads/' . $this->lessonFile->baseName . '.' . $this->lessonFile->extension);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    */
 }

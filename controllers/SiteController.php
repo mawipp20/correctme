@@ -8,6 +8,9 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\base\DynamicModel;
 use app\models\Lesson;
+use app\models\LessonUpload;
+use yii\web\UploadedFile;
+
 //use app\models\StudentJoinForm;
 //use app\models\StudentForm;
 //var_dump(Yii::$app->_L->get('error_server_connect'));
@@ -85,6 +88,7 @@ class SiteController extends \app\components\Controller
     public function actionLesson()
     {
 
+        $this->layout = 'teacher';
         $model = new Lesson();
         
         return $this->render('lesson', [
@@ -100,9 +104,109 @@ class SiteController extends \app\components\Controller
      */
     public function actionLesson_exact()
     {
+        $this->layout = 'teacher';
         $model = new Lesson();
+        $model_upload = new LessonUpload();
+        $uploadedTasks = array();
+        $fileTempName = "";
+
+        if (Yii::$app->request->isPost) {
+            
+                $model_upload->lessonFile = UploadedFile::getInstance($model_upload, 'lessonFile');
+                $fileTempName = $model_upload->lessonFile->tempName;
+                //$model_upload->fileParsed = parse_ini_file($fileTempName, true);
+                $parsedArr = array();
+                $currentSection = "";
+                $unrecognizedLines = array();
+                $taskCount = 0;
+                $taskErrorCount = 0;
+                $handle = fopen($fileTempName, "r");
+                if ($handle) {
+                    while (($line = fgets($handle)) !== false) {
+                        $line = trim($line);
+                        if($line == ""){continue;}
+                        if(substr($line, 0, 1) == ";" | substr($line, 0, 1) == "#"){
+                            continue;
+                        }
+                        if(preg_match('/^\[[a-zA-Z_\-0-9]*\]$/', $line)){
+                            $currentSection = preg_replace("/\[|\]/", "", $line);
+                            $parsedArr[$currentSection] = array();
+                            continue;
+                        }
+                        if($currentSection != ""){
+                            $line_arr = explode("=", $line);
+                            if(count($line_arr)<=1){
+                                $unrecognizedLines[] = $line;
+                                continue;
+                            }
+                            $key = trim($line_arr[0]);
+                            $val = trim($line_arr[1]);
+                            if(count($line_arr)>2){
+                                array_shift($line_arr);
+                                $val = implode("=", $line_arr);}
+                            if($currentSection != "tasks"){
+                                $parsedArr[$currentSection][$key] = $val;                                    
+                            }else{
+                                $taskCount++;
+                                if(!in_array($key, $model->taskTypes)){
+                                    $taskErrorCount++;
+                                    $this_flash = Yii::$app->_L->get("lesson_upload_task_check_error");
+                                    $this_flash = str_replace("#type#", "'".$key."'", $this_flash);
+                                    $this_flash = str_replace("#number#", $taskCount + 1, $this_flash);
+                                    $this_flash .= " ".$val;
+                                    Yii::$app->getSession()->setFlash('warning_task'.$taskCount, $this_flash);
+                                }else{
+                                    $parsedArr[$currentSection][$val] = $key;                                    
+                                }
+                            }
+                        }
+                    }
+                    if(count($unrecognizedLines)>0){
+                        $this_flash = Yii::$app->_L->get("lesson_upload_unrecognizedLines");
+                        $this_flash .= "<br /><br />".implode("<br />", $unrecognizedLines);
+                        Yii::$app->getSession()->setFlash('warning_unrecognizedLines', $this_flash);
+                    }
+                    $this_flash = Yii::$app->_L->get("lesson_upload_task_check_success");
+                    $this_flash = str_replace("#number#", ($taskCount - $taskErrorCount), $this_flash);
+                    Yii::$app->getSession()->setFlash('success_task_'.$taskCount, $this_flash);
+                    $model_upload->fileParsed = $parsedArr;                    
+                    fclose($handle);
+                } else {
+                    Yii::$app->getSession()->setFlash('error_file_read', Yii::$app->_L->get('lesson_upload_file_read_error'));
+                }
+
+                if (!is_null($model_upload->fileParsed)) {
+                    $config = $model_upload->fileParsed;
+                    if(isset($config['general'])){
+                        if(isset($config['general']['numTeamsize'])){$model->numTeamsize = $config['general']['numTeamsize'];}
+                        if(isset($config['general']['thinkingMinutes'])){$model->thinkingMinutes = $config['general']['thinkingMinutes'];}
+                        if(isset($config['general']['earlyPairing'])){$model->earlyPairing = $config['general']['earlyPairing'];}
+                        if(isset($config['general']['namedPairing'])){$model->namedPairing = $config['general']['namedPairing'];}
+                    }
+                    if(isset($config['tasks'])){
+                        $uploadedTasks = $config['tasks'];
+                    }
+                }
+        }
         
         return $this->render('lesson_exact', [
+            'model' => $model,
+            'uploadedTasks' => $uploadedTasks,
+            'fileTempName' => $fileTempName,
+        ]);
+    }
+
+    /**
+     * Displays teacher lesson upload page.
+     *
+     * @return string
+     */
+    public function actionLesson_upload()
+    {
+        $this->layout = 'teacher';
+        $model = new LessonUpload();
+        
+        return $this->render('lesson_upload', [
             'model' => $model,
         ]);
     }
