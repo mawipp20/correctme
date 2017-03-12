@@ -15,7 +15,7 @@ $(document).ready(function() {
         for (var key in uploadedTasks){tempArr.push(key);}
         for(var i = 0; i < tempArr.length; i++) {
             var this_question = tempArr[i];
-            addTask(this_question, type = uploadedTasks[this_question], atBottom = false);  
+            addTask(this_question, type = uploadedTasks[this_question], atBottom = false);
         }
         $('#lesson_btn_submit').closest('.form-group').show();
     }
@@ -88,7 +88,6 @@ function addTask(text, type, atBottom){
     this_newTask.find(".task_input").attr('data-text-length', text.length);
     if(type != "clone"){
         this_newTask.find(".task_type").attr("data-task-type", type);
-        console.log('lesson_tasks_type_' + type);
         this_newTask.find(".task_type").find("button").html(_L_lesson['lesson_tasks_type_' + type] + ' <span class="caret"></span>');
     }
     this_newTask.find(".task_input").attr('placeholder', '');
@@ -98,7 +97,7 @@ function addTask(text, type, atBottom){
     }else{
         var first_task = $("#tasks").children('.task').first();
         first_task.before(this_newTask);
-    }
+    }   
     this_newTask.find(".task_input").autoGrow();
 }
 

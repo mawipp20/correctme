@@ -120,9 +120,9 @@ $this->title = Yii::$app->_L->get("lesson_title");
                 <ul class="dropdown-menu">
                     <li><a data-task-type="text" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_text').'&nbsp;&nbsp;'; ?></a></li>
-                    <li><a data-task-type="how_often" href="#"
+                    <li><a data-task-type="how-often" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how-often').'&nbsp;&nbsp;'; ?></a></li>
-                    <li><a data-task-type="how_true" href="#"
+                    <li><a data-task-type="how-true" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how-true').'&nbsp;&nbsp;'; ?></a></li>
                 </ul>
             </div>

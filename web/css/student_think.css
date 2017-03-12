@@ -7,10 +7,35 @@
 .task_text{
     display: inline;
 }
+.task_how_true_often_button{
+    b/order-width: 0px;
+    margin-bottom: 0.5em;
+    text-align: left;
+    vertical-align: middle;
+    b/ackground-color: rgb(219,237,255);
+}
+.task_how_true_often_button:focus{
+    background-color: darkgreen;
+}
+.task_how_true_often_button_dont_know{
+    border-width: 2px;
+    background-color: white;
+    color: black;
+}
+.task_how_true_often_label{
+    padding-left: 2em;
+    padding-bottom: 1em;    
+    vertical-align: middle;
+}
+.taskDisplay_how_often_true{
+    max-width: 480px;
+}
 .task_label{
     padding-top: 1em;
     padding-bottom: 1em;
-    f/ont-size: larger;
+    font-size: large;
+    margin-left: 0em;
+    margin-right: 0em;
 }
 .btn_task{
     margin-right: 0.3em;
@@ -58,6 +83,7 @@
 }
 #taskNav_first{
     margin-bottom: 1em;
+    
 }
 #taskNav_second{
     margin-bottom: 1em;    

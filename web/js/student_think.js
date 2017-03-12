@@ -7,6 +7,7 @@
 
 
 */
+
 var lesson = {
     "startKey":""
     ,"lesson.numTasks":""
@@ -266,48 +267,98 @@ function displayTasks(){
     
     /** Answer input */
     
-/**    
-    <div class="row">
-  <div class="col-md-8">.col-md-8</div>
-  <div class="col-md-4">.col-md-4</div>
-</div>
-*/
-    
     var taskDisplay = $('<div data-id="' + task["taskId"] + '" class="form-group"></div>').appendTo($("#displayTasks"));
     
     var label_str = '';
     label_str += '<div class="row task_label">';
-    label_str += '<div class="col-xs-1 col-sm-1 col-md-1">';
-    label_str += '<span class="taskId">' + task["num"] + '.</span>';
-    label_str += '</div>';
-    label_str += '<div class="col-xs-9 col-sm-9 col-md-10 no_padding_right no_padding_left">';
+    
+    
+    var this_cols = { 'num': {'xs':2, 'sm':1, 'md':1}
+                    , 'text': {'xs':8, 'sm':9, 'md':10}
+                    , 'help': {'xs':2, 'sm':2, 'md':1}};
+    
+    if(!cmConfig.displayTaskLabelNum){
+        this_cols.text.xs += this_cols.num.xs;
+        this_cols.text.sm += this_cols.num.sm;
+        this_cols.text.md += this_cols.num.md;
+    }
+    if(!cmConfig.displayBtnHelp){
+        this_cols.text.xs += this_cols.help.xs;
+        this_cols.text.sm += this_cols.help.sm;
+        this_cols.text.md += this_cols.help.md;
+    }
+    
+    if(cmConfig.displayTaskLabelNum){
+        var this_col_class = 'col-xs-' + this_cols["num"]["xs"];
+        this_col_class += ' col-sm-' + this_cols["num"]["sm"];
+        this_col_class += ' col-md-' + this_cols["num"]["md"]
+        label_str += '<div class="' + this_col_class + '">';
+        label_str += '<span class="taskId">' + task["num"] + '.</span>';
+        label_str += '</div>';
+    }
+    
+    var this_col_class = 'col-xs-' + this_cols["text"]["xs"];
+    this_col_class += ' col-sm-' + this_cols["text"]["sm"];
+    this_col_class += ' col-md-' + this_cols["text"]["md"]
+    label_str += '<div class="' + this_col_class + ' no_padding_right no_padding_left">';
     label_str += '<span class="task_text">' + task["task_text"] + '</span>';
-    label_str += '</div><div id="displayBtnHelp" style="text-align:right;" class="col-xs-2 col-sm-2 col-md-1 no_padding_left"></div>';
+    label_str += '</div>';
+    
+    if(cmConfig.displayBtnHelp){
+        var this_col_class = 'col-xs-' + this_cols["help"]["xs"];
+        this_col_class += ' col-sm-' + this_cols["help"]["sm"];
+        this_col_class += ' col-md-' + this_cols["help"]["md"]
+        label_str += '<div id="displayBtnHelp" style="text-align:right;" class="' + this_col_class + ' no_padding_left"></div>';
+    }
+    
     label_str += '</div>';
     taskDisplay.append($(label_str));
+    
+    
 
-
-   
-    var texarea_rows = 1;
-    if(lesson['typeTasks'] == "textarea"){
-        texarea_rows = 5;
+    if(task.type == "text"){
+        var str = '<textarea class="form-control text-area" rows="1"';
+        str += ' id="answer_text" oninput="textarea_oninput(this);">';
+        str += answer["answer_text"] + '</textarea>';
+        taskDisplay.append($(str));
+        $(".text-area").autoGrow();
+        $("#answer_text").focus();
     }
-    var textarea_str = '<textarea class="form-control text-area" rows="' + texarea_rows + '" id="answer_text" oninput="textarea_oninput(this);">';
-    textarea_str += answer["answer_text"] + '</textarea>';
     
-    taskDisplay.append($(textarea_str));
-    
-    
-    //$("#displayTasks").append(taskDisplay);
-    
-    $(".text-area").autoGrow();
-    
-    $("#answer_text").focus();
-       
+    if(task.type == "how-true"){
+        
+        taskDisplay.addClass('taskDisplay_how_often_true');
+        $('#student_think_btn_task_finished').css('visibility', 'hidden');
+        
+        var str = "";
+        pie_percentage = ["", "0", "25", "75", "100", ""];
+        for(var i = 1; i <= 5; i++){
+            str += get_taskDisplay_how_often_true_button('how-true', pie_percentage[i], i);
+        }
+        taskDisplay.append($(str));
+        //$(".pie").progressPie({mode:$.fn.progressPie.Mode.COLOR, valueData:"val", size:80, strokeWidth: 1});
+        //rgb(36,156,255)
+        $(".pie").progressPie({color:"white", valueData:"val", size:30, strokeWidth: 1});
+    }   
     
     displayTaskNavigation();
     displayLessonInfo();
         
+}
+
+function get_taskDisplay_how_often_true_button(type, pie_percentage, num){
+        var this_btn_css_class = 'btn btn-block btn-primary task_how_true_often_button';
+        if(pie_percentage == ''){
+            this_btn_css_class += ' task_how_true_often_button_dont_know';
+        }
+        var btn_start = '<button type="button" class="' + this_btn_css_class + '">';
+        var this_class = 'pie';
+        if(pie_percentage == ''){
+            this_class += ' invisible';
+        }
+        var ret = btn_start + '<span class="' + this_class + '" data-val="' + pie_percentage + '"></span>';
+        ret += '<span class="task_how_true_often_label">' + _L['student_think_' + type + '-' + num] + '</span></button>';
+        return ret;
 }
 
 function displayTaskNavigation(){
@@ -319,6 +370,13 @@ function displayTaskNavigation(){
     taskNav_second.empty();
     
     if(lesson.numTasks == 1){return;}
+    
+    /** horizontal align */
+    if(task.type == 'text'){
+        taskNav_first.addClass('text-center');
+    }else{
+        taskNav_first.removeClass('text-center');
+    }
         
     /** task navigation buttons */
     
@@ -340,13 +398,12 @@ function displayTaskNavigation(){
     }
         
     /** finished button */
-    
-    show_btn_finished();
+    if(task.type == 'text'){
+        show_btn_finished();
+    }
 
 
     /** foward button */
-    
-    // _L['student_think_btn_forward']
     
     taskNav_first.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-right" aria-hidden="true"></i>' + '</button>'));
     if(task.num == lesson.numTasks){
@@ -434,39 +491,41 @@ function displayTaskNavigation(){
         }
     }
 
-    /** append "Help with this task" button */
+    /** append "Help with this task" button in case of taskType = text */
     
     var displayBtnHelp = $('#displayBtnHelp').empty();
-    var this_symbol = 'fa-life-ring';
-    var this_style = 'color:red;border:1px solid blue;background:white;'
-    if(answer["status"] == "help"){
-        this_symbol = 'fa-user-o';
-        this_style += 'color:black;border:1px solid black;background:yellow;';        
-    }
-    var str = '<button type="button" style="' + this_style + '" id="student_think_btn_task_help" class="btn btn_task">';
-    str += '<i class="fa ' + this_symbol + '" aria-hidden="true"></i>';
-    str += '</button>';
-    displayBtnHelp.append($(str));
-    displayBtnHelp.children("button").last().on("click", "", function( event ) {
+    if(task.type == 'text'){
+        var this_symbol = 'fa-life-ring';
+        var this_style = 'color:red;border:1px solid blue;background:white;'
         if(answer["status"] == "help"){
-            if(answer["status"]["answer_text"]==''){
-                answer["status"] = "empty";
+            this_symbol = 'fa-user-o';
+            this_style += 'color:black;border:1px solid black;background:yellow;';        
+        }
+        var str = '<button type="button" style="' + this_style + '" id="student_think_btn_task_help" class="btn btn_task">';
+        str += '<i class="fa ' + this_symbol + '" aria-hidden="true"></i>';
+        str += '</button>';
+        displayBtnHelp.append($(str));
+        displayBtnHelp.children("button").last().on("click", "", function( event ) {
+            if(answer["status"] == "help"){
+                if(answer["status"]["answer_text"]==''){
+                    answer["status"] = "empty";
+                }else{
+                    answer["status"] = "working";
+                }
             }else{
-                answer["status"] = "working";
+                answer["status"] = "help";
             }
-        }else{
-            answer["status"] = "help";
-        }
-        state["hasChanges"] = true;
-        saveAnswer();
-        state["eventPageX"] = event.pageX;
-        state["goto_taskNum"] = task["num"];
-        getTask();
-        if(!state['messageHelpButtonShown']){
-            $('#student_think_help_message_btn_toggle').click();
-            state['messageHelpButtonShown'] = true;
-        }
-    });
+            state["hasChanges"] = true;
+            saveAnswer();
+            state["eventPageX"] = event.pageX;
+            state["goto_taskNum"] = task["num"];
+            getTask();
+            if(!state['messageHelpButtonShown']){
+                $('#student_think_help_message_btn_toggle').click();
+                state['messageHelpButtonShown'] = true;
+            }
+        });
+    }
 
 
 
@@ -543,31 +602,9 @@ function show_btn_finished(){
     if(this_answer_is_finished){
         btn_class += ' btn-success';
     }
-    /**
-    if( answer['status'] == 'empty'
-        | (!forward & task.num == 1)
-        | (forward & task.num == lesson.numTasks)
-    ){
-        btn_class += ' invisible';
-    }
-    */
     
     var this_step = 0;
     var str = '<button type="button" id="student_think_btn_task_finished" class="' + btn_class + '">';
-/**
-    if(forward & task.num < lesson.numTasks){
-        this_step = 1;
-        str += '<i class="fa fa-check';
-        if(!this_answer_is_finished){str += ' fa-check-cm';}
-        str += '" aria-hidden="true"></i>';
-    }
-    if(!forward & task.num > 1){
-        this_step = -1;
-        str += '<i class="fa fa-check';
-        if(!this_answer_is_finished){str += ' fa-check-cm';}
-        str += '" aria-hidden="true"></i>';
-    }
-*/    
     
     str += '<i class="fa fa-check';
     if(!this_answer_is_finished){str += ' fa-check-cm';}
@@ -590,4 +627,7 @@ function show_btn_finished(){
         state["goto_taskNum"] = task["num"] + this_step;
         getTask();
     });
+    
+    
+    
 }

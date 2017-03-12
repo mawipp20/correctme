@@ -42,11 +42,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <div id="displayTasks"></div>
-    <div id="taskNav_first" class="text-center"></div>
+    <div id="taskNav_first"></div>
     <div class="lessonInfo" id="lessonInfo"></div>
     <div id="taskNav_second"></div>
 
 </div>
 
-<script>var _L = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;</script>
+<script>
+var _L = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;
+function cmConfigO(){
+    this.displayThinkingMinutes = false;
+    this.displayTaskNavSecond = false;
+    this.displayTaskLabelNum = false;
+    this.displayBtnHelp = false;
+}
+var cmConfig = new cmConfigO();
+</script>
 

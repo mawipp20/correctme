@@ -24,5 +24,6 @@ class StudentAsset extends AssetBundle
     public $js = [
         'js/student_think.js',
         'js/jquery.autogrowtextarea.min.js',
+        'js/jquery-progresspiesvg/js/min/jquery-progresspiesvg-min.js',
     ];
 }
