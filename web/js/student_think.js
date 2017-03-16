@@ -88,7 +88,7 @@ $(document).ready(function() {
 });
 
 function getTask(){
-    
+        
     /** taskNav: spinning loading sign next to position of last click */
     
     $("#taskNav_first").empty();
@@ -128,38 +128,30 @@ function getTask(){
 
 function saveAnswer(){
 
-    /** save the task  */ 
+    /** save the answer locally  */ 
 
-    var this_answer_text = "";
-    var this_answer_status = "empty";
-    if(typeof answer["status"] != "undefined"){
-        this_answer_status = answer["status"];
-    }    
+    /* get text input */
     if($("#answer_text").length > 0){
-        this_answer_text = $("#answer_text").val();
-        /** changing answer status from empty to working when there is an answer_text */
-        if(   answer["status"] == "empty"
-            & this_answer_text!=""
-            ){                
-                this_answer_status = "working";
-        }
+        answer.answer_text = $("#answer_text").val();
+    }
+    
+    /** changing answer status from empty to working when there is an answer_text */
+    if(   answer.status == "empty"
+        & answer.answer_text!=""
+        ){                
+            answer.status = "working";
     }
     
     if( typeof task_all[task.num] != "undefined" ){
         
-        /** saving */
         var this_task = task_all[task.num];
         answer.startKey = lesson.startKey;
         answer.studentId = student.id;
         answer.taskId = this_task.taskId;
-        answer.answer_text = this_answer_text;
-        answer.status = this_answer_status;
         
         answer_all[task.num] = answer;
         
-    }
-
-    
+    }    
 }
 
 function rest_service(){
@@ -196,7 +188,7 @@ function rest_service(){
     state["rest_status"] = 1;
     
     $.ajax({
-        url: 'http://localhost/restcorrectme/web/student/think',
+        url: cmConfig.restcorrectmeUrl,
         type: 'POST',
         data: query,
         success: function(data) {
@@ -270,7 +262,7 @@ function displayTasks(){
     var taskDisplay = $('<div data-id="' + task["taskId"] + '" class="form-group"></div>').appendTo($("#displayTasks"));
     
     var label_str = '';
-    label_str += '<div class="row task_label">';
+    label_str += '<div class="well row task_label">';
     
     
     var this_cols = { 'num': {'xs':2, 'sm':1, 'md':1}
@@ -299,7 +291,8 @@ function displayTasks(){
     
     var this_col_class = 'col-xs-' + this_cols["text"]["xs"];
     this_col_class += ' col-sm-' + this_cols["text"]["sm"];
-    this_col_class += ' col-md-' + this_cols["text"]["md"]
+    this_col_class += ' col-md-' + this_cols["text"]["md"];
+    
     label_str += '<div class="' + this_col_class + ' no_padding_right no_padding_left">';
     label_str += '<span class="task_text">' + task["task_text"] + '</span>';
     label_str += '</div>';
@@ -325,20 +318,18 @@ function displayTasks(){
         $("#answer_text").focus();
     }
     
-    if(task.type == "how-true"){
+    if(task.type != "text"){
         
-        taskDisplay.addClass('taskDisplay_how_often_true');
+        //taskDisplay.addClass('taskDisplay_how_often_true');
         $('#student_think_btn_task_finished').css('visibility', 'hidden');
         
         var str = "";
         pie_percentage = ["", "0", "25", "75", "100", ""];
         for(var i = 1; i <= 5; i++){
-            str += get_taskDisplay_how_often_true_button('how-true', pie_percentage[i], i);
+            str += get_taskDisplay_how_often_true_button(task.type, pie_percentage[i], i);
         }
         taskDisplay.append($(str));
-        //$(".pie").progressPie({mode:$.fn.progressPie.Mode.COLOR, valueData:"val", size:80, strokeWidth: 1});
-        //rgb(36,156,255)
-        $(".pie").progressPie({color:"white", valueData:"val", size:30, strokeWidth: 1});
+        $(".pie").progressPie({color:$(".task_label").css("background-color"), valueData:"val", size:30, strokeWidth: 1});
     }   
     
     displayTaskNavigation();
@@ -346,18 +337,23 @@ function displayTasks(){
         
 }
 
-function get_taskDisplay_how_often_true_button(type, pie_percentage, num){
+function get_taskDisplay_how_often_true_button(type, pie_percentage, orderNum){
+        var data_val = orderNum;
+        if(data_val == 5){data_val = 'x';}
         var this_btn_css_class = 'btn btn-block btn-primary task_how_true_often_button';
-        if(pie_percentage == ''){
+        if(answer["answer_text"] == data_val){
+            this_btn_css_class += ' task_how_true_often_button_selected';
+        }
+        else if(pie_percentage == ''){
             this_btn_css_class += ' task_how_true_often_button_dont_know';
         }
-        var btn_start = '<button type="button" class="' + this_btn_css_class + '">';
+        var btn_start = '<button onclick="task_how_often_true_button_click(this);" data-val="' + data_val + '" type="button" class="' + this_btn_css_class + '">';
         var this_class = 'pie';
         if(pie_percentage == ''){
             this_class += ' invisible';
         }
         var ret = btn_start + '<span class="' + this_class + '" data-val="' + pie_percentage + '"></span>';
-        ret += '<span class="task_how_true_often_label">' + _L['student_think_' + type + '-' + num] + '</span></button>';
+        ret += '<span class="task_how_true_often_label">' + _L['student_think_' + type + '-' + orderNum] + '</span></button>';
         return ret;
 }
 
@@ -369,13 +365,26 @@ function displayTaskNavigation(){
     taskNav_first.empty();
     taskNav_second.empty();
     
+    /**
+    var this_col_class = 'col-xs-' + this_cols["num"]["xs"];
+    this_col_class += ' col-sm-' + this_cols["num"]["sm"];
+    this_col_class += ' col-md-' + this_cols["num"]["md"]
+    */
+    
+    taskNav_first.append($('<div id="taskNav_first_left" class="col-xs-10 col-sm-10 col-md-10 vcenter"></div><div id="taskNav_first_right" class="col-xs-2 col-sm-2 col-md-2 vcenter"></div>'));
+    var taskNav_first_left = $('#taskNav_first_left');
+    var taskNav_first_right = $('#taskNav_first_right');   
+    
+    
+    if(!cmConfig.displayTaskNavSecond){taskNav_second.css("display", "none");}
+    
     if(lesson.numTasks == 1){return;}
     
     /** horizontal align */
     if(task.type == 'text'){
-        taskNav_first.addClass('text-center');
+        taskNav_first_left.addClass('text-center');
     }else{
-        taskNav_first.removeClass('text-center');
+        taskNav_first_left.removeClass('text-center');
     }
         
     /** task navigation buttons */
@@ -386,11 +395,14 @@ function displayTaskNavigation(){
     
     // _L['student_think_btn_back']
       
-    taskNav_first.append($('<button type="button" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-left" aria-hidden="true"></i>' + '</button>'));
-    if(task.num == 1){
-        taskNav_first.children("button").last().addClass('btn_task_inactive');
+    taskNav_first_left.append($('<button type="button" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-left" aria-hidden="true"></i>' + '</button>'));
+    if(task.num == 1
+        |   (task.type != 'text'
+            & task.answer_text == '')
+        ){
+        taskNav_first_left.children("button").last().addClass('btn_task_inactive');
     }else{
-        taskNav_first.children("button").last().on("click", "", function( event ) {
+        taskNav_first_left.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
             state["goto_taskNum"] = task["num"] - 1;
             getTask();
@@ -405,11 +417,24 @@ function displayTaskNavigation(){
 
     /** foward button */
     
-    taskNav_first.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-right" aria-hidden="true"></i>' + '</button>'));
-    if(task.num == lesson.numTasks){
-        taskNav_first.children("button").last().addClass('btn_task_inactive');
+    taskNav_first_left.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-right" aria-hidden="true"></i>' + '</button>'));
+    
+    
+    /** position info */
+    if(!cmConfig.displayTaskNavSecond){
+        taskNav_first_right.append($('<span class="taskOfTaskPositionInfo">' + task.num + '/' + lesson.numTasks + '</span>'));
+        if(task.type == 'how-true' | task.type == 'how-often'){
+            $('#taskNav_first').css("max-width", $('.task_how_true_often_button').css("max-width"));}
+    }
+
+    
+    if(task.num == lesson.numTasks
+        |   (task.type != 'text'
+            & answer.answer_text == '')
+    ){
+        taskNav_first_left.children("button").last().addClass('btn_task_inactive');
     }else{
-        taskNav_first.children("button").last().on("click", "", function( event ) {
+        taskNav_first_left.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
             state["goto_taskNum"] = task["num"] + 1;
             getTask();
@@ -526,13 +551,11 @@ function displayTaskNavigation(){
             }
         });
     }
-
-
-
 }
 
 function displayLessonInfo(){
 
+    if(!cmConfig.displayThinkingMinutes){return;}
 
     var info = _L["student_think_working_time"];
     
@@ -550,9 +573,6 @@ function displayLessonInfo(){
         is_overtime = true;
         info = _L["student_think_working_overtime"].replace('#', '<b>' + minutesLeft * (-1) + '</b>');
     } 
-    
-    //info += blanks(3) + '<i class="fa fa-floppy-o" aria-hidden="true"></i>';
-
     
     var lessonInfo = $('.lessonInfo');
     lessonInfo.html(info);
@@ -573,7 +593,6 @@ function blanks(numBlanks){
 function textarea_oninput(elem){
     state["hasChanges"] = true;
     var this_answer_status_before = answer["status"];
-    console.log(this_answer_status_before);
     if($(elem).val()!=''){
         answer["status"] = 'working';
     }else{
@@ -587,7 +606,7 @@ function textarea_oninput(elem){
 
 function show_btn_finished(){
     
-    taskNav_first = $('#taskNav_first');
+    taskNav_first_left = $('#taskNav_first_left');
     
     /** check the status of the current task */   
     this_answer_is_finished = false;
@@ -610,8 +629,8 @@ function show_btn_finished(){
     if(!this_answer_is_finished){str += ' fa-check-cm';}
     str += '" aria-hidden="true"></i>';
     str += '</button>';
-    taskNav_first.append($(str));
-    taskNav_first.children("button").last().on("click", "", function( event ) {
+    taskNav_first_left.append($(str));
+    taskNav_first_left.children("button").last().on("click", "", function( event ) {
         if(answer["status"] == "finished"){
             if(answer.answer_text == ""){
                 answer["status"] = "empty";
@@ -626,8 +645,29 @@ function show_btn_finished(){
         state["eventPageX"] = event.pageX;
         state["goto_taskNum"] = task["num"] + this_step;
         getTask();
+    });    
+}
+function task_how_often_true_button_click(elem){
+
+    answer.answer_text = $(elem).attr("data-val");
+    saveAnswer();
+    
+    if(state["goto_taskNum"] == lesson.numTasks){
+        if(cmConfig.studentRedirectAfterLastAnswer){
+            alert("Thank you");
+        }
+        return;
+    }
+    
+    $('.task_label').css('background-color', 'white');
+    $('.task_how_true_often_button').each(function() {
+        if(!$(this).is(elem)){
+            $(this).addClass("invisible");
+        }
     });
     
-    
-    
+    setTimeout(function() {
+        state["goto_taskNum"] = task["num"] + 1;
+        getTask();
+    }, 1000)
 }

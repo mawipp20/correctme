@@ -39,15 +39,18 @@ class Language extends Component {
         }else{
             $this->country = $_SESSION["_LANGUAGE"];
         }
-
-        $this_language_file = \Yii::$app->basePath.'\language\\'.$this->country.'.ini';
+        $pathSeparator = "/";
+        if($_SERVER['HTTP_HOST'] == 'localhost'){$pathSeparator = "\\";}
+        
+        
+        $this_language_file = \Yii::$app->basePath.$pathSeparator.'language'.$pathSeparator.$this->country.'.ini';
         if (file_exists($this_language_file)) {
             $this->L_sections = parse_ini_file($this_language_file, true);
             foreach($this->L_sections as $section => $arr){
                 $this->L = array_merge($this->L, $arr);
             }
         }else{
-            die('! missing language file: '.$_SESSION["_LANGUAGE"].'.ini');
+            die('! missing language file: '.$_SESSION["_LANGUAGE"].'.ini '.$this_language_file.print_r($_SERVER, true));
         }
     }
     
