@@ -45,7 +45,7 @@ class Language extends Component {
         
         $this_language_file = \Yii::$app->basePath.$pathSeparator.'language'.$pathSeparator.$this->country.'.ini';
         if (file_exists($this_language_file)) {
-            $this->L_sections = parse_ini_file($this_language_file, true);
+            $this->L_sections = parse_ini_file($this_language_file, true, INI_SCANNER_RAW);
             foreach($this->L_sections as $section => $arr){
                 $this->L = array_merge($this->L, $arr);
             }

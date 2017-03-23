@@ -83,9 +83,14 @@ class Student extends \app\components\ActiveRecord
     public function beforeValidate()
     {
         if (parent::beforeValidate()) {
-            $this->status = "empty";
+            if($this->status == ""){
+                $this->status = "empty";
+            }
             if($this->studentKey == ""){
                 $this->studentKey = "s-".$this->generateUniqueRandomString("studentKey", 6);
+            }
+            if($this->name == ""){
+                $this->name = $this->generateUniqueRandomString("name", 10);
             }
             return true;
         }

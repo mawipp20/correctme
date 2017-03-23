@@ -26,7 +26,7 @@ LessonAsset::register($this);
 -->
 
 <h3 style="margin-top: 0.0em;"><?= Yii::$app->_L->get('student_join_title') ?></h3>
-<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo Yii::$app->_L->get('LESSON_WELCOME_line_2'); ?></h4> -->
+<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo Yii::$app->_L->get('lesson_welcome_line_2'); ?></h4> -->
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {

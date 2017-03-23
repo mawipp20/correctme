@@ -9,7 +9,7 @@ AppAsset::register($this);
 use app\assets\LessonAsset;
 LessonAsset::register($this);
 
-$this->title = Yii::$app->_L->get("lesson_title");
+$this->title = Yii::$app->_L->get("poll_title");
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Lesson */
@@ -17,7 +17,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
 ?>
 
 
-<h3 style="margin-top: 0em; margin-bottom: 20px;"><?= Yii::$app->_L->get('lesson_welcome') ?></h3>
+<h3 style="margin-top: 0em; margin-bottom: 20px;"><?= Yii::$app->_L->get('poll_welcome') ?></h3>
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
@@ -30,12 +30,11 @@ $this->title = Yii::$app->_L->get("lesson_title");
 <div class="Lesson">
 
 <ul class="nav nav-tabs" style="margin-bottom: 20px;">
-  <li><a href="#"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
-  <li><a href="lesson_exact"><?= Yii::$app->_L->get('lesson_nav_tab_exact') ?></a></li>
-  <li class="active"><a href="lesson_upload"><?= Yii::$app->_L->get('lesson_nav_tab_upload') ?></a></li>
+  <li><a href="poll_exact"><?= Yii::$app->_L->get('poll_nav_tab_exact') ?></a></li>
+  <li class="active"><a href="poll_upload"><?= Yii::$app->_L->get('poll_nav_tab_upload') ?></a></li>
 </ul>
 
-    <h4 style="margin-top: 1.5em; margin-bottom: 1em; "><?= Yii::$app->_L->get('lesson_upload_title'); ?></h4>
+    <h4 style="margin-top: 1.5em; margin-bottom: 1em; "><?= Yii::$app->_L->get('poll_upload_title'); ?></h4>
 
     <?php $form = ActiveForm::begin([
                 'enableClientValidation'=>true,

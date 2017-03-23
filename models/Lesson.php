@@ -11,6 +11,7 @@ use app\models\Language;
  * @property string $startKey
  * @property string $teacherKey
  * @property integer $teacherId
+ * @property integer $type
  * @property integer $numTasks
  * @property integer $numStudents
  * @property integer $numTeamsize
@@ -81,6 +82,7 @@ class Lesson extends \app\components\ActiveRecord
             'startKey' => '',
             'teacherKey' => '',
             'teacherId' => '',
+            'type' => '',
             'numTasks' => '',
             'numStudents' => '',
             'numTeamsize' => '',
@@ -103,6 +105,9 @@ class Lesson extends \app\components\ActiveRecord
             }
             if($this->typeTasks == ""){
                 $this->typeTasks = 'textarea';
+            }
+            if($this->type == ""){
+                $this->type = 'lesson';
             }
             return true;
         }

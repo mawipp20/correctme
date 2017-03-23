@@ -11,28 +11,6 @@ use app\models\Lesson;
 use app\models\LessonUpload;
 use yii\web\UploadedFile;
 
-//use app\models\StudentJoinForm;
-//use app\models\StudentForm;
-//var_dump(Yii::$app->_L->get('error_server_connect'));
-
-//die(print_r(Yii::$app->getComponents()));
-
-//die(Yii::$app->language->get("error_server_connect"));
-
-//Yii::$app->message->display('I am Yii2.0 Programmer');
-
-//var_dump(Yii::$app->request);
-//var_dump(Yii::$app->message);
-//var_dump(Yii::$app->_L->get("error_server_connect"));
-//die();
-
-//die();
-
-/**
-if(!function_exists("_L")){
-    include_once(\Yii::$app->basePath.'\language\language.php');
-}
-*/
 class SiteController extends \app\components\Controller
 {
 
@@ -81,6 +59,22 @@ class SiteController extends \app\components\Controller
 
 
     /**
+     * Displays teacher choose poll or collaborate
+     *
+     * @return string
+     */
+    public function actionTeacher_poll_or_lesson()
+    {
+
+        $this->layout = 'teacher';
+        $model = new Lesson();
+        
+        return $this->render('teacher_poll_or_lesson', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Displays teacher quick lesson create page.
      *
      * @return string
@@ -110,11 +104,33 @@ class SiteController extends \app\components\Controller
         $uploadedTasks = array();
         $fileTempName = "";
 
+
+        /** set lesson_type to 'lesson' or 'poll' */
+        
+        $lesson_type = 'lesson';
+        $request_params = array();
+        if (Yii::$app->request->isGet) {
+            $request_params = Yii::$app->request->get();
+        }
+        if (Yii::$app->request->isPost) {
+            $request_params = Yii::$app->request->post();
+            if(isset($request_params["LessonUpload"])){
+                $request_params = $request_params["LessonUpload"];
+                $request_params["lesson_type"] = $request_params["type"];
+            }
+        }
+        if(isset($request_params["lesson_type"])){
+            $lesson_type = $request_params["lesson_type"];
+        }
+        Yii::$app->getSession()->set("lesson_type", $lesson_type);
+
+
+        /** process uploaded file with tasks/questions */
+
         if (Yii::$app->request->isPost) {
             
                 $model_upload->lessonFile = UploadedFile::getInstance($model_upload, 'lessonFile');
                 $fileTempName = $model_upload->lessonFile->tempName;
-                //$model_upload->fileParsed = parse_ini_file($fileTempName, true);
                 $parsedArr = array();
                 $currentSection = "";
                 $unrecognizedLines = array();
@@ -150,7 +166,7 @@ class SiteController extends \app\components\Controller
                                 $taskCount++;
                                 if(!in_array($key, $model->taskTypes)){
                                     $taskErrorCount++;
-                                    $this_flash = Yii::$app->_L->get("lesson_upload_task_check_error");
+                                    $this_flash = Yii::$app->_L->get($lesson_type."_upload_task_check_error");
                                     $this_flash = str_replace("#type#", "'".$key."'", $this_flash);
                                     $this_flash = str_replace("#number#", $taskCount + 1, $this_flash);
                                     $this_flash .= " ".$val;
@@ -166,13 +182,13 @@ class SiteController extends \app\components\Controller
                         $this_flash .= "<br /><br />".implode("<br />", $unrecognizedLines);
                         Yii::$app->getSession()->setFlash('warning_unrecognizedLines', $this_flash);
                     }
-                    $this_flash = Yii::$app->_L->get("lesson_upload_task_check_success");
+                    $this_flash = Yii::$app->_L->get($lesson_type."_upload_task_check_success");
                     $this_flash = str_replace("#number#", ($taskCount - $taskErrorCount), $this_flash);
                     Yii::$app->getSession()->setFlash('success_task_'.$taskCount, $this_flash);
                     $model_upload->fileParsed = $parsedArr;                    
                     fclose($handle);
                 } else {
-                    Yii::$app->getSession()->setFlash('error_file_read', Yii::$app->_L->get('lesson_upload_file_read_error'));
+                    Yii::$app->getSession()->setFlash('error_file_read', Yii::$app->_L->get($lesson_type.'_upload_file_read_error'));
                 }
 
                 if (!is_null($model_upload->fileParsed)) {
@@ -189,7 +205,7 @@ class SiteController extends \app\components\Controller
                 }
         }
         
-        return $this->render('lesson_exact', [
+        return $this->render($lesson_type.'_exact', [
             'model' => $model,
             'uploadedTasks' => $uploadedTasks,
             'fileTempName' => $fileTempName,
@@ -207,6 +223,21 @@ class SiteController extends \app\components\Controller
         $model = new LessonUpload();
         
         return $this->render('lesson_upload', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays teacher poll upload page.
+     *
+     * @return string
+     */
+    public function actionPoll_upload()
+    {
+        $this->layout = 'teacher';
+        $model = new LessonUpload();
+        
+        return $this->render('poll_upload', [
             'model' => $model,
         ]);
     }
@@ -295,7 +326,11 @@ class SiteController extends \app\components\Controller
                         ])->execute();
                     }
                     
-                    return $this->render('think', [
+                    $this_view = 'think';
+                    if($model->type == "poll"){
+                        $this_view = 'poll_participants';
+                    }
+                    return $this->render($this_view, [
                         'model' => $this->findLesson($model->startKey),
                     ]);
                 } else {

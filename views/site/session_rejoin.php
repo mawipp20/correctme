@@ -27,8 +27,8 @@ $this->title = Yii::$app->_L->get("session_rejoin_title");
   </div>
 -->
 
-<h3 style="padding-top: 0em; margin-top: 0em;"><?= Yii::$app->_L->get('LESSON_WELCOME') ?></h3>
-<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo Yii::$app->_L->get('LESSON_WELCOME_line_2'); ?></h4> -->
+<h3 style="padding-top: 0em; margin-top: 0em;"><?= Yii::$app->_L->get('lesson_welcome') ?></h3>
+<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo Yii::$app->_L->get('lesson_welcome_line_2'); ?></h4> -->
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {

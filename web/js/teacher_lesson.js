@@ -99,6 +99,7 @@ function addTask(text, type, atBottom){
         first_task.before(this_newTask);
     }   
     this_newTask.find(".task_input").autoGrow();
+    $('#div_lesson_submit').show();
 }
 
 function display_btn_task_text_analyse(elem){

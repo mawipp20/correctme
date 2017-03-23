@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\StudentJoinForm;
 use app\models\Student;
+use app\models\Lesson;
 
 class StudentController extends \app\components\Controller
 {
@@ -61,7 +62,33 @@ class StudentController extends \app\components\Controller
     public function actionIndex()
     {
         $model = new StudentJoinForm();
+        return $this->render('student_poll_or_lesson', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays the student lesson Login page.
+     *
+     * @return string
+     */
+    public function actionStudent_join()
+    {
+        $model = new StudentJoinForm();
         return $this->render('student_join', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays the student poll Login page.
+     *
+     * @return string
+     */
+    public function actionStudent_join_poll()
+    {
+        $model = new StudentJoinForm();
+        return $this->render('student_join_poll', [
             'model' => $model,
         ]);
     }
@@ -79,10 +106,13 @@ class StudentController extends \app\components\Controller
 
         $request = Yii::$app->request;
 
+
         /** create new student */
         
-        if ($request->isPost) {            
+        if ($request->isPost) {
             if($model->load($request->post(), "StudentJoinForm")){
+                
+                $lesson = Lesson::find()->where(['startKey' => $model->startKey])->one();
                 
                 $student_with_the_same_name = Student::find()->where(
                                 [    'startKey'=>$model->startKey
@@ -90,18 +120,26 @@ class StudentController extends \app\components\Controller
                                 ]
                                 )->one();
                                 
-                if(!is_null($student_with_the_same_name)
-                        ){
+                if(!is_null($student_with_the_same_name)){
                             $student_with_the_same_name->delete();
                             //$model->addErrors(array(Yii::$app->_L->get('student_join_name_already_existing')));    
-                        }
+                }
+                
+                /** poll browser sessions that have been concluded can't be repeated by a page refresh or entering the start key again */
+                if(Yii::$app->getSession()->get("status") == "finished"
+                   & $lesson["type"] == "poll"
+                    ){
+                    $model->addErrors(array(Yii::$app->_L->get('student_join_error_poll_is_finished')));    
+                }
             }
             
             if (!$model->hasErrors() && $model->save()) {
                     Yii::$app->getSession()->set("startKey", $model->startKey);
                     Yii::$app->getSession()->set("studentKey", $model->studentKey);
+                    Yii::$app->getSession()->set("status", "working");
                     
                     $this->view->params['model'] = $model;
+                    $this->view->params['lesson'] = $lesson;
                     
                     return $this->render('student_think', [
                         'model' => $this->findStudent($model->startKey, $model->studentKey),
@@ -145,6 +183,38 @@ class StudentController extends \app\components\Controller
 
     }
 
+
+    public function actionPoll_finished()
+    {
+        
+        //$model = new Student();
+        //$this->layout = 'student';
+
+        $request = Yii::$app->request;
+
+        /** set student status to finished */
+        
+        $model = $this->findStudent( Yii::$app->getSession()->get("startKey")
+                             ,Yii::$app->getSession()->get("studentKey")
+                            );
+        
+        Yii::$app->getSession()->set("status", "finished");
+                            
+        $model->status = "finished";
+        if(!$model->save()){
+            $this_errors = array();
+            foreach($model->getErrors() as $this_error){
+                $this_errors = array_merge($this_errors, $this_error);
+            }
+            Yii::$app->getSession()->setFlash('error_save', implode("<br>", $this_errors));
+        }
+        
+        return $this->render('poll_finished', [
+            'model' => $model,
+        ]);
+
+                            
+    }
 
 
     protected function findStudent($startKey, $studentKey)

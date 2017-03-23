@@ -623,6 +623,9 @@ function show_btn_finished(){
     }
     
     var this_step = 0;
+    if(cmConfig.taskFinishedButtonMoveOn){
+        this_step = 1;
+    }
     var str = '<button type="button" id="student_think_btn_task_finished" class="' + btn_class + '">';
     
     str += '<i class="fa fa-check';
@@ -654,7 +657,7 @@ function task_how_often_true_button_click(elem){
     
     if(state["goto_taskNum"] == lesson.numTasks){
         if(cmConfig.studentRedirectAfterLastAnswer){
-            alert("Thank you");
+            window.location.href = 'poll_finished';
         }
         return;
     }

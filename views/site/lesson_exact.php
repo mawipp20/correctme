@@ -18,7 +18,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
 ?>
 
 
-<h3 style="margin-top: 0em; margin-bottom: 20px;"><?= Yii::$app->_L->get('LESSON_WELCOME') ?></h3>
+<h3 style="margin-top: 0em; margin-bottom: 20px;"><?= Yii::$app->_L->get('lesson_welcome') ?></h3>
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
@@ -49,6 +49,8 @@ $this->title = Yii::$app->_L->get("lesson_title");
                 'method' => 'post',
                 'id' => 'lesson_form',
     ]); ?>
+
+          <?= $form->field($model, 'type')->hiddenInput(['value' => 'lesson'])->label(false); ?>
 
 
           <?php

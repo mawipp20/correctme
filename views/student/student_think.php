@@ -41,7 +41,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-    <div id="displayTasks"></div>
+    <div id="displayTasks">
+        <div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i></div>
+    </div>
     <div id="taskNav_first" class="row"></div>
     <div class="lessonInfo" id="lessonInfo"></div>
     <div id="taskNav_second"></div>
@@ -67,6 +69,7 @@ function cmConfigO(){
     this.displayTaskLabelNum = false;
     this.displayBtnHelp = false;
     this.studentRedirectAfterLastAnswer = true;
+    this.taskFinishedButtonMoveOn = true;
     this.restcorrectmeUrl = '<?= $restcorrectmeUrl ?>';
 }
 var cmConfig = new cmConfigO();
