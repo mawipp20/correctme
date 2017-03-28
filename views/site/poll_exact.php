@@ -38,12 +38,30 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'enableClientValidation'=>true,
                 'validateOnChange'=>true,
                 'validateOnBlur'=>false,
-                'action' => ['think'],
+                'action' => ['teachers'],
                 'method' => 'post',
                 'id' => 'lesson_form',
     ]); ?>
 
-          <?= $form->field($model, 'type')->hiddenInput(['value' => 'poll'])->label(false); ?>
+    <?= $form->field($model, 'type')->hiddenInput(['value' => 'poll'])->label(false); ?>
+    
+  <?php
+    echo $form->field($model, 'title'
+    , [
+    'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson'
+                        , 'style' => 'min-width: 80px; padding-right: 0.5em;' ]
+    ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+    ]
+    )->textInput([
+    'placeholder'=>Yii::$app->_L->get('lesson_title_placeholder')
+    , 'value' => $model->thinkingMinutes
+    , 'autofocus' => true
+    ])
+    ->label(Yii::$app->_L->get('lesson_title_label'))
+    ; ?>
+
+    
+    
 
     <h4 style="margin-top: 1.5em; margin-bottom: 1em;"><?= Yii::$app->_L->get('poll_tasks_title'); ?></h4>
 

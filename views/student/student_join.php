@@ -9,24 +9,12 @@ AppAsset::register($this);
 use app\assets\LessonAsset;
 LessonAsset::register($this);
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Lesson */
-/* @var $form ActiveForm */
+$this->title = Yii::$app->_L->get("student_join_lesson_title");
+
 ?>
 
-<!--
-<div class="form-group">
-    <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-    <div class="input-group">
-      <div class="input-group-addon">$</div>
-      <input type="text" class="form-control" id="exampleInputAmount" placeholder="Amount">
-      <div class="input-group-addon">.00</div>
-    </div>
-  </div>
--->
+<h3 style="margin-top: 0.0em; margin-bottom: 1em;"><?= Yii::$app->_L->get('student_join_lesson_title') ?></h3>
 
-<h3 style="margin-top: 0.0em;"><?= Yii::$app->_L->get('student_join_title') ?></h3>
-<!-- </a><h4 style="margin-top: 0.2em;margin-bottom: 1em;"><?php //echo Yii::$app->_L->get('lesson_welcome_line_2'); ?></h4> -->
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {

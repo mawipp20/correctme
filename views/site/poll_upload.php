@@ -30,7 +30,7 @@ $this->title = Yii::$app->_L->get("poll_title");
 <div class="Lesson">
 
 <ul class="nav nav-tabs" style="margin-bottom: 20px;">
-  <li><a href="poll_exact"><?= Yii::$app->_L->get('poll_nav_tab_exact') ?></a></li>
+  <li><a href="lesson_exact?lesson_type=poll"><?= Yii::$app->_L->get('poll_nav_tab_exact') ?></a></li>
   <li class="active"><a href="poll_upload"><?= Yii::$app->_L->get('poll_nav_tab_upload') ?></a></li>
 </ul>
 

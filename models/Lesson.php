@@ -11,6 +11,7 @@ use app\models\Language;
  * @property string $startKey
  * @property string $teacherKey
  * @property integer $teacherId
+ * @property integer $title
  * @property integer $type
  * @property integer $numTasks
  * @property integer $numStudents
@@ -83,6 +84,7 @@ class Lesson extends \app\components\ActiveRecord
             'teacherKey' => '',
             'teacherId' => '',
             'type' => '',
+            'title' => '',
             'numTasks' => '',
             'numStudents' => '',
             'numTeamsize' => '',

@@ -9,6 +9,7 @@ use yii\filters\VerbFilter;
 use yii\base\DynamicModel;
 use app\models\Lesson;
 use app\models\LessonUpload;
+use app\models\Teacher;
 use yii\web\UploadedFile;
 
 class SiteController extends \app\components\Controller
@@ -247,6 +248,44 @@ class SiteController extends \app\components\Controller
      *
      * @return string
      */
+    public function actionResults()
+    {
+        $model = new Lesson();
+
+        $request = Yii::$app->request;
+        $request_params = $request->get("Lesson");
+
+        if ($request->isGet)  {
+            $model->load($request->get());
+            $row = Lesson::find()->where(
+                    [    'startKey'=>$request_params["startKey"]
+                        ,'teacherKey'=>$request_params["teacherKey"]
+                    ]
+                    )->one();
+                    
+            if(!is_null($row)){
+                return $this->render('think', [
+                    'model' => $row,
+                ]);
+            } else {
+                $this_errors = $model->getErrors();
+                Yii::$app->getSession()->setFlash('error_save', Yii::$app->_L->get("join_session_login_error_flash"));
+                Yii::$app->response->redirect(['site/session_rejoin']);
+            }
+            
+        }
+
+        return $this->render('results', [
+             'model' => $model,
+            //,'model_teacherKey_validate' => $model_teacherKey_validate
+        ]);
+    }
+
+    /**
+     * Displays teacher rejoin running session with starKey and teacherKey
+     *
+     * @return string
+     */
     public function actionSession_rejoin()
     {
         $model = new Lesson();
@@ -356,49 +395,13 @@ class SiteController extends \app\components\Controller
      *
      * @return string
      */
-    public function actionLogin()
+    public function actionTeachers()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-        return $this->render('login', [
+        $model = new Teacher();
+        return $this->render('teachers', [
             'model' => $model,
         ]);
     }
-
-    /**
-     * Logout action.
-     *
-     * @return string
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
+    
 }

@@ -9,9 +9,11 @@ AppAsset::register($this);
 use app\assets\LessonAsset;
 LessonAsset::register($this);
 
+$this->title = Yii::$app->_L->get("student_join_poll_title");
+
 ?>
 
-<h3 style="margin-top: 0.0em;"><?= Yii::$app->_L->get('student_join_title') ?></h3>
+<h3 style="margin-top: 0.0em; margin-bottom: 1em;"><?= Yii::$app->_L->get('student_join_poll_title') ?></h3>
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
