@@ -110,8 +110,8 @@ $this->title = Yii::$app->_L->get("teacher_title");
                 .Yii::$app->_L->get('teacher_btn_team')
             , [
                 'class' => 'btn btn-primary',
-                'id'=>'teachers_add_team',
-                'onclick' => '$("#team_info").show();$("#team_names").show();'
+                'id'=>'teachers_btn_add_team',
+                'onclick' => 'teachers_add_team();'
                 ]) ?>
 
             <div id="team_info" style="display: none;">
@@ -133,7 +133,13 @@ $this->title = Yii::$app->_L->get("teacher_title");
         <label class="input-group-addon">
             <?= Yii::$app->_L->get('teacher_team_member_label') ?>
         </label>
-        <input type="text" class="form-control teacher-name" oninput="teacherOnInput(this);" placeholder="<?php echo Yii::$app->_L->get('teacher_team_member_name_placeholder');?>">
+        <input type="text"
+             class="form-control teacher-name"
+             data-text-length="0"
+             oninput="teacherNameOnInput(this);"
+             placeholder="<?php echo Yii::$app->_L->get('teacher_team_member_name_placeholder');?>"
+             >
+        <textarea rows="1" style="display: none;" class="form-control teacher-name" data-text-length="0"></textarea>
         </div>
     </div>    
        

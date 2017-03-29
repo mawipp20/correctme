@@ -34,7 +34,6 @@ $(document).ready(function() {
                 var this_task = $(this).closest(".task");
                 if(!this_task.is($("#tasks").children(".task").last())){
                     this_task.next().find(".task_type").children("button").first().focus();
-                    //event.stopPropagation();
                 }
             }
         });

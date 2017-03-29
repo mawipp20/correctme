@@ -201,7 +201,7 @@ class SiteController extends \app\components\Controller
                         if(isset($config['general']['earlyPairing'])){$model->earlyPairing = $config['general']['earlyPairing'];}
                         if(isset($config['general']['namedPairing'])){$model->namedPairing = $config['general']['namedPairing'];}
                         if(isset($config['general']['title'])){$model->title = $config['general']['title'];}
-                        if(isset($config['general']['type'])){$model->title = $config['general']['type'];}
+                        if(isset($config['general']['type'])){$model->type = $config['general']['type'];}
                     }
                     if(isset($config['tasks'])){
                         $uploadedTasks = $config['tasks'];
