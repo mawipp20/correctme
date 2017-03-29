@@ -653,6 +653,7 @@ function show_btn_finished(){
 function task_how_often_true_button_click(elem){
 
     answer.answer_text = $(elem).attr("data-val");
+    answer.status = "finished";
     saveAnswer();
     
     if(state["goto_taskNum"] == lesson.numTasks){

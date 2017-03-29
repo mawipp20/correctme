@@ -38,7 +38,7 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'enableClientValidation'=>true,
                 'validateOnChange'=>true,
                 'validateOnBlur'=>false,
-                'action' => ['teachers'],
+                'action' => ['think'],
                 'method' => 'post',
                 'id' => 'lesson_form',
     ]); ?>
@@ -54,14 +54,11 @@ $this->title = Yii::$app->_L->get("poll_title");
     ]
     )->textInput([
     'placeholder'=>Yii::$app->_L->get('lesson_title_placeholder')
-    , 'value' => $model->thinkingMinutes
+    , 'value' => $model->title
     , 'autofocus' => true
     ])
     ->label(Yii::$app->_L->get('lesson_title_label'))
     ; ?>
-
-    
-    
 
     <h4 style="margin-top: 1.5em; margin-bottom: 1em;"><?= Yii::$app->_L->get('poll_tasks_title'); ?></h4>
 
@@ -99,21 +96,14 @@ $this->title = Yii::$app->_L->get("poll_title");
         </div>
     </div>    
 
-        <div id="div_lesson_submit" class="well" style="margin-top: 2em; display: none;">
+        <div id="div_lesson_submit" class="" style="margin-top: 2em; display: none;">
         
-            <?= Yii::$app->_L->get('poll_next_step') ?>
-
-            &nbsp;&nbsp;
-        
-            <?php echo  Html::submitButton(
-                '<i class="fa fa-user-plus" aria-hidden="true"></i>'
-                .'&nbsp;&nbsp;&nbsp;&nbsp;'
-                .Yii::$app->_L->get('poll_btn_submit')
-            , [
+            <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit')
+                , [
                 'class' => 'btn btn-primary',
-                'id'=>'lesson_btn_submit',
-                'onsubmit' => 'lesson_exact_onsubmit();'
+                'id'=>'poll_exact_submit',
                 ]) ?>
+
         </div>
        
     <?php ActiveForm::end(); ?>

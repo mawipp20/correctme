@@ -55,11 +55,14 @@ class Lesson extends \app\components\ActiveRecord
     {
         return [
 
+            ['type', 'in', 'range' => ['lesson', 'poll']],
+            ['title', 'string', 'max' => 30],
+
             [['numTasks'], 'required', 'message' => Yii::$app->_L->get('numTasks_required')],
             [['numTasks'], 'integer', 'min'=>1, 'max'=>20, 'message' => '1 - 20'],
             
             [['thinkingMinutes'], 'required', 'message' => Yii::$app->_L->get('thinkingMinutes_required')],
-            [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>600, 'message' => '2 - 600'],
+            [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>20160, 'message' => '2 - 20160'],
 
             [['numTeamsize'], 'required', 'message' => Yii::$app->_L->get('numTeamsize_required')],
             [['numTeamsize'], 'integer', 'min'=>2, 'max'=>6, 'message' => '2 - 6'],
@@ -105,12 +108,20 @@ class Lesson extends \app\components\ActiveRecord
             if($this->teacherKey == ""){
                 $this->teacherKey = $this->generateUniqueRandomString("teacherKey", 6);
             }
-            if($this->typeTasks == ""){
-                $this->typeTasks = 'textarea';
-            }
+            
             if($this->type == ""){
                 $this->type = 'lesson';
             }
+            if($this->typeTasks == ""){
+                $this->typeTasks = 'textarea';
+            }
+            if($this->type == "poll"){
+                $this->numStudents = 2;
+                $this->numTeamsize = 2;
+                $this->thinkingMinutes = 60;
+            }
+            
+            
             return true;
         }
     }

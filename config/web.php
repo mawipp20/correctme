@@ -52,7 +52,7 @@ $config = [
             //'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
-                //"ThinkMonitor" => "site/ThinkMonitor",
+                "team" => "site/team",
             /**
                 "UserForm" => "site/userform",
                 "hello" => "site/hello",

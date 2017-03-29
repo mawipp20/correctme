@@ -10,6 +10,7 @@ use yii\base\DynamicModel;
 use app\models\Lesson;
 use app\models\LessonUpload;
 use app\models\Teacher;
+use app\models\Task;
 use yii\web\UploadedFile;
 
 class SiteController extends \app\components\Controller
@@ -199,6 +200,8 @@ class SiteController extends \app\components\Controller
                         if(isset($config['general']['thinkingMinutes'])){$model->thinkingMinutes = $config['general']['thinkingMinutes'];}
                         if(isset($config['general']['earlyPairing'])){$model->earlyPairing = $config['general']['earlyPairing'];}
                         if(isset($config['general']['namedPairing'])){$model->namedPairing = $config['general']['namedPairing'];}
+                        if(isset($config['general']['title'])){$model->title = $config['general']['title'];}
+                        if(isset($config['general']['type'])){$model->title = $config['general']['type'];}
                     }
                     if(isset($config['tasks'])){
                         $uploadedTasks = $config['tasks'];
@@ -277,7 +280,6 @@ class SiteController extends \app\components\Controller
 
         return $this->render('results', [
              'model' => $model,
-            //,'model_teacherKey_validate' => $model_teacherKey_validate
         ]);
     }
 
@@ -289,14 +291,59 @@ class SiteController extends \app\components\Controller
     public function actionSession_rejoin()
     {
         $model = new Lesson();
-
-        //$model_teacherKey_validate = new DynamicModel(compact('teacherKey'));
-        //$model_teacherKey_validate->addRule('teacherKey', 'required', ['message' => Yii::$app->_L->get('lesson_input_required_message')]);
-        
         return $this->render('session_rejoin', [
              'model' => $model,
-            //,'model_teacherKey_validate' => $model_teacherKey_validate
         ]);
+    }
+
+    /**
+     * Displays teacher rejoin running session with starKey and teacherKey
+     *
+     * @return string
+     */
+    public function actionDownload_questions()
+    {
+        $umlaute = array(
+            "/Ö/" => "Oe",
+            "/ö/" => "oe",
+            "/Ü/" => "Ue",
+            "/ü/" => "ue",
+            "/Ä/" => "Ae",
+            "/ä/" => "ae",
+            "/ß/" => "ss",
+            "/ /" => "-",
+        );
+        $lesson = $this->findLesson(Yii::$app->getSession()->get("startKey"));
+        
+        $title_clean = preg_replace(array_keys($umlaute), array_values($umlaute), $lesson->title);
+        $title_clean = preg_replace("/[^A-Za-z0-9_-]/", "", $title_clean);
+        
+        $this_filename = Yii::$app->_L->get('teacher_questions');
+        $this_filename .= "_".date("Y-m-d");
+        $this_filename .= "_".$title_clean;
+        $this_filename .= ".ini";
+        
+        $pathSeparator = "/";
+        if($_SERVER['HTTP_HOST'] == 'localhost'){$pathSeparator = "\\";}
+         $this_path = \Yii::$app->basePath.$pathSeparator.'language'.$pathSeparator;
+
+        $ini_template_file = $this_path."template.questions.".$_SESSION["_LANGUAGE"].".ini";
+        if(!is_file($ini_template_file)){
+            $ini_template_file = $this_path."template.questions.en.ini";
+        }
+        $content = file_get_contents($ini_template_file);
+        $content .= "\r\n\r\n[general]";
+        $content .= "\r\ntitle = ".$lesson["title"];
+        $content .= "\r\ntype = ".$lesson["type"];
+        $content .= "\r\n\r\n[tasks]\r\n";
+        
+        $tasks = Task::findAll(['startKey' => Yii::$app->getSession()->get("startKey")]);
+        foreach($tasks as $task){
+            $content .= "\r\n". $task["type"]." = ".$task["task_text"];
+        }
+        
+        Yii::$app->response->sendContentAsFile($content, $this_filename)->send();
+        return;
     }
 
     /**
@@ -338,14 +385,21 @@ class SiteController extends \app\components\Controller
         }
         
         if ($request->isPost) {
+
+            $this_view_error = 'lesson';
+            if($request_params["type"] == 'poll'){
+                $this_view_error = 'poll_exact';
+            }
+            
             if ($model->load($request->post()) && $model->save()) {
                     Yii::$app->getSession()->set("startKey", $model->startKey);
                     Yii::$app->getSession()->set("teacherKey", $model->teacherKey);
                     
                     $post = Yii::$app->request->post();
+                    
                     $new_tasks = array();
                     if(isset($post["new_tasks"])){
-                        $new_tasks = json_decode(Yii::$app->request->post("new_tasks"));
+                        $new_tasks = json_decode($post["new_tasks"]);
                     }
 
                     /** create the requested numTasks number of tasks */
@@ -366,16 +420,17 @@ class SiteController extends \app\components\Controller
                     }
                     
                     $this_view = 'think';
-                    if($model->type == "poll"){
-                        $this_view = 'poll_participants';
+                    if($model->type == 'poll'){
+                        $this_view = 'teachers';
                     }
                     return $this->render($this_view, [
                         'model' => $this->findLesson($model->startKey),
+                        'teacher' => new Teacher(),
                     ]);
                 } else {
                     $this_errors = $model->getErrors();
                     Yii::$app->getSession()->setFlash('error_save', print_r($this_errors, true));
-                    Yii::$app->response->redirect(['site/lesson']);
+                    Yii::$app->response->redirect(['site/'.$this_view_error]);
                 }
             }
         }
@@ -389,19 +444,5 @@ class SiteController extends \app\components\Controller
         }
     }
 
-
-    /**
-     * Login action.
-     *
-     * @return string
-     */
-    public function actionTeachers()
-    {
-
-        $model = new Teacher();
-        return $this->render('teachers', [
-            'model' => $model,
-        ]);
-    }
     
 }

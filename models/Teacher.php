@@ -32,9 +32,9 @@ class Teacher extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['startKey', 'name', 'email', 'studentkey', 'resultkey'], 'required'],
+            [['startKey', 'name', 'studentkey', 'resultkey'], 'required'],
             [['name'], 'string'],
-            [['resultkey'], 'integer'],
+            [['resultkey'], 'string', 'max' => 12],
             [['startKey'], 'string', 'max' => 12],
             [['email'], 'string', 'max' => 150],
             [['studentkey'], 'string', 'max' => 50],
@@ -49,12 +49,12 @@ class Teacher extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'startKey' => 'Start Key',
-            'id' => 'ID',
-            'name' => 'Name',
-            'email' => 'Email',
-            'studentkey' => 'Studentkey',
-            'resultkey' => 'Resultkey',
+            'startKey' => '',
+            'id' => '',
+            'name' => '',
+            'email' => '',
+            'studentkey' => '',
+            'resultkey' => '',
         ];
     }
 

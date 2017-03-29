@@ -6,19 +6,13 @@ use yii\widgets\ActiveForm;
 use app\assets\AppAsset;
 AppAsset::register($this);
 
-use app\assets\LessonAsset;
-LessonAsset::register($this);
+use app\assets\TeachersAsset;
+TeachersAsset::register($this);
 
 
-$this->title = Yii::$app->_L->get("lesson_title");
+$this->title = Yii::$app->_L->get("teacher_title");
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Lesson */
-/* @var $form ActiveForm */
 ?>
-
-
-<h3 style="margin-top: 0em; margin-bottom: 20px;"><?= Yii::$app->_L->get('lesson_welcome') ?></h3>
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
@@ -30,137 +24,122 @@ $this->title = Yii::$app->_L->get("lesson_title");
         }
     ?>
 
-<div class="Lesson">
+<h3 style="margin-top: 0em; margin-bottom: 20px;">
+    <?php 
+    if($model->title != ""){
+        echo $model->title;
+    }else{
+        echo Yii::$app->_L->get('student_join_poll_title');
+    }
+    ?>
+</h3>
 
-<?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>
+<div class="" style="margin-top: 0em; margin-bottom: 20px;">
+    
+    <a class='btn btn-default' href="download_questions">
+    <i class="fa fa-save" aria-hidden="true"></i>
+    &nbsp;&nbsp;
+    <?= $model->numTasks ?>
+    <?= Yii::$app->_L->get('teacher_questions') ?>
+    </a> 
+</div>
 
-
-<ul class="nav nav-tabs" style="margin-bottom: 20px;">
-  <li><a href="lesson"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
-  <li class="active"><a href="#"><?= Yii::$app->_L->get('lesson_nav_tab_exact') ?></a></li>
-  <li><a href="lesson_upload"><?= Yii::$app->_L->get('lesson_nav_tab_upload') ?></a></li>
-</ul>
+<div class="Teachers">
 
     <?php $form = ActiveForm::begin([
                 'enableClientValidation'=>true,
                 'validateOnChange'=>true,
                 'validateOnBlur'=>false,
-                'action' => ['think'],
+                'action' => ['poll_start'],
                 'method' => 'post',
-                'id' => 'lesson_form',
+                'id' => 'teachers_form',
     ]); ?>
 
-          <?= $form->field($model, 'type')->hiddenInput(['value' => 'lesson'])->label(false); ?>
-
+          <?php
+            echo $form->field($teacher, 'name'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ]
+            )->textInput([
+            'placeholder'=>Yii::$app->_L->get('teacher_my_name_placeholder'),
+            'value' => $teacher->name,
+            'autofocus' => true,
+            ])
+            ->label(Yii::$app->_L->get('teacher_my_name_label'))
+            ; ?>
 
           <?php
-            $autofocus = false;
-            if($model->thinkingMinutes == ""){$autofocus = true;}
             echo $form->field($model, 'thinkingMinutes'
             , [
-            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
-            )->textInput([
-            'placeholder'=>Yii::$app->_L->get('thinkingMinutes_placeholder')
-            , 'value' => $model->thinkingMinutes
-            , 'autofocus' => $autofocus
-            ])
-            ->label(Yii::$app->_L->get('thinkingMinutes_label'))
-            ; ?>
-
-          <?php
-            $this_autofocus = false;
-            if($model->numTeamsize == "" & !$autofocus){$this_autofocus = true; $autofocus = true;}
-            echo $form->field($model, 'numTeamsize'
-            , [
-            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
-            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-            ]
-            )->textInput([
-            'placeholder'=>Yii::$app->_L->get('numTeamsize_placeholder')
-            , 'value' => $model->numTeamsize
-            , 'autofocus' => $this_autofocus
-            ])
-            ->label(Yii::$app->_L->get('numTeamsize_label'))
-            ; ?>
-
-          <?php
-            $this_autofocus = false;
-            if($model->numStudents == "" & !$autofocus){$this_autofocus = true; $autofocus = true;}
-            echo $form->field($model, 'numStudents'
-            , [
-            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
-            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-            ]
-            )->textInput([
-            'placeholder'=>Yii::$app->_L->get('numStudents_placeholder')
-            , 'value' => $model->numStudents
-            , 'autofocus' => $this_autofocus
-            ])
-            ->label(Yii::$app->_L->get('numStudents_label'))
-            ; ?>
+            )->dropdownList([
+                "60" => Yii::$app->_L->get('teacher_thinkingMinutes_hour'),
+                "1440" => Yii::$app->_L->get('teacher_thinkingMinutes_day'),
+                "10080" => Yii::$app->_L->get('teacher_thinkingMinutes_1week'),
+                "20160" => Yii::$app->_L->get('teacher_thinkingMinutes_2week'),
+                ])
+            ->label(Yii::$app->_L->get('teacher_thinkingMinutes_label'))
+            ;
+            ?>
 
 
-
-
-    <h4 style="margin-top: 1.5em; margin-bottom: 1em; "><?= Yii::$app->_L->get('lesson_tasks_title'); ?></h4>
-
-
-    <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
-    <?= $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
-      
-    
-    <div id="tasks">
+        <div id="div_teacher_submit" class="well" style="margin-top: 2em;">
         
-        <div class='input-group task'>
-        <label class="input-group-addon input-group-addon-tasks">
+            <?php echo  Html::submitButton(Yii::$app->_L->get('teacher_btn_just_me')
+                , [
+                'class' => 'btn btn-primary',
+                'id'=>'teacher_btn_just_me',
+                'onclick' => '
+                $("#team_info").hide();
+                $("#team_names").hide();
+                $(this).closest("form").attr("action", "about");
+                '
+                ]) ?>
 
-            <div class="dropdown task_type" data-task-type="textarea">
-                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"><?= Yii::$app->_L->get('lesson_tasks_type_text'); ?>
-                <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                    <li><a data-task-type="text" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_text').'&nbsp;&nbsp;'; ?></a></li>
-                    <li><a data-task-type="how-often" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how-often').'&nbsp;&nbsp;'; ?></a></li>
-                    <li><a data-task-type="how-true" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how-true').'&nbsp;&nbsp;'; ?></a></li>
-                </ul>
-            </div>
-        
-        
-        </label>
-        <textarea rows="1" data-text-length="0" class="form-control task_input" oninput="taskOnInput(this);" style="border-radius: 4px;" placeholder="<?php echo Yii::$app->_L->get('lesson_tasks_first_placeholder_explain_strg_v');?>"></textarea>
-        <label class="input-group-addon task_action_buttons_label" style="padding:0em;background:transparent;border-color:transparent;">
-        
-        <button class="btn btn-default btn_delete_task" type="button" onclick="task_remove(this);"><i class="fa fa-chain-broken" aria-hidden="true"></i></button>
-        
-<!--        
-        <button class="btn btn-default btn_sort_task btn_sort_task_inactive" type="button" onclick="task_start_sort(this);"><i class="fa fa-sort" aria-hidden="true"></i></button>
--->    
-        </label>    
-        </div>
-    </div>    
 
-        <div class="form-group" style="margin-top: 2em; display: none;">
-            <?php echo  Html::submitButton(Yii::$app->_L->get('lesson_btn_submit')
+            &nbsp;&nbsp;
+            <?= Yii::$app->_L->get('teacher_btn_or') ?>
+            &nbsp;&nbsp;
+
+            <?php echo  Html::button(
+                '<i class="fa fa-user-plus" aria-hidden="true"></i>'
+                .'&nbsp;&nbsp;&nbsp;&nbsp;'
+                .Yii::$app->_L->get('teacher_btn_team')
             , [
                 'class' => 'btn btn-primary',
-                'id'=>'lesson_btn_submit',
-                'onsubmit' => 'lesson_exact_onsubmit();'
+                'id'=>'teachers_add_team',
+                'onclick' => '$("#team_info").show();$("#team_names").show();'
                 ]) ?>
+
+            <div id="team_info" style="display: none;">
+                <h3 style=" margin-top:1em; margin-bottom:1em;">
+                    <?= Yii::$app->_L->get('teacher_info_team_title') ?>
+                </h3>
+        
+                <p><?= Yii::$app->_L->get('teacher_info_team_1') ?></p>
+                <p><?= Yii::$app->_L->get('teacher_info_team_2') ?></p>
+                <p><?= Yii::$app->_L->get('teacher_info_team_3') ?></p>
+            </div>
+
+
         </div>
+
+
+    <div id="team_names" style="display: none;">
+        <div class='input-group teacher' style="">
+        <label class="input-group-addon">
+            <?= Yii::$app->_L->get('teacher_team_member_label') ?>
+        </label>
+        <input type="text" class="form-control teacher-name" oninput="teacherOnInput(this);" placeholder="<?php echo Yii::$app->_L->get('teacher_team_member_name_placeholder');?>">
+        </div>
+    </div>    
        
     <?php ActiveForm::end(); ?>
 
 </div>
 <script>
-var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;
-var uploadedTasks = <?= json_encode($uploadedTasks); ?>;
+var _L_lesson = <?= json_encode(Yii::$app->_L->get('teacher')); ?>;
 </script>
-
-<?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>
-
-
-<!-- Lesson -->

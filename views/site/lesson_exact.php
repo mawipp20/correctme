@@ -12,9 +12,6 @@ LessonAsset::register($this);
 
 $this->title = Yii::$app->_L->get("lesson_title");
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Lesson */
-/* @var $form ActiveForm */
 ?>
 
 
