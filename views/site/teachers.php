@@ -92,11 +92,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
                 , [
                 'class' => 'btn btn-primary',
                 'id'=>'teacher_btn_just_me',
-                'onclick' => '
-                $("#team_info").hide();
-                $("#team_names").hide();
-                $(this).closest("form").attr("action", "about");
-                '
+                'onclick' => 'teachers_single_submit(this);'
                 ]) ?>
 
 
@@ -127,22 +123,37 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
         </div>
 
+        <div id="team_div" style="display: none;">
 
-    <div id="team_names" style="display: none;">
-        <div class='input-group teacher' style="">
-        <label class="input-group-addon">
-            <?= Yii::$app->_L->get('teacher_team_member_label') ?>
-        </label>
-        <input type="text"
-             class="form-control teacher-name"
-             data-text-length="0"
-             oninput="teacherNameOnInput(this);"
-             placeholder="<?php echo Yii::$app->_L->get('teacher_team_member_name_placeholder');?>"
-             >
-        <textarea rows="1" style="display: none;" class="form-control teacher-name" data-text-length="0"></textarea>
+            <div id="team_names">
+                <div class='input-group teacher' style="">
+                <label class="input-group-addon">
+                    <?= Yii::$app->_L->get('teacher_team_member_label') ?>
+                </label>
+                <input type="text"
+                     class="form-control teacher-name"
+                     data-text-length="0"
+                     oninput="teacherNameOnInput(this);"
+                     placeholder="<?php echo Yii::$app->_L->get('teacher_team_member_name_placeholder');?>"
+                     >
+                <textarea id="teacher-name-textarea" rows="1" style="display: none;" class="form-control teacher-name" data-text-length="0"></textarea>
+                </div>
+            </div>    
+            <div id="div_teachers_submit" class="" style="margin-top: 1em;">
+                <?php 
+                    $this_btn_label = '<span id="countTeachers"></span> '.Yii::$app->_L->get('teachers_team_submit');
+                    echo  Html::button($this_btn_label
+                    , [
+                    'class' => 'btn btn-primary',
+                    'id'=>'teachers_team_submit_id',
+                    'onclick' => 'teachers_team_submit(this);'
+                    ]) ?>
+            </div>
         </div>
-    </div>    
-       
+
+
+
+   
     <?php ActiveForm::end(); ?>
 
 </div>

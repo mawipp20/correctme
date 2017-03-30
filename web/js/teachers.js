@@ -1,8 +1,20 @@
 function teachers_add_team(){
     $('#team_info').show();
-    $('#team_names').show();
+    $('#team_div').show();
     $('#team_names').find("input").focus();
 }
+function teachers_single_submit(e){
+    $("#team_info").hide();
+    $("#team_names").hide();
+    $("form").attr("action", "about");
+    $("form").submit();
+}
+function teachers_team_submit(e){
+    $("form").attr("action", "../student/student_join_poll");
+    $("form").submit();
+}
+
+                
 
 function teacherNameOnInput(elem){
 
@@ -25,9 +37,9 @@ function teacherNameOnInput(elem){
             }
         });
         elem.hide();
-getTeachers();
-        return;
     }
+    $('#countTeachers').html(getTeachers(true));
+        
     elem.attr("data-text-length", length_now);
 
     /** show or hide the submit button */
@@ -47,6 +59,10 @@ getTeachers();
 }
 
 function addTeacher(text){
+    
+    if($('#teacher-name-textarea').val()!=""){
+        return;
+    }
 
     var last_elem = $("#team_names").children('.teacher').last();
     var new_elem = last_elem.clone(true);
@@ -62,25 +78,36 @@ function addTeacher(text){
     //$('#div_lesson_submit').show();
 }
 
-function getTeachers(){
-    var teachers = [];
-    $('#team_names').children('.teacher').each(function(){
-        if($(this).val()!=""){
-            var arr = $(this).val().split(",");
-            if(arr.length == 1){
-               arr = $(this).val().split(";"); 
-            }
-            if(arr.length == 1){
-               arr = $(this).val().split(";"); 
-            }
-            if(arr.length == 1){
-                teachers[teachers.length] = $(this).val().trim();
-            }else{
-                for(var i = 0; i < arr.length; i++){
-                    teachers[teachers.length] = arr[i].trim();
-                }
+//<>
+
+function getTeachers(getCount){
+    if(typeof getCount == "undefined"){
+        getCount = false;
+    }
+    var teachers = {};
+    var textarea = $('#teacher-name-textarea').val();
+    if(textarea != ""){
+        var arr = textarea.split(",");
+        if(arr.length == 1){
+           arr = textarea.split(";"); 
+        }
+        for(var i = 0; i < arr.length; i++){
+            if(arr[i].trim() != ""){
+                teachers[arr[i].trim()] = "";
             }
         }
-    });
-    alert(teachers.join("|"));
+        $('#teacher-name-textarea').val(Object.keys(teachers).join(", "));
+    }else{
+        $('#team_names').children('.teacher').each(function(){
+            if($(this).find("input").val()!=""){
+            //console.log("test");
+                teachers[$(this).find("input").val().trim()] = "";
+            }
+        });
+        
+    }
+    if(getCount){
+        return Object.keys(teachers).length;
+    }    
+    return Object.keys(teachers);
 }
