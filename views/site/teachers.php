@@ -92,7 +92,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
                 , [
                 'class' => 'btn btn-primary',
                 'id'=>'teacher_btn_just_me',
-                'onclick' => 'teachers_single_submit(this);'
+                'onclick' => 'teachers_submit();'
                 ]) ?>
 
 
@@ -146,7 +146,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
                     , [
                     'class' => 'btn btn-primary',
                     'id'=>'teachers_team_submit_id',
-                    'onclick' => 'teachers_team_submit(this);'
+                    'onclick' => 'teachers_submit();'
                     ]) ?>
             </div>
         </div>

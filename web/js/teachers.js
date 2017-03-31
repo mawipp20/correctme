@@ -3,14 +3,9 @@ function teachers_add_team(){
     $('#team_div').show();
     $('#team_names').find("input").focus();
 }
-function teachers_single_submit(e){
-    $("#team_info").hide();
-    $("#team_names").hide();
-    $("form").attr("action", "about");
-    $("form").submit();
-}
-function teachers_team_submit(e){
-    $("form").attr("action", "../student/student_join_poll");
+function teachers_submit(){
+    
+    $("form").attr("action", "teacher_poll_codes");
     $("form").submit();
 }
 

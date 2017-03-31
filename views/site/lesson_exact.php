@@ -27,6 +27,11 @@ $this->title = Yii::$app->_L->get("lesson_title");
         }
     ?>
 
+<div id='activation_code'>
+
+</div>
+
+
 <div class="Lesson">
 
 <?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>
