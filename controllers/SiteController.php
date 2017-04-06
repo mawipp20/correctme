@@ -92,7 +92,6 @@ class SiteController extends \app\components\Controller
         ]);
     }
 
-
     /**
      * Displays teacher exact lesson create page.
      *
@@ -100,7 +99,7 @@ class SiteController extends \app\components\Controller
      */
     public function actionLesson_exact()
     {
-        $this->layout = 'teacher';
+
         $model = new Lesson();
         $model_upload = new LessonUpload();
         $uploadedTasks = array();
@@ -108,8 +107,9 @@ class SiteController extends \app\components\Controller
 
 
         /** set lesson_type to 'lesson' or 'poll' */
-        
-        $lesson_type = 'lesson';
+        if(!isset($lesson_type)){
+            $lesson_type = 'lesson';
+        }
         $request_params = array();
         if (Yii::$app->request->isGet) {
             $request_params = Yii::$app->request->get();
@@ -125,8 +125,7 @@ class SiteController extends \app\components\Controller
             $lesson_type = $request_params["lesson_type"];
         }
         Yii::$app->getSession()->set("lesson_type", $lesson_type);
-
-
+        
         /** process uploaded file with tasks/questions */
 
         if (Yii::$app->request->isPost) {
@@ -211,8 +210,10 @@ class SiteController extends \app\components\Controller
         
         return $this->render($lesson_type.'_exact', [
             'model' => $model,
+            'teacher' => new Teacher(),
             'uploadedTasks' => $uploadedTasks,
             'fileTempName' => $fileTempName,
+            'show_teacher_join' => isset($request_params["show_teacher_join"])
         ]);
     }
 
@@ -246,6 +247,97 @@ class SiteController extends \app\components\Controller
         ]);
     }
 
+    /**
+     * Displays teacher poll upload page.
+     *
+     * @return string
+     */
+    public function actionTeacher_poll_codes()
+    {
+
+        $teachers_num_limit = 500;
+
+        $request_params = Yii::$app->request->post();
+        
+        if(!isset($request_params["teachers_collected"])){return $this->render('error', ["msg" => "lesson_collected_teachers"]);}
+        if(!isset($request_params["Teacher"]["name"])){return $this->render('error', ["msg" => "teacher_name"]);}
+        if($request_params["Teacher"]["name"]==""){return $this->render('error', ["msg" => "teacher_name empty"]);}
+        if(!isset($request_params["Lesson"]["thinkingMinutes"])){return $this->render('error', ["msg" => "lesson_thinkingminutes"]);}
+        
+        $teachers_collected = array();
+        $teachers_collected_pre = explode("#", $request_params["teachers_collected"]);
+        foreach($teachers_collected_pre as $this_teacher){
+            if($this_teacher == ""){continue;}else{$teachers_collected[$this_teacher] = "";}
+        }
+        if(count($teachers_collected) > $teachers_num_limit){
+            return $this->render('error', ["msg" => "number of teachers limited to ".$teachers_num_limit]);
+        }
+
+
+        
+/**
+ * This is the model class for table "teacher".
+ *
+ * @property string $startKey
+ * @property integer $id
+ * @property string $name
+ * @property string $email
+ * @property string $status
+ * @property string $activationkey
+ * @property string $studentkey
+ * @property integer $resultkey
+ * @property integer $state
+ *
+ * @property Lesson $startKey0
+ */
+ 
+    \Yii::$app->db->createCommand()->delete('teacher', 'startkey = "'.Yii::$app->getSession()->get("startKey").'"')->execute();
+
+    $lesson = Lesson::find()->where(
+        ['startKey'=>Yii::$app->getSession()->get("startKey")]
+        )->one();
+        
+    if(is_null($lesson)){return $this->render('error', ["msg" => "lesson not found"]);}
+    
+    $lesson->thinkingMinutes = $request_params["Lesson"]["thinkingMinutes"];
+    $lesson->save();
+
+    $initiator = new Teacher();
+    $initiator->startKey = $lesson->startKey;
+    $initiator->name = $request_params["Teacher"]["name"];
+    $initiator->status = "initiator";
+    $initiator->state = "prepared";
+    $initiator->activationkey = $initiator->generateUniqueRandomString("activationkey", 8);
+    $initiator->studentkey = $initiator->generateUniqueRandomString("studentkey", 8);
+    $initiator->resultkey = $initiator->generateUniqueRandomString("resultkey", 8);
+    $initiator->save();
+        
+    $teachers = array($initiator->toArray());
+    
+    foreach($teachers_collected as $this_teacher => $val){
+        $teacher = new Teacher();
+        $teacher->startKey = $lesson->startKey;
+        $teacher->name = $this_teacher;
+        $teacher->status = "teacher";
+        $teacher->state = "prepared";
+        $teacher->activationkey = $teacher->generateUniqueRandomString("activationkey", 8);
+        $teacher->studentkey = $teacher->generateUniqueRandomString("studentkey", 8);
+        $teacher->resultkey = $teacher->generateUniqueRandomString("resultkey", 8);
+        $teacher->save();
+        $teachers[] = $teacher->toArray();
+    }
+    
+
+        $this->layout = 'teacher';
+        
+
+        return $this->render('teacher_poll_codes', [
+            //'initiator' => $initiator,
+            'teachers' => $teachers,
+        ]);
+    }
+
+//
     /**
      * Displays teacher rejoin running session with starKey and teacherKey
      *

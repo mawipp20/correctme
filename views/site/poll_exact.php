@@ -14,8 +14,66 @@ $this->title = Yii::$app->_L->get("poll_title");
 
 ?>
 
+<div id='switch_activate_create' class='well well-lg  well-poll-or-lesson'
+    style="margin-top: 1em; margin-bottom: 3em;<?php if(!$show_teacher_join){echo 'display:none;';} ?>"
+    onclick='   
+        $("#switch_activate_create").hide();
+        $("#activate_poll").hide();
+        $("#lesson_div").show();
+        $("#lesson-title").focus();
+        '
+>
+    <?= Yii::$app->_L->get('lesson_switch_activate_create') ?>
+</div>
 
-<h3 style="margin-top: 0em; margin-bottom: 20px; line-height:150%;"><?= Yii::$app->_L->get('poll_welcome') ?></h3>
+
+
+<div id='activate_poll' style="<?php if(!$show_teacher_join){echo 'display:none;';} ?>">
+
+    <?php $form1 = ActiveForm::begin([
+                'action' => ['teacher_join_poll'],
+                'method' => "post",    
+                'validateOnChange'=>true,
+                'validateOnBlur'=>false,
+    ]);
+    ?>
+
+
+    <h3 style="margin-bottom: 20px;"><?= Yii::$app->_L->get('lesson_teacher_join_poll_title') ?></h3>
+
+            <?php
+            echo $form1->field($teacher, 'activationkey'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ]
+            )->textInput([
+            'value' => $teacher->name,
+            'autofocus' => true,
+            ])
+            ->label('<b>'.Yii::$app->_L->get('lesson_teacher_join_activationkey_label').'</b>')
+            ;
+            ?>
+
+    <blockquote>
+    <p><?= Yii::$app->_L->get('lesson_teacher_join_activationkey_explanation') ?></p>
+    </blockquote>
+
+
+
+        <div class="form-group" style="margin-top: 1em;">
+            <?= Html::submitButton(Yii::$app->_L->get('lesson_teacher_join_poll_btn_submit'), ['class' => 'btn btn-primary']) ?>
+        </div>
+    <?php ActiveForm::end(); ?>
+
+
+</div>
+
+
+<div class="Lesson" id="lesson_div" style="<?php if($show_teacher_join){echo 'display:none;';} ?>">
+
+
+    <h3 style="margin-top: 0em; margin-bottom: 20px; line-height:150%;"><?= Yii::$app->_L->get('poll_welcome') ?></h3>
 
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
@@ -27,12 +85,11 @@ $this->title = Yii::$app->_L->get("poll_title");
         }
     ?>
 
-<div class="Lesson">
 
-<ul class="nav nav-tabs" style="margin-bottom: 20px;">
-  <li class="active"><a href="#"><?= Yii::$app->_L->get('poll_nav_tab_exact') ?></a></li>
-  <li><a href="poll_upload"><?= Yii::$app->_L->get('poll_nav_tab_upload') ?></a></li>
-</ul>
+    <ul class="nav nav-tabs" style="margin-bottom: 20px;">
+      <li class="active"><a href="#"><?= Yii::$app->_L->get('poll_nav_tab_exact') ?></a></li>
+      <li><a href="poll_upload"><?= Yii::$app->_L->get('poll_nav_tab_upload') ?></a></li>
+    </ul>
 
     <?php $form = ActiveForm::begin([
                 'enableClientValidation'=>true,
@@ -45,7 +102,7 @@ $this->title = Yii::$app->_L->get("poll_title");
 
     <?= $form->field($model, 'type')->hiddenInput(['value' => 'poll'])->label(false); ?>
     
-  <?php
+    <?php
     echo $form->field($model, 'title'
     , [
     'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson'
@@ -109,6 +166,7 @@ $this->title = Yii::$app->_L->get("poll_title");
     <?php ActiveForm::end(); ?>
 
 </div>
+
 <script>
 var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;
 var uploadedTasks = <?= json_encode($uploadedTasks); ?>;

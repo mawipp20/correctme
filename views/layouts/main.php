@@ -26,7 +26,7 @@ use yii\widgets\Breadcrumbs;
     <?php
     
     NavBar::begin([
-        'brandLabel' => 'correctme.de',
+        'brandLabel' => Yii::$app->_L->get('top_nav_site_home'),
         //'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -35,7 +35,7 @@ use yii\widgets\Breadcrumbs;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => Yii::$app->_L->get('top_nav_go_teacher'), 'url' => ['/site/teacher_poll_or_lesson']],
+            //['label' => Yii::$app->_L->get('top_nav_go_teacher'), 'url' => ['/site/teacher_poll_or_lesson']],
             ['label' => Yii::$app->_L->get('top_nav_teacher_about'), 'url' => ['/site/about']],
         ],
     ]);

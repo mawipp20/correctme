@@ -28,6 +28,7 @@ LessonAsset::register($this);
 
     <form id="start_lesson_form" name="start_lesson_form" method="get" action="">
     <input type="hidden" id="lesson_type" name="lesson_type" value="">
+    <input type="hidden" id="show_teacher_join" name="show_teacher_join" value="">
 
     <h3 style="margin-top: 0.0em; margin-bottom: 1em;">
     <?= Yii::$app->_L->get('teacher_headline_poll_or_lesson') ?>

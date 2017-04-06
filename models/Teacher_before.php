@@ -19,7 +19,7 @@ use Yii;
  *
  * @property Lesson $startKey0
  */
-class Teacher extends \app\components\ActiveRecord
+class Teacher extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -36,14 +36,13 @@ class Teacher extends \app\components\ActiveRecord
     {
         return [
             [['startKey', 'name', 'studentkey', 'resultkey', 'activationkey', 'status', 'state'], 'required'],
-            [['name'], 'string', 'max' => 100],
+            [['name'], 'string'],
+            [['email'], 'string', 'max' => 150],
+            [['status'], 'in', ['initiator', 'teacher']],
             [['resultkey'], 'string', 'max' => 12],
             [['startKey'], 'string', 'max' => 12],
-            [['email'], 'string', 'max' => 150],
             [['activationkey'], 'string', 'max' => 12],
-            ['state', 'in', "range" => ['prepared', 'active', 'finished']],
-            ['status', 'in', "range" => ['initiator', 'teacher']],
-            [['studentkey'], 'string', 'max' => 50],
+            [['state'], 'in', ['prepared', 'active', 'finished']],
             [['startKey', 'email'], 'unique', 'targetAttribute' => ['startKey', 'email'], 'message' => 'The combination of Start Key and Email has already been taken.'],
             [['startKey'], 'exist', 'skipOnError' => true, 'targetClass' => Lesson::className(), 'targetAttribute' => ['startKey' => 'startKey']],
         ];

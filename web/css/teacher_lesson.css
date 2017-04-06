@@ -1,3 +1,16 @@
+.well-poll-or-lesson{
+    color: darkblue;
+    margin-bottom: 0.6em;
+    font-size: large;
+    padding: 0.6em;
+}
+.well-poll-or-lesson:hover{
+    background-color:  rgb(51,122,183);
+    color: white;
+    cursor: pointer;
+    font-size: large;
+    padding: 0.6em;
+}
 .input-group-addon-lesson{
     min-width:158px;
     text-align: right;

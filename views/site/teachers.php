@@ -35,12 +35,15 @@ $this->title = Yii::$app->_L->get("teacher_title");
 </h3>
 
 <div class="" style="margin-top: 0em; margin-bottom: 20px;">
+
+    <?= $model->numTasks ?>
+    <?= Yii::$app->_L->get('teacher_questions') ?>
+    &nbsp;&nbsp;
     
     <a class='btn btn-default' href="download_questions">
     <i class="fa fa-save" aria-hidden="true"></i>
-    &nbsp;&nbsp;
-    <?= $model->numTasks ?>
-    <?= Yii::$app->_L->get('teacher_questions') ?>
+    &nbsp;
+    <?= Yii::$app->_L->get('gen_save') ?>
     </a> 
 </div>
 
@@ -54,6 +57,10 @@ $this->title = Yii::$app->_L->get("teacher_title");
                 'method' => 'post',
                 'id' => 'teachers_form',
     ]); ?>
+
+
+    <input type='hidden' id='teachers_collected' name='teachers_collected' value=''>       
+    
 
           <?php
             echo $form->field($teacher, 'name'

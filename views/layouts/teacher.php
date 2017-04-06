@@ -26,7 +26,7 @@ use yii\widgets\Breadcrumbs;
     <?php
     
     NavBar::begin([
-        'brandLabel' => Yii::$app->_L->get('top_nav_teacher_brand_label'),
+        'brandLabel' => Yii::$app->_L->get('top_nav_site_home'),
         //'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',

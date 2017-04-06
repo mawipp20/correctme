@@ -37,12 +37,12 @@ $this->title = Yii::$app->_L->get("student_join_lesson_title");
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
             )->textInput([
-            'placeholder'=>Yii::$app->_L->get('student_join_startKey_placeholder')
+            'placeholder'=>Yii::$app->_L->get('student_join_lesson_startKey_placeholder')
             , 'value' => $model->startKey
             , 'autofocus' => 'true'
             ,
             ])
-            ->label(Yii::$app->_L->get('student_join_startKey_label'))
+            ->label(Yii::$app->_L->get('student_join_lesson_startKey_label'))
             ; ?>
 
           <?= $form->field($model, 'name'

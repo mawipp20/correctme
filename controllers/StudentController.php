@@ -62,7 +62,7 @@ class StudentController extends \app\components\Controller
     public function actionIndex()
     {
         $model = new StudentJoinForm();
-        return $this->render('student_poll_or_lesson', [
+        return $this->render('poll_or_lesson', [
             'model' => $model,
         ]);
     }

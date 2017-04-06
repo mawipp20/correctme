@@ -4,7 +4,7 @@ function teachers_add_team(){
     $('#team_names').find("input").focus();
 }
 function teachers_submit(){
-    
+    $('#teachers_collected').val(getTeachers().join("#"))
     $("form").attr("action", "teacher_poll_codes");
     $("form").submit();
 }
