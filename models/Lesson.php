@@ -120,7 +120,9 @@ class Lesson extends \app\components\ActiveRecord
             if($this->type == "poll"){
                 $this->numStudents = 2;
                 $this->numTeamsize = 2;
-                $this->thinkingMinutes = 60;
+                if($this->thinkingMinutes == 0){
+                    $this->thinkingMinutes = 60;
+                }
             }
             
             

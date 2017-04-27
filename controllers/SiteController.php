@@ -301,9 +301,14 @@ class SiteController extends \app\components\Controller
         
     if(is_null($lesson)){return $this->render('error', ["msg" => "lesson not found"]);}
     
+    
     $lesson->thinkingMinutes = $request_params["Lesson"]["thinkingMinutes"];
     $lesson->poll_show_teacher_names = $poll_show_teacher_names;
-    $lesson->save();
+    $lesson->title = "/xxx";
+    if(!$lesson->save()){
+        echo "error 'saving lesson in actionTeacher_poll_codes.'";
+        if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($lesson->getErrors());}
+    }
 
     $initiator = new Teacher();
     $initiator->startKey = $lesson->startKey;
@@ -313,7 +318,10 @@ class SiteController extends \app\components\Controller
     $initiator->activationkey = $initiator->generateUniqueRandomString("activationkey", 8);
     $initiator->studentkey = $initiator->generateUniqueRandomString("studentkey", 8);
     $initiator->resultkey = $initiator->generateUniqueRandomString("resultkey", 8);
-    $initiator->save();
+    if(!$initiator->save()){
+        echo "error 'saving initiator in actionTeacher_poll_codes.'";
+        if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($initiator->getErrors());}
+    }
         
     $teachers = array($initiator->name=>$initiator->toArray());
     
@@ -326,10 +334,16 @@ class SiteController extends \app\components\Controller
         $teacher->activationkey = $teacher->generateUniqueRandomString("activationkey", 8);
         $teacher->studentkey = $teacher->generateUniqueRandomString("studentkey", 8);
         $teacher->resultkey = $teacher->generateUniqueRandomString("resultkey", 8);
-        $teacher->save();
+        if(!$teacher->save()){
+            echo "error 'saving initiator in actionTeacher_poll_codes.'";
+            if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($teacher->getErrors());}
+        }
         $teachers[$this_teacher] = $teacher->toArray();
     }
     ksort($teachers);
+    
+    var_dump($teachers);
+    die();
 
         $this->layout = 'teacher';
         

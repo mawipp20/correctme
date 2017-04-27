@@ -30,7 +30,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
         $time = new DateTime();
         $time->add(new DateInterval('PT' . $lesson->thinkingMinutes . 'M'));
         echo '&nbsp;&nbsp;&nbsp;<i class="fa fa-hourglass-end" aria-hidden="true"></i>';
-        Yii::$app->formatter->locale = 'de-DE';
+        //Yii::$app->formatter->locale = 'de-DE';
         echo '&nbsp;'.Yii::$app->formatter->asDate($time);       
     ?>
 </div>
