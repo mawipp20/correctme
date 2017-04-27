@@ -36,14 +36,13 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 <div class="" style="margin-top: 0em; margin-bottom: 20px;">
 
-    <?= $model->numTasks ?>
-    <?= Yii::$app->_L->get('teacher_questions') ?>
-    &nbsp;&nbsp;
     
     <a class='btn btn-default' href="download_questions">
-    <i class="fa fa-save" aria-hidden="true"></i>
-    &nbsp;
-    <?= Yii::$app->_L->get('gen_save') ?>
+        <i class="fa fa-save" aria-hidden="true"></i>
+        &nbsp;&nbsp;
+        <?= $model->numTasks ?>
+        <?= Yii::$app->_L->get('poll_save_questions') ?>
+        <?= Yii::$app->_L->get('gen_save') ?>
     </a> 
 </div>
 
@@ -60,6 +59,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 
     <input type='hidden' id='teachers_collected' name='teachers_collected' value=''>       
+    <input type='hidden' id='poll_show_teacher_names' name='poll_show_teacher_names' value=''>       
     
 
           <?php
@@ -95,11 +95,11 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
         <div id="div_teacher_submit" class="well" style="margin-top: 2em;">
         
-            <?php echo  Html::submitButton(Yii::$app->_L->get('teacher_btn_just_me')
+            <?php echo  Html::button(Yii::$app->_L->get('teacher_btn_just_me')
                 , [
                 'class' => 'btn btn-primary',
                 'id'=>'teacher_btn_just_me',
-                'onclick' => 'teachers_submit();'
+                'onclick' => 'teachers_single_submit();'
                 ]) ?>
 
 
@@ -122,9 +122,18 @@ $this->title = Yii::$app->_L->get("teacher_title");
                     <?= Yii::$app->_L->get('teacher_info_team_title') ?>
                 </h3>
         
-                <p><?= Yii::$app->_L->get('teacher_info_team_1') ?></p>
-                <p><?= Yii::$app->_L->get('teacher_info_team_2') ?></p>
-                <p><?= Yii::$app->_L->get('teacher_info_team_3') ?></p>
+                <p>
+                <?= Yii::$app->_L->get('teacher_info_team_1') ?><br/>
+                <?= Yii::$app->_L->get('teacher_info_team_2') ?><br/>
+                <?= Yii::$app->_L->get('teacher_info_team_3') ?>
+                </p>
+                
+                <div class="checkbox" style="color: darkblue;">
+                  <label>
+                  <input type="checkbox" id="checkbox_poll_show_teacher_names">
+                  <?= Yii::$app->_L->get('teacher_info_poll_show_teacher_names') ?>
+                  </label>
+                </div>
             </div>
 
 

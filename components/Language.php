@@ -32,9 +32,13 @@ class Language extends Component {
     public function init()
     {
         parent::init();
+        
+        $supportedLanguages = ['en', 'de'];
+        $preferredLanguage = Yii::$app->request->getPreferredLanguage($supportedLanguages);
+        Yii::$app->language = $preferredLanguage;
 
         if (!isset($_SESSION["_LANGUAGE"])) {
-            $this->country = "de";
+            $this->country = $preferredLanguage;
             $_SESSION["_LANGUAGE"] = $this->country;
         }else{
             $this->country = $_SESSION["_LANGUAGE"];

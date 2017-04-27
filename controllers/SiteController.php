@@ -58,6 +58,17 @@ class SiteController extends \app\components\Controller
         ];
     }
 
+    public $umlaute = array(
+        "/Ö/" => "Oe",
+        "/ö/" => "oe",
+        "/Ü/" => "Ue",
+        "/ü/" => "ue",
+        "/Ä/" => "Ae",
+        "/ä/" => "ae",
+        "/ß/" => "ss",
+        "/ /" => "-",
+    );
+
 
 
     /**
@@ -264,32 +275,23 @@ class SiteController extends \app\components\Controller
         if($request_params["Teacher"]["name"]==""){return $this->render('error', ["msg" => "teacher_name empty"]);}
         if(!isset($request_params["Lesson"]["thinkingMinutes"])){return $this->render('error', ["msg" => "lesson_thinkingminutes"]);}
         
+        $poll_show_teacher_names = false;
+        if(isset($request_params["poll_show_teacher_names"])){
+            if($request_params["poll_show_teacher_names"]=="true"){$poll_show_teacher_names = true;}
+        }
+        
+
+        
         $teachers_collected = array();
         $teachers_collected_pre = explode("#", $request_params["teachers_collected"]);
         foreach($teachers_collected_pre as $this_teacher){
-            if($this_teacher == ""){continue;}else{$teachers_collected[$this_teacher] = "";}
+            if($this_teacher == ""){continue;}
+            if(mb_strtolower($this_teacher) == mb_strtolower($request_params["Teacher"]["name"])){continue;}
+            $teachers_collected[$this_teacher] = "";
         }
         if(count($teachers_collected) > $teachers_num_limit){
             return $this->render('error', ["msg" => "number of teachers limited to ".$teachers_num_limit]);
         }
-
-
-        
-/**
- * This is the model class for table "teacher".
- *
- * @property string $startKey
- * @property integer $id
- * @property string $name
- * @property string $email
- * @property string $status
- * @property string $activationkey
- * @property string $studentkey
- * @property integer $resultkey
- * @property integer $state
- *
- * @property Lesson $startKey0
- */
  
     \Yii::$app->db->createCommand()->delete('teacher', 'startkey = "'.Yii::$app->getSession()->get("startKey").'"')->execute();
 
@@ -300,6 +302,7 @@ class SiteController extends \app\components\Controller
     if(is_null($lesson)){return $this->render('error', ["msg" => "lesson not found"]);}
     
     $lesson->thinkingMinutes = $request_params["Lesson"]["thinkingMinutes"];
+    $lesson->poll_show_teacher_names = $poll_show_teacher_names;
     $lesson->save();
 
     $initiator = new Teacher();
@@ -312,7 +315,7 @@ class SiteController extends \app\components\Controller
     $initiator->resultkey = $initiator->generateUniqueRandomString("resultkey", 8);
     $initiator->save();
         
-    $teachers = array($initiator->toArray());
+    $teachers = array($initiator->name=>$initiator->toArray());
     
     foreach($teachers_collected as $this_teacher => $val){
         $teacher = new Teacher();
@@ -324,20 +327,20 @@ class SiteController extends \app\components\Controller
         $teacher->studentkey = $teacher->generateUniqueRandomString("studentkey", 8);
         $teacher->resultkey = $teacher->generateUniqueRandomString("resultkey", 8);
         $teacher->save();
-        $teachers[] = $teacher->toArray();
+        $teachers[$this_teacher] = $teacher->toArray();
     }
-    
+    ksort($teachers);
 
         $this->layout = 'teacher';
         
 
         return $this->render('teacher_poll_codes', [
-            //'initiator' => $initiator,
+            'lesson' => $lesson,
+            'initiator' => $initiator,
             'teachers' => $teachers,
         ]);
     }
 
-//
     /**
      * Displays teacher rejoin running session with starKey and teacherKey
      *
@@ -389,25 +392,15 @@ class SiteController extends \app\components\Controller
     }
 
     /**
-     * Displays teacher rejoin running session with starKey and teacherKey
+     * download questions before start of the lesson or poll
      *
      * @return string
      */
     public function actionDownload_questions()
     {
-        $umlaute = array(
-            "/Ö/" => "Oe",
-            "/ö/" => "oe",
-            "/Ü/" => "Ue",
-            "/ü/" => "ue",
-            "/Ä/" => "Ae",
-            "/ä/" => "ae",
-            "/ß/" => "ss",
-            "/ /" => "-",
-        );
         $lesson = $this->findLesson(Yii::$app->getSession()->get("startKey"));
         
-        $title_clean = preg_replace(array_keys($umlaute), array_values($umlaute), $lesson->title);
+        $title_clean = preg_replace(array_keys($this->umlaute), array_values($this->umlaute), $lesson->title);
         $title_clean = preg_replace("/[^A-Za-z0-9_-]/", "", $title_clean);
         
         $this_filename = Yii::$app->_L->get('teacher_questions');
@@ -434,6 +427,32 @@ class SiteController extends \app\components\Controller
             $content .= "\r\n". $task["type"]." = ".$task["task_text"];
         }
         
+        Yii::$app->response->sendContentAsFile($content, $this_filename)->send();
+        return;
+    }
+
+    /**
+     * download questions before start of the lesson or poll
+     *
+     * @return string
+     */
+    public function actionDownload_activationcodes()
+    {
+        $lesson = $this->findLesson(Yii::$app->getSession()->get("startKey"));
+        
+        $title_clean = preg_replace(array_keys($this->umlaute), array_values($this->umlaute), $lesson->title);
+        $title_clean = preg_replace("/[^A-Za-z0-9_-]/", "", $title_clean);
+        
+        $this_filename = Yii::$app->_L->get('teacher_questions');
+        $this_filename .= "_".date("Y-m-d");
+        $this_filename .= "_".$title_clean;
+        $this_filename .= ".csv";
+
+        $content = "name;activationcode";
+        $teachers = Teacher::findAll(['startKey' => Yii::$app->getSession()->get("startKey")]);
+        foreach($teachers as $teacher){
+            $content .= "\r\n".$teacher["name"].";".$teacher["activationkey"];
+        }
         Yii::$app->response->sendContentAsFile($content, $this_filename)->send();
         return;
     }

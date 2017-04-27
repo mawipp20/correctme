@@ -21,6 +21,7 @@ use app\models\Language;
  * @property integer $earlyPairing
  * @property string $typeMixing
  * @property integer $namedPairing
+ * @property poll_show_teacher_names
  */
 
 /**
@@ -96,6 +97,7 @@ class Lesson extends \app\components\ActiveRecord
             'earlyPairing' => Yii::$app->_L->get('LABEL_earlyPairing'),
             'typeMixing' => Yii::$app->_L->get('LABEL_typeMixing'),
             'namedPairing' => Yii::$app->_L->get('LABEL_namedPairing'),
+            'poll_show_teacher_names' => '',
         ];
     }
 

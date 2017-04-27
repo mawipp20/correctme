@@ -24,21 +24,50 @@ $this->title = Yii::$app->_L->get("teacher_title");
         }
     ?>
 
-<h3 style="margin-top: 0em; margin-bottom: 20px;">
-    <?php echo Yii::$app->_L->get('teacher_poll_codes_title'); ?>
-</h3>
+<div class="alert alert-success" style="margin-top: 0em; margin-bottom: 20px; font-size: large;">
+    <?php
+        echo Yii::$app->_L->get('teacher_poll_codes_title');
+        $time = new DateTime();
+        $time->add(new DateInterval('PT' . $lesson->thinkingMinutes . 'M'));
+        echo '&nbsp;&nbsp;&nbsp;<i class="fa fa-hourglass-end" aria-hidden="true"></i>';
+        Yii::$app->formatter->locale = 'de-DE';
+        echo '&nbsp;'.Yii::$app->formatter->asDate($time);       
+    ?>
+</div>
 
-<div class="keys-grid">
-  <div class="row keys-grid-th">
-    <div class="col-md-6 keys-grid-name"><?php echo Yii::$app->_L->get('teacher_poll_codes_participant'); ?></div>
-    <div class="col-md-6 keys-grid-activationkey"><?php echo Yii::$app->_L->get('teacher_poll_codes_activationcode'); ?></div>
+    <blockquote>
+    <p><?= Yii::$app->_L->get('teacher_poll_codes_explanation') ?></p>
+    <?php   if($lesson->poll_show_teacher_names){
+                echo '<p>'.Yii::$app->_L->get('teacher_poll_codes_explanation_show_teacher_names').'</p>';   
+            }
+    ?>
+    </blockquote>
+
+
+<div id="poll-codes">
+  <div class="row th">
+    <div class="col-md-3 name">
+        <?php echo Yii::$app->_L->get('teacher_poll_codes_participant'); ?>
+        <a id="justToAlignVerticallyNoFunctionality" class='btn' style='visibility:hidden;'>&nbsp;</a>
+    </div>
+    <div class="col-md-9 activationkey">
+        <?php echo Yii::$app->_L->get('teacher_poll_codes_activationcode'); ?>
+        &nbsp;&nbsp;
+        <a class='btn btn-default' style='border-color:  black;' href="download_activationcodes">
+        <i class="fa fa-save" aria-hidden="true"></i>
+        </a> 
+    </div>
   </div>
   <?php 
     foreach($teachers as $teacher){
-      echo '<div class="row keys-grid-td">\n';
-      echo '<div class="col-md-6 keys-grid-name">'.$teacher['name'].'</div>\n';
-      echo '<div class="col-md-6 keys-grid-activationkey">'.$teacher['activationkey'].'</div>\n';
-      echo '</div>\n';
+        $css_class_initiator = "";
+        if($teacher['name'] == $initiator->name){
+            $css_class_initiator = " initiator";
+        }
+        echo '<div class="row tr'.$css_class_initiator.'">';
+        echo '<div class="col-md-3 name">'.$teacher['name'].'</div>';
+        echo '<div class="col-md-9 activationkey">'.$teacher['activationkey'].'</div>';
+        echo '</div>';
     }
   ?>
 </div>

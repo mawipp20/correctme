@@ -25,8 +25,10 @@ LessonAsset::register($this);
         <div class='well well-lg well-poll-or-lesson'
             onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/student/student_join'; ?>"'
         >
+            <!--
             <i class="fa fa-handshake-o" aria-hidden="true"></i>
             &nbsp;
+            -->
             <?= Yii::$app->_L->get('student_btn_goto_lesson') ?>
         </div>
     
@@ -34,8 +36,10 @@ LessonAsset::register($this);
         <div class='well well-lg well-poll-or-lesson'
             onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/student/student_join_poll'; ?>"'
         >
+            <!--
             <i class="fa fa-question-circle-o" aria-hidden="true"></i>
             &nbsp;
+            -->
             <?= Yii::$app->_L->get('student_btn_goto_poll') ?>
         </div>
     </div>
@@ -47,8 +51,10 @@ LessonAsset::register($this);
         <div class='well well-lg well-poll-or-lesson'
             onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/site/lesson'; ?>"'
         >
+            <!--
             <i class="fa fa-handshake-o" aria-hidden="true"></i>
             &nbsp;&nbsp;
+            -->
             <?= Yii::$app->_L->get('teacher_btn_goto_lesson') ?>
         </div>
     
@@ -56,8 +62,10 @@ LessonAsset::register($this);
         <div class='well well-lg well-poll-or-lesson'
             onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/site/lesson_exact?lesson_type=poll&show_teacher_join'; ?>"'
         >
+            <!--
             <i class="fa fa-question-circle-o" aria-hidden="true"></i>
             &nbsp;&nbsp;
+            -->
             <?= Yii::$app->_L->get('teacher_btn_goto_poll') ?>
         </div>
     </div>

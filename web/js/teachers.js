@@ -2,14 +2,24 @@ function teachers_add_team(){
     $('#team_info').show();
     $('#team_div').show();
     $('#team_names').find("input").focus();
+    return false
 }
 function teachers_submit(){
-    $('#teachers_collected').val(getTeachers().join("#"))
+    $('#teachers_collected').val(getTeachers().join("#"));
+    $('#poll_show_teacher_names').val($('#checkbox_poll_show_teacher_names').prop( "checked" ));
     $("form").attr("action", "teacher_poll_codes");
     $("form").submit();
 }
-
-                
+function teachers_single_submit(){
+    if($('#team_info').is(":visible")){
+        $('#team_info').hide();
+        $('#team_div').hide();
+        return;
+    }
+    //$('#teachers_collected').val("");
+    $("form").attr("action", "poll_start");
+    $("form").submit();
+}          
 
 function teacherNameOnInput(elem){
 
@@ -102,7 +112,9 @@ function getTeachers(getCount){
         
     }
     if(getCount){
-        return Object.keys(teachers).length;
+        var ret = Object.keys(teachers).length;
+        if(typeof teachers[$('#teacher-name').val()] == "undefined"){ret++;}
+        return ret;
     }    
     return Object.keys(teachers);
 }
