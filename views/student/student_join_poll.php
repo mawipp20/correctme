@@ -30,18 +30,17 @@ $this->title = Yii::$app->_L->get("student_join_poll_title");
                 'validateOnBlur'=>false,
     ]); ?>
 
-          <?= $form->field($model, 'startKey'
+          <?= $form->field($teacher, 'studentkey'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-student-join' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
             ]
             )->textInput([
-            'placeholder'=>Yii::$app->_L->get('student_join_poll_startKey_placeholder')
-            , 'value' => $model->startKey
-            , 'autofocus' => 'true'
-            ,
+            //'placeholder'=>Yii::$app->_L->get('student_join_poll_startKey_placeholder')
+            'value' => $teacher->studentkey,
+            'autofocus' => 'true',
             ])
-            ->label(Yii::$app->_L->get('student_join_poll_startKey_label'))
+            ->label(Yii::$app->_L->get('student_join_poll_student_label'))
             ; ?>
 
         <div class="form-group" style="margin-top: 1em;">

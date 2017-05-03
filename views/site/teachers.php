@@ -52,7 +52,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
                 'enableClientValidation'=>true,
                 'validateOnChange'=>true,
                 'validateOnBlur'=>false,
-                'action' => ['poll_start'],
+                'action' => ['teacher_poll_codes'],
                 'method' => 'post',
                 'id' => 'teachers_form',
     ]); ?>
@@ -81,12 +81,13 @@ $this->title = Yii::$app->_L->get("teacher_title");
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ,'enableClientValidation' => false
             ]
             )->dropdownList([
-                "60" => Yii::$app->_L->get('teacher_thinkingMinutes_hour'),
-                "1440" => Yii::$app->_L->get('teacher_thinkingMinutes_day'),
-                "10080" => Yii::$app->_L->get('teacher_thinkingMinutes_1week'),
-                "20160" => Yii::$app->_L->get('teacher_thinkingMinutes_2week'),
+                "today" => Yii::$app->_L->get('teacher_thinkingMinutes_today'),
+                "end_of_this_week" => Yii::$app->_L->get('teacher_thinkingMinutes_end_of_this_week'),
+                "end_of_next_week" => Yii::$app->_L->get('teacher_thinkingMinutes_end_of_next_week'),
+                "end_of_week_after_next" => Yii::$app->_L->get('teacher_thinkingMinutes_end_of_week_after_next'),
                 ])
             ->label(Yii::$app->_L->get('teacher_thinkingMinutes_label'))
             ;

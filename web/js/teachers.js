@@ -7,7 +7,7 @@ function teachers_add_team(){
 function teachers_submit(){
     $('#teachers_collected').val(getTeachers().join("#"));
     $('#poll_show_teacher_names').val($('#checkbox_poll_show_teacher_names').prop( "checked" ));
-    $("form").attr("action", "teacher_poll_codes");
+    //$("form").attr("action", "teacher_poll_codes");
     $("form").submit();
 }
 function teachers_single_submit(){
@@ -16,8 +16,9 @@ function teachers_single_submit(){
         $('#team_div').hide();
         return;
     }
+    //alert($("form").attr("action"));
     //$('#teachers_collected').val("");
-    $("form").attr("action", "poll_start");
+    //$("form").attr("action", "poll_start");
     $("form").submit();
 }          
 

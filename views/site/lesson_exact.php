@@ -9,7 +9,6 @@ AppAsset::register($this);
 use app\assets\LessonAsset;
 LessonAsset::register($this);
 
-
 $this->title = Yii::$app->_L->get("lesson_title");
 
 ?>
@@ -64,7 +63,8 @@ $this->title = Yii::$app->_L->get("lesson_title");
             , 'autofocus' => $autofocus
             ])
             ->label(Yii::$app->_L->get('thinkingMinutes_label'))
-            ; ?>
+            ;
+            ?>
 
           <?php
             $this_autofocus = false;

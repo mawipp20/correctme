@@ -26,12 +26,15 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 <div class="alert alert-success" style="margin-top: 0em; margin-bottom: 20px; font-size: large;">
     <?php
-        echo Yii::$app->_L->get('teacher_poll_codes_title');
-        $time = new DateTime();
-        $time->add(new DateInterval('PT' . $lesson->thinkingMinutes . 'M'));
-        echo '&nbsp;&nbsp;&nbsp;<i class="fa fa-hourglass-end" aria-hidden="true"></i>';
-        //Yii::$app->formatter->locale = 'de-DE';
-        echo '&nbsp;'.Yii::$app->formatter->asDate($time);       
+        $msg_success = Yii::$app->_L->get('teacher_poll_codes_title');
+        $deadline = new DateTime();
+        $deadline->add(new DateInterval('PT' . $lesson->thinkingMinutes . 'M'));
+        $deadline_results = new DateTime();
+        $deadline_results->add(new DateInterval('PT'.($lesson->thinkingMinutes + 10080).'M'));
+        $msg_success = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline).'</b>', $msg_success); 
+        $msg_success = str_replace('#deadline_results#', '<b>'.Yii::$app->formatter->asDate($deadline_results).'</b>', $msg_success); 
+        $msg_success = str_replace('#lesson_title#', '<b>'.$lesson->title.'</b>', $msg_success); 
+        echo $msg_success;      
     ?>
 </div>
 

@@ -13,6 +13,7 @@ if(!function_exists("_L")){include_once(\Yii::$app->basePath.'\language\language
  *
  * @property integer $id
  * @property string $startKey
+ * @property string $teacher_id
  * @property string $name
  * @property string $studentKey
  * @property integer $position
@@ -40,19 +41,10 @@ class Student extends \app\components\ActiveRecord
      */
     public function rules()
     {
-/**
-        return [
-            [['startKey', 'name', 'stats', 'status', 'position'], 'required'],
-            [['stats'], 'string'],
-            [['lastchange', 'insert_timestamp'], 'safe'],
-            [['startKey'], 'string', 'max' => 12],
-            [['name'], 'string', 'max' => 255],
-            [['status'], 'string', 'max' => 100],
-        ];
-*/
         return [
             [['startKey', 'name', 'studentKey'], 'required'],
             [['position'], 'integer'],
+            [['teacher_id'], 'integer'],
             [['stats', 'status'], 'string'],
             [['lastchange', 'insert_timestamp'], 'safe'],
             [['startKey', 'studentKey'], 'string', 'max' => 12],
@@ -70,6 +62,7 @@ class Student extends \app\components\ActiveRecord
         return [
             'id' => '',
             'startKey' => '',
+            'teacher_id' => '',
             'name' => '',
             'studentKey' => '',
             'position' => '',

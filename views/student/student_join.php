@@ -20,6 +20,7 @@ $this->title = Yii::$app->_L->get("student_join_lesson_title");
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
             echo '<div class="alert alert-danger">' . $message . "</div>\n";
         }
+        
     ?>
 
 <div class="Lesson">

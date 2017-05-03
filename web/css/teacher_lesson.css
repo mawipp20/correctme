@@ -27,6 +27,10 @@
     text-align: right;
     min-width:140px;
 }
+.input-group-addon-teacher{
+    text-align: right;
+    min-width:180px;
+}
 .input-group-addon-rejoin{
     min-width:100px;
 }

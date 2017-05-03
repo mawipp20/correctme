@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\StudentJoinForm;
 use app\models\Student;
+use app\models\Teacher;
 use app\models\Lesson;
 
 class StudentController extends \app\components\Controller
@@ -87,9 +88,9 @@ class StudentController extends \app\components\Controller
      */
     public function actionStudent_join_poll()
     {
-        $model = new StudentJoinForm();
+        $teacher = new Teacher();
         return $this->render('student_join_poll', [
-            'model' => $model,
+            'teacher' => $teacher,
         ]);
     }
 
@@ -110,28 +111,60 @@ class StudentController extends \app\components\Controller
         /** create new student */
         
         if ($request->isPost) {
-            if($model->load($request->post(), "StudentJoinForm")){
-                
+            
+            $post = $request->post();
+            
+            /** from student_join_poll: get the startKey via studentkey of the teacher */
+            
+            if(isset($post["Teacher"])){
+                $post["StudentJoinForm"] = array("startKey"=>"", "name"=>Yii::$app->getSecurity()->generateRandomString(32));
+                $teacher = Teacher::find()->where(['studentkey' => $post["Teacher"]["studentkey"]])->one();
+                if(!is_null($teacher)){
+                    $post["StudentJoinForm"]["startKey"] = $teacher->startKey;
+                    $post["StudentJoinForm"]["teacher_id"] = $teacher->id;
+                }else{
+                    /** check if student tried a lesson key as a poll key */
+                    $check_lesson = Lesson::find()->where(['startKey' => $post["Teacher"]["studentkey"]])->one();
+                    if(!is_null($check_lesson)){
+                        Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error_is_lesson'));
+                        Yii::$app->response->redirect(['student/student_join']);
+                        return;
+                    }
+                    Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
+                    Yii::$app->response->redirect(['student/student_join_poll']);
+                    return;
+                }
+            }
+            
+            /** join collaborative lesson or poll with startKey of the lesson */
+            
+            if($model->load($post, "StudentJoinForm")){
                 $lesson = Lesson::find()->where(['startKey' => $model->startKey])->one();
-                
+                if(is_null($lesson)){
+                    Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
+                    Yii::$app->response->redirect(['student/student_join']);
+                    return;
+                }
                 $student_with_the_same_name = Student::find()->where(
                                 [    'startKey'=>$model->startKey
                                     ,'name'=>$model->name
                                 ]
                                 )->one();
-                                
                 if(!is_null($student_with_the_same_name)){
-                            $student_with_the_same_name->delete();
-                            //$model->addErrors(array(Yii::$app->_L->get('student_join_name_already_existing')));    
-                }
-                
-                /** poll browser sessions that have been concluded can't be repeated by a page refresh or entering the start key again */
-                if(Yii::$app->getSession()->get("status") == "finished"
-                   & $lesson["type"] == "poll"
-                    ){
-                    $model->addErrors(array(Yii::$app->_L->get('student_join_error_poll_is_finished')));    
+                            //$student_with_the_same_name->delete();
+                            $model->addErrors(array(Yii::$app->_L->get('student_join_name_already_existing')));    
                 }
             }
+                        
+            /** poll browser sessions that have been concluded can't be repeated by a page refresh or entering the start key again */
+            if(Yii::$app->getSession()->get("status") == "finished"
+               & $lesson["type"] == "poll"
+               & $_SERVER['HTTP_HOST'] != 'localhost'
+                ){
+                $model->addErrors(array(Yii::$app->_L->get('student_join_error_poll_is_finished')));    
+            }
+            
+            
             
             if (!$model->hasErrors() && $model->save()) {
                     Yii::$app->getSession()->set("startKey", $model->startKey);

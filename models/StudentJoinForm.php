@@ -5,19 +5,8 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "lesson".
+ * This is the model class for table "student".
  *
- * @property string $startKey
- * @property string $teacherKey
- * @property integer $teacherId
- * @property integer $numTasks
- * @property integer $numStudents
- * @property integer $numTeamsize
- * @property integer thinkingMinutes
- * @property string $typeTasks
- * @property integer $earlyPairing
- * @property string $typeMixing
- * @property integer $namedPairing
  */
 
 /**
@@ -55,6 +44,7 @@ class StudentJoinForm extends \app\components\ActiveRecord
         return [
             'startKey' => '',
             'name' => '',
+            'teacher_id' => '',
         ];
     }
 }

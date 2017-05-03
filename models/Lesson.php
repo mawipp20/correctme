@@ -63,7 +63,7 @@ class Lesson extends \app\components\ActiveRecord
             [['numTasks'], 'integer', 'min'=>1, 'max'=>20, 'message' => '1 - 20'],
             
             [['thinkingMinutes'], 'required', 'message' => Yii::$app->_L->get('thinkingMinutes_required')],
-            [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>20160, 'message' => '2 - 20160'],
+            [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>30240, 'message' => '2 - 30240'],
 
             [['numTeamsize'], 'required', 'message' => Yii::$app->_L->get('numTeamsize_required')],
             [['numTeamsize'], 'integer', 'min'=>2, 'max'=>6, 'message' => '2 - 6'],
@@ -124,8 +124,6 @@ class Lesson extends \app\components\ActiveRecord
                     $this->thinkingMinutes = 60;
                 }
             }
-            
-            
             return true;
         }
     }
