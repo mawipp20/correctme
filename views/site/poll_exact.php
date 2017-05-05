@@ -179,6 +179,8 @@ $this->title = Yii::$app->_L->get("poll_title");
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('poll_tasks_type_how-often').'&nbsp;&nbsp;'; ?></a></li>
                     <li><a data-task-type="text" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('poll_tasks_type_text').'&nbsp;&nbsp;'; ?></a></li>
+                    <li><a data-task-type="info" href="#"
+                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('poll_tasks_type_info').'&nbsp;&nbsp;'; ?></a></li>
                 </ul>
             </div>
         

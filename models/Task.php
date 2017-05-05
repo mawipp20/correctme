@@ -36,7 +36,8 @@ class Task extends \yii\db\ActiveRecord
             [['startKey', 'num', 'type', 'text'], 'required'],
             [['num'], 'integer'],
             [['text'], 'string'],
-            [['startKey', 'type'], 'string', 'max' => 12],
+            [['type'], 'in', 'range' => ['text', 'how-true', 'how-often', 'info'], 'message' => 'Unknown type of task/question'],
+            [['startKey'], 'string', 'max' => 12],
             [['startKey', 'num'], 'unique', 'targetAttribute' => ['startKey', 'num'], 'message' => 'The combination of Start Key and Num has already been taken.'],
             [['startKey'], 'exist', 'skipOnError' => true, 'targetClass' => Lesson::className(), 'targetAttribute' => ['startKey' => 'startKey']],
         ];

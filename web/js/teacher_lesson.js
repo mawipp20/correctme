@@ -181,6 +181,16 @@ function lesson_exact_validate_tasks(){
     var ret = false;
     var new_tasks = {};
     
+    /** for polls an start info with the title and the teacher will be automatically inserted */
+    if($("#lesson-type").val()=="poll"){
+        this_num++;
+        var this_task = new taskO();
+        this_task.type = "sysinfo";
+        this_task.task_text = "#pollStart#";
+        this_task.num = this_num;
+        new_tasks[this_num] = this_task;
+    }    
+    
     $('#tasks').children('.task').each(function() {
         var this_text = $(this).find(".task_input").val();
         if(this_text != ''){

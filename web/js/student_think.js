@@ -11,6 +11,7 @@
 var lesson = {
     "startKey":""
     ,"lesson.numTasks":""
+    ,"type":""
     ,"numTeamsize":""
     ,"thinkingMinutes":""
     ,"typeTasks":""
@@ -60,6 +61,7 @@ var answer = new answerO();
 
 var state = {
     "error":"" 
+    ,"teacherName":"" /** name of the teacher in a poll - retrieved by the rest service */
     ,"eventPageX":0 /** position where a nav button was clicked to place the waiting for answer symbol nearby */
     ,"program_version":"" /** can be set to "dev" for debugging */
     ,"goto_taskNum":1 /** number of the requested task */
@@ -68,6 +70,7 @@ var state = {
     ,"restInterval_seconds":10 /** interval when the the rest service is called */
     ,"hasChanges":0
     ,"lastSaved":0
+    ,"pollStart":true /** at the start of a poll the title of the poll and the name of the teacher is shown with a start-now-button */
     ,"millisecondsServerMinusClient":false /** difference in time between server and client, used for the minutes countdown */ 
     ,"messageHelpButtonShown":false /** has the info message about the call for help already been shown */ 
     };
@@ -114,6 +117,17 @@ function getTask(){
     }else{
         task = new taskO();
     }
+    
+    /** task text transformation */
+    if(lesson->type == "poll"){
+        var this_text = task.task_text;
+        this_text = this_text.replace("#startPoll#", "");
+        this_text = this_text.replace("#pollTitle#", lesson->title);
+        this_text = this_text.replace("#teacherName#", teacherName);
+        task.task_text = this_text;
+    }
+
+    
 
     if(typeof answer_all[state["goto_taskNum"]] != "undefined"){
         answer = answer_all[state["goto_taskNum"]];
@@ -196,6 +210,7 @@ function rest_service(){
             state["rest_status"] = 0;
             
             lesson = data["lesson"];
+            
             student = data["student"];
             task_all = data["task_all"];
             answer_all = data["answer_all"];
@@ -203,6 +218,7 @@ function rest_service(){
             state["error"] = data["error"];
             state["debug"] = data["debug"];
             state["lastSaved"] = data["lastSaved"];
+            state["teacherName"] = data["teacherName"];
             
             state["hasChanges"] = false;
             
@@ -231,7 +247,8 @@ function rest_service(){
 }
 
 function displayTasks(){
-    
+
+   
     /** adapt the number of direct navigation buttons according to numTask and window size */
     state["numNavButtons"] = lesson.numTasks;
     var maxNumNavButtons = Math.floor(($(window).width() / 80));
@@ -307,7 +324,9 @@ function displayTasks(){
     label_str += '</div>';
     taskDisplay.append($(label_str));
     
-    
+    if(task.type == "info" | task.type == "sysinfo"){
+        $(".task_label").addClass("task_label_info");
+    }
 
     if(task.type == "text"){
         var str = '<textarea class="form-control text-area" rows="1"';
@@ -318,7 +337,7 @@ function displayTasks(){
         $("#answer_text").focus();
     }
     
-    if(task.type != "text"){
+    if(task.type == "how-true" | task.type == "how-often"){
         
         //taskDisplay.addClass('taskDisplay_how_often_true');
         $('#student_think_btn_task_finished').css('visibility', 'hidden');
@@ -397,7 +416,7 @@ function displayTaskNavigation(){
       
     taskNav_first_left.append($('<button type="button" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-left" aria-hidden="true"></i>' + '</button>'));
     if(task.num == 1
-        |   (task.type != 'text'
+        |   ((task.type == 'how-true' | task.type == 'how-often')
             & task.answer_text == '')
         ){
         taskNav_first_left.children("button").last().addClass('btn_task_inactive');
@@ -429,7 +448,7 @@ function displayTaskNavigation(){
 
     
     if(task.num == lesson.numTasks
-        |   (task.type != 'text'
+        |   ((task.type == 'how-true' | task.type == 'how-often')
             & answer.answer_text == '')
     ){
         taskNav_first_left.children("button").last().addClass('btn_task_inactive');

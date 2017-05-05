@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $restcorrectmeUrl = 'http://localhost/restcorrectme/web/student/think';
 if($_SERVER['HTTP_HOST'] == 'zelon.de'){
-    $restcorrectmeUrl = 'http://zelon.de/restcorrectme/web/student/think';
+    $restcorrectmeUrl = 'https://zelon.de/restcorrectme/web/student/think';
 }
 
 

@@ -598,7 +598,6 @@ class SiteController extends \app\components\Controller
                         $this_type = $model->typeTasks;
                         $this_text = '';
                         if(isset($new_tasks->$i)){
-                            //Yii::$app->getSession()->setFlash('error_save', print_r($new_tasks, true));
                             $this_type = $new_tasks->$i->type;
                             $this_text = $new_tasks->$i->task_text;
                         }
