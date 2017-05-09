@@ -67,7 +67,8 @@
 }
 
 .btn_task_inactive, .btn_task_inactive:hover, .btn_task_inactive:active, .btn_task_inactive:visited{
-    c/olor: transparent;
+    visibility: hidden;
+    color: transparent;
     cursor: default;
     border-color: transparent;
 }

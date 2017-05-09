@@ -12,7 +12,8 @@ $(document).ready(function() {
             
         /** reverse order of task as they are inserted on top */    
         var tempArr = [];
-        for (var key in uploadedTasks){tempArr.push(key);}
+        //for (var key in uploadedTasks){tempArr.push(key);}
+        for (var key in uploadedTasks){tempArr.unshift(key);}
         for(var i = 0; i < tempArr.length; i++) {
             var this_question = tempArr[i];
             addTask(this_question, type = uploadedTasks[this_question], atBottom = false);

@@ -36,6 +36,11 @@ class Student extends \app\components\ActiveRecord
         return 'student';
     }
 
+    /** teacherName is retrieved by the rest service using the teacher_id field in the student tabel */
+    
+    public $teacherName = "";
+
+
     /**
      * @inheritdoc
      */

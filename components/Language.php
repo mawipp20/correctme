@@ -45,6 +45,11 @@ class Language extends Component {
         }
         $pathSeparator = "/";
         if($_SERVER['HTTP_HOST'] == 'localhost'){$pathSeparator = "\\";}
+
+
+/** hard coded de */
+$this->country = "de";    
+
         
         
         $this_language_file = \Yii::$app->basePath.$pathSeparator.'language'.$pathSeparator.$this->country.'.ini';

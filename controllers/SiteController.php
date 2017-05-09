@@ -189,6 +189,7 @@ class SiteController extends \app\components\Controller
                             }
                         }
                     }
+                    
                     if(count($unrecognizedLines)>0){
                         $this_flash = Yii::$app->_L->get("lesson_upload_unrecognizedLines");
                         $this_flash .= "<br /><br />".implode("<br />", $unrecognizedLines);

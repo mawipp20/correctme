@@ -41,6 +41,7 @@ class Lesson extends \app\components\ActiveRecord
     public $taskTypes = array(  "text",
                                 "how-often",
                                 "how-true",
+                                "info",
                                 ); 
     
     
@@ -60,7 +61,7 @@ class Lesson extends \app\components\ActiveRecord
             ['title', 'string', 'max' => 30],
 
             [['numTasks'], 'required', 'message' => Yii::$app->_L->get('numTasks_required')],
-            [['numTasks'], 'integer', 'min'=>1, 'max'=>20, 'message' => '1 - 20'],
+            [['numTasks'], 'integer', 'min'=>1, 'max'=>100, 'message' => '1 - 100'],
             
             [['thinkingMinutes'], 'required', 'message' => Yii::$app->_L->get('thinkingMinutes_required')],
             [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>30240, 'message' => '2 - 30240'],

@@ -32,6 +32,7 @@ var student = {
     "id":""
     ,"name":""
     ,"studentKey":""
+    ,"teacherName":"" /** name of the teacher in a poll - retrieved by the rest service */
 /**
 not yet used
  * @property string $startKey
@@ -61,13 +62,12 @@ var answer = new answerO();
 
 var state = {
     "error":"" 
-    ,"teacherName":"" /** name of the teacher in a poll - retrieved by the rest service */
     ,"eventPageX":0 /** position where a nav button was clicked to place the waiting for answer symbol nearby */
     ,"program_version":"" /** can be set to "dev" for debugging */
     ,"goto_taskNum":1 /** number of the requested task */
     ,"numNavButtons":5 /** is adapted to window width */
     ,"rest_status":"" /** empty string means display tasks for the first time; 0 = not in connection; 1 waiting for rest answer */
-    ,"restInterval_seconds":10 /** interval when the the rest service is called */
+    ,"restInterval_seconds":5 /** interval when the the rest service is called */
     ,"hasChanges":0
     ,"lastSaved":0
     ,"pollStart":true /** at the start of a poll the title of the poll and the name of the teacher is shown with a start-now-button */
@@ -119,15 +119,15 @@ function getTask(){
     }
     
     /** task text transformation */
-    if(lesson->type == "poll"){
+    if(lesson.type == "poll"){
         var this_text = task.task_text;
-        this_text = this_text.replace("#startPoll#", "");
-        this_text = this_text.replace("#pollTitle#", lesson->title);
-        this_text = this_text.replace("#teacherName#", teacherName);
+        this_text = this_text.replace("#pollStart#", _L["student_think_poll_start_info"]);
+        this_text = this_text.replace("#pollTitle#", lesson.title);
+        this_text = this_text.replace("#teacherName#", student.teacherName);
+        this_text = this_text.replace("#teacherNameDativ#", student.teacherName.replace("Herr ", "Herrn "));
         task.task_text = this_text;
     }
-
-    
+  
 
     if(typeof answer_all[state["goto_taskNum"]] != "undefined"){
         answer = answer_all[state["goto_taskNum"]];
@@ -163,8 +163,7 @@ function saveAnswer(){
         answer.studentId = student.id;
         answer.taskId = this_task.taskId;
         
-        answer_all[task.num] = answer;
-        
+        answer_all[task.num] = answer;        
     }    
 }
 
@@ -183,6 +182,7 @@ function rest_service(){
     if(   state["rest_status"] == 1
         | state["hasChanges"] === false
     ){
+        console.log("no changes:" + state["rest_status"]);
         return;
     }
 
@@ -218,7 +218,6 @@ function rest_service(){
             state["error"] = data["error"];
             state["debug"] = data["debug"];
             state["lastSaved"] = data["lastSaved"];
-            state["teacherName"] = data["teacherName"];
             
             state["hasChanges"] = false;
             
@@ -673,6 +672,7 @@ function task_how_often_true_button_click(elem){
 
     answer.answer_text = $(elem).attr("data-val");
     answer.status = "finished";
+    state["hasChanges"] = true;
     saveAnswer();
     
     if(state["goto_taskNum"] == lesson.numTasks){
