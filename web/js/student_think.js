@@ -419,6 +419,7 @@ function displayTaskNavigation(){
             & task.answer_text == '')
         ){
         taskNav_first_left.children("button").last().addClass('btn_task_inactive');
+        taskNav_first_left.children("button").last().addClass('display_none');
     }else{
         taskNav_first_left.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
@@ -435,7 +436,9 @@ function displayTaskNavigation(){
 
     /** foward button */
     
-    taskNav_first_left.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task btn_task_move1">' + '<i class="fa fa-caret-right" aria-hidden="true"></i>' + '</button>'));
+    var btn_task_move_forward_caption = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
+    if(task.type == "sysinfo" & task.num == 1){btn_task_move_forward_caption = _L["student_think_btn_start_poll"];}
+    taskNav_first_left.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task btn_task_move1">' + btn_task_move_forward_caption + '</button>'));
     
     
     /** position info */

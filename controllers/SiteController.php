@@ -10,7 +10,9 @@ use yii\base\DynamicModel;
 use app\models\Lesson;
 use app\models\LessonUpload;
 use app\models\Teacher;
+use app\models\Student;
 use app\models\Task;
+use app\models\Answer;
 use yii\web\UploadedFile;
 
 class SiteController extends \app\components\Controller
@@ -176,7 +178,7 @@ class SiteController extends \app\components\Controller
                                 $parsedArr[$currentSection][$key] = $val;                                    
                             }else{
                                 $taskCount++;
-                                if(!in_array($key, $model->taskTypes)){
+                                if(!isset($model->taskTypes[$key])){
                                     $taskErrorCount++;
                                     $this_flash = Yii::$app->_L->get($lesson_type."_upload_task_check_error");
                                     $this_flash = str_replace("#type#", "'".$key."'", $this_flash);
@@ -309,7 +311,7 @@ class SiteController extends \app\components\Controller
         $beginOfDay = clone $dtNow;
         $endOfDay = clone $beginOfDay;
         $endOfDay->modify('tomorrow');
-        $minutesLeftToday = ceil(($endOfDay->getTimeStamp() - $dtNow->getTimeStamp())/60);
+        $minutesLeftToday = ceil(($endOfDay->getTimeStamp() - $dtNow->getTimeStamp())/60) - 1;
         switch($new_thinkingMinutes){
             case "today":
                 $new_thinkingMinutes = $minutesLeftToday;
@@ -456,21 +458,127 @@ class SiteController extends \app\components\Controller
         $request_params = Yii::$app->request->get();
         $request_params = $request_params["Teacher"];
         $teacher = Teacher::find()->where(['activationkey'=>$request_params["activationkey"]])->one();
-        $num_teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->count();
-        //var_dump($teacher);die();
+        
         if($teacher !== null){
+                $teacher->state = "active";
+                if(!$teacher->save()){
+                    if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($teacher->getErrors());}
+                    die("teacher state not saved");
+                }
                 $lesson = Lesson::find()->where(['startKey'=>$teacher->startKey])->one();
+                $num_teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->count();
                 return $this->render('teacher_join_poll', [
                  'teacher' => $teacher,
                  'lesson' => $lesson,
                  'num_teachers' => $num_teachers,
                 ]);
         }else{
-            Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_login_error'));
+            Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_activation_error'));
             Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
         }
         
     }
+
+    /**
+     * Displays teacher rejoin running session with starKey and teacherKey
+     *
+     * @return string
+     */
+    public function actionTeacher_results()
+    {
+        $request_params = Yii::$app->request->get();
+        $request_params = $request_params["Teacher"];
+        $teacher = Teacher::find()->where(['resultkey'=>$request_params["resultkey"]])->one();
+        if($teacher == null){
+            Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_resultkey_error'));
+            Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
+            return;
+        }
+        $lesson = Lesson::find()->where(['startKey'=>$teacher->startKey])->one();
+        $teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->all();
+        $students = Student::find()->where(['startKey'=>$teacher->startKey, 'status'=>'finished'])->all();
+        $tasks = Task::find()->where(['startKey'=>$teacher->startKey])->all();
+        $answers = Answer::find()->where(['startKey'=>$teacher->startKey])->all();
+        
+        $teachersArr = array("countAll"=>count($teachers));
+        $teachersArr["countActive"] = 0;
+        $teachersArr["withStudents"] = 0;
+        $teachersArr["students"] = array();
+        
+        foreach($teachers as $this_teacher){
+            if($this_teacher->state == "active"){$teachersArr["countActive"]++;}
+            $teachersArr["students"][$this_teacher->id] = array("name"=>$this_teacher->name, "countStudents"=>0);
+        }
+        $myStudentsIds = array();
+        $numStudents = array("all"=>count($students));
+        $numStudents["mine"] = 0;
+        foreach($students as $this_student){
+            if(isset($teachersArr["students"][$this_student->teacher_id])){
+                $teachersArr["students"][$this_student->teacher_id]["countStudents"]++;
+            }
+            if($this_student->teacher_id == $teacher->id){
+                $myStudentsIds[$this_student->id] = "";
+                $numStudents["mine"]++;
+            }
+        }
+        
+        foreach($teachersArr["students"] as $this_teacher_id => $val_arr){
+            if($val_arr["countStudents"] >= 5){$teachersArr["withStudents"]++;}
+        }
+        
+
+        $taskAnswers = array();
+        foreach($tasks as $this_task){
+            if(!isset($lesson->taskTypes[$this_task->type])){continue;}
+            if($lesson->taskTypes[$this_task->type]==""){continue;}
+            $taskAnswers[$this_task->taskId] = $this_task->toArray();
+            $taskAnswers[$this_task->taskId]["countAnswers"] = 0;
+            $taskAnswers[$this_task->taskId]["sumAnswers"] = 0;
+            $taskAnswers[$this_task->taskId]["myCountAnswers"] = 0;
+            $taskAnswers[$this_task->taskId]["mySumAnswers"] = 0;
+            $taskAnswers[$this_task->taskId]["myTextAnswers"] = array();
+        }
+
+        foreach($answers as $this_answer){
+            
+            if(trim($this_answer->answer_text)==""){continue;}
+            
+            if(!isset($taskAnswers[$this_answer->taskId])){continue;}
+            if(!isset($taskAnswers[$this_answer->taskId]["type"])){continue;}
+            
+            if(!isset($lesson->taskTypes[$taskAnswers[$this_answer->taskId]["type"]])){continue;}
+            
+            $this_answer_type = $lesson->taskTypes[$taskAnswers[$this_answer->taskId]["type"]];
+            
+            $isMyStudent = false;
+            if(isset($myStudentsIds[$this_answer->studentId])){
+                $isMyStudent = true;
+            }
+
+            if($this_answer_type=="numeric"){
+                $taskAnswers[$this_answer->taskId]["countAnswers"] += 1;
+                $taskAnswers[$this_answer->taskId]["sumAnswers"] += intval($this_answer->answer_text);
+                if($isMyStudent){
+                    $taskAnswers[$this_answer->taskId]["myCountAnswers"] += 1;
+                    $taskAnswers[$this_answer->taskId]["mySumAnswers"] += intval($this_answer->answer_text);
+                }
+            }
+             if($isMyStudent & $this_answer_type=="string"
+                ){
+                    $taskAnswers[$this_answer->taskId]["myTextAnswers"][] = $this_answer->answer_text;
+             }
+        }
+
+        return $this->render('teacher_poll_results', [
+         'lesson' => $lesson,
+         'teacher' => $teacher,
+         'teachersArr' => $teachersArr,
+         'numStudents' => $numStudents,
+         'taskAnswers' => $taskAnswers,
+        ]);
+    }
+
+
 
     /**
      * download questions before start of the lesson or poll
@@ -524,7 +632,7 @@ class SiteController extends \app\components\Controller
         $title_clean = preg_replace(array_keys($this->umlaute), array_values($this->umlaute), $lesson->title);
         $title_clean = preg_replace("/[^A-Za-z0-9_-]/", "", $title_clean);
         
-        $this_filename = Yii::$app->_L->get('teacher_questions');
+        $this_filename = Yii::$app->_L->get('gen_activationcodes');
         $this_filename .= "_".date("Y-m-d");
         $this_filename .= "_".$title_clean;
         $this_filename .= ".csv";

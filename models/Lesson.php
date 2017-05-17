@@ -38,10 +38,11 @@ class Lesson extends \app\components\ActiveRecord
      */
      
     public $lessonFile; 
-    public $taskTypes = array(  "text",
-                                "how-often",
-                                "how-true",
-                                "info",
+    public $taskTypes = array(  "text"=>"string",
+                                "how-often"=>"numeric",
+                                "how-true"=>"numeric",
+                                "sysinfo"=>"",
+                                "info"=>"",
                                 ); 
     
     
@@ -58,7 +59,7 @@ class Lesson extends \app\components\ActiveRecord
         return [
 
             ['type', 'in', 'range' => ['lesson', 'poll']],
-            ['title', 'string', 'max' => 30],
+            [['title'], 'string', 'max' => 30, 'message' => Yii::$app->_L->get('lesson_title_max_length')],
 
             [['numTasks'], 'required', 'message' => Yii::$app->_L->get('numTasks_required')],
             [['numTasks'], 'integer', 'min'=>1, 'max'=>100, 'message' => '1 - 100'],

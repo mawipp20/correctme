@@ -30,10 +30,11 @@ $this->title = Yii::$app->_L->get("teacher_title");
         if($num_teachers > 1){$msg_success = Yii::$app->_L->get('teacher_join_poll_login_success_team');}
         $msg_success = str_replace('#lesson_title#', '"<b>'.$lesson->title.'</b>"', $msg_success);
          
-        $deadline = new DateTime();
+        $deadline = new DateTime($lesson->insert_timestamp);
         $deadline->add(new DateInterval('PT' . $lesson->thinkingMinutes . 'M'));
-        $deadline_results = new DateTime();
-        $deadline_results->add(new DateInterval('PT'.($lesson->thinkingMinutes + 10080).'M'));
+        
+        $deadline_results = $deadline;
+        $deadline_results->add(new DateInterval('PT10080M'));
         
         $msg_deadline = Yii::$app->_L->get('teacher_join_poll_login_success_deadline');
         $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline).'</b>', $msg_deadline);
