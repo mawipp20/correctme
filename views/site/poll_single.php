@@ -12,6 +12,7 @@ TeachersAsset::register($this);
 
 $this->title = Yii::$app->_L->get("teacher_title");
 
+
 ?>
 
     <?php
@@ -52,14 +53,14 @@ $this->title = Yii::$app->_L->get("teacher_title");
                 'enableClientValidation'=>true,
                 'validateOnChange'=>true,
                 'validateOnBlur'=>false,
-                'action' => ['teacher_poll_codes'],
+                'action' => ['teacher_join_poll'],
                 'method' => 'post',
                 'id' => 'teachers_form',
     ]); ?>
 
 
     <input type='hidden' id='teachers_collected' name='teachers_collected' value=''>       
-    <input type='hidden' id='poll_show_teacher_names' name='poll_show_teacher_names' value=''>       
+    <?= $form->field($model, 'poll_type')->hiddenInput()->label(false); ?>
     
 
           <?php
@@ -93,82 +94,14 @@ $this->title = Yii::$app->_L->get("teacher_title");
             ;
             ?>
 
-
-        <div id="div_teacher_submit" class="well" style="margin-top: 2em;">
-        
-            <?php echo  Html::button(Yii::$app->_L->get('teacher_btn_just_me')
-                , [
-                'class' => 'btn btn-primary',
-                'id'=>'teacher_btn_just_me',
-                'onclick' => 'teachers_single_submit();'
-                ]) ?>
-
-
-            &nbsp;&nbsp;
-            <?= Yii::$app->_L->get('teacher_btn_or') ?>
-            &nbsp;&nbsp;
-
-            <?php echo  Html::button(
-                '<i class="fa fa-user-plus" aria-hidden="true"></i>'
-                .'&nbsp;&nbsp;&nbsp;&nbsp;'
-                .Yii::$app->_L->get('teacher_btn_team')
+            <?php
+            echo  Html::button(Yii::$app->_L->get('teacher_btn_just_me')
             , [
-                'class' => 'btn btn-primary',
-                'id'=>'teachers_btn_add_team',
-                'onclick' => 'teachers_add_team();'
-                ]) ?>
-
-            <div id="team_info" style="display: none;">
-                <h3 style=" margin-top:1em; margin-bottom:1em;">
-                    <?= Yii::$app->_L->get('teacher_info_team_title') ?>
-                </h3>
-        
-                <p>
-                <?= Yii::$app->_L->get('teacher_info_team_1') ?><br/>
-                <?= Yii::$app->_L->get('teacher_info_team_2') ?><br/>
-                <?= Yii::$app->_L->get('teacher_info_team_3') ?>
-                </p>
-                
-                <div class="checkbox" style="color: darkblue;">
-                  <label>
-                  <input type="checkbox" id="checkbox_poll_show_teacher_names">
-                  <?= Yii::$app->_L->get('teacher_info_poll_show_teacher_names') ?>
-                  </label>
-                </div>
-            </div>
-
-
-        </div>
-
-        <div id="team_div" style="display: none;">
-
-            <div id="team_names">
-                <div class='input-group teacher' style="">
-                <label class="input-group-addon">
-                    <?= Yii::$app->_L->get('teacher_team_member_label') ?>
-                </label>
-                <input type="text"
-                     class="form-control teacher-name"
-                     data-text-length="0"
-                     oninput="teacherNameOnInput(this);"
-                     placeholder="<?php echo Yii::$app->_L->get('teacher_team_member_name_placeholder');?>"
-                     >
-                <textarea id="teacher-name-textarea" rows="1" style="display: none;" class="form-control teacher-name" data-text-length="0"></textarea>
-                </div>
-            </div>    
-            <div id="div_teachers_submit" class="" style="margin-top: 1em;">
-                <?php 
-                    $this_btn_label = '<span id="countTeachers"></span> '.Yii::$app->_L->get('teachers_team_submit');
-                    echo  Html::button($this_btn_label
-                    , [
-                    'class' => 'btn btn-primary',
-                    'id'=>'teachers_team_submit_id',
-                    'onclick' => 'teachers_submit();'
-                    ]) ?>
-            </div>
-        </div>
-
-
+            'class' => 'btn btn-primary',
+            'id'=>'teacher_btn_just_me',
+            'onclick' => 'teachers_submit_single();'
+            ]);
+            ?>
 
    
     <?php ActiveForm::end(); ?>

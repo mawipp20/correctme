@@ -123,8 +123,13 @@ function getTask(){
         var this_text = task.task_text;
         this_text = this_text.replace("#pollStart#", _L["student_think_poll_start_info"]);
         this_text = this_text.replace("#pollTitle#", lesson.title);
-        this_text = this_text.replace("#teacherName#", student.teacherName);
-        this_text = this_text.replace("#teacherNameDativ#", student.teacherName.replace("Herr ", "Herrn "));
+        if(student.teacherName != ""){
+            this_text = this_text.replace("#teacherName#", student.teacherName);
+            this_text = this_text.replace("#teacherNameDativ#", student.teacherName.replace("Herr ", "Herrn "));
+        }else{
+            this_text = this_text.replace("#teacherName#", _L["student_think_poll_default_teacher_name"]);
+            this_text = this_text.replace("#teacherNameDativ#", _L["student_think_poll_default_teacher_name"]);
+        }
         task.task_text = this_text;
     }
   
@@ -202,7 +207,7 @@ function rest_service(){
     state["rest_status"] = 1;
     
     $.ajax({
-        url: cmConfig.restcorrectmeUrl,
+        url: cmConfig.restcorrectmeBaseUrl + "web/student/think",
         type: 'POST',
         data: query,
         success: function(data) {

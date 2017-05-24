@@ -278,13 +278,6 @@ class SiteController extends \app\components\Controller
         if($request_params["Teacher"]["name"]==""){return $this->render('error', ["msg" => "teacher_name empty"]);}
         if(!isset($request_params["Lesson"]["thinkingMinutes"])){return $this->render('error', ["msg" => "lesson_thinkingminutes"]);}
         
-        $poll_show_teacher_names = false;
-        if(isset($request_params["poll_show_teacher_names"])){
-            if($request_params["poll_show_teacher_names"]=="true"){$poll_show_teacher_names = true;}
-        }
-        
-
-        
         $teachers_collected = array();
         $teachers_collected_pre = explode("#", $request_params["teachers_collected"]);
         foreach($teachers_collected_pre as $this_teacher){
@@ -296,7 +289,6 @@ class SiteController extends \app\components\Controller
             return $this->render('error', ["msg" => "number of teachers limited to ".$teachers_num_limit]);
         }
  
-    //   \Yii::$app->db->createCommand()->delete('teacher', 'startkey = "'.Yii::$app->getSession()->get("startKey").'"')->execute();
 
     $lesson = Lesson::find()->where(
         ['startKey'=>Yii::$app->getSession()->get("startKey")]
@@ -329,40 +321,30 @@ class SiteController extends \app\components\Controller
     }
 
     $lesson->thinkingMinutes = $new_thinkingMinutes;
-    $lesson->poll_show_teacher_names = $poll_show_teacher_names;
+    $lesson->poll_type = $request_params["Lesson"]["poll_type"];
     if(!$lesson->save()){
         echo "error 'saving lesson in actionTeacher_poll_codes.'";
         if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($lesson->getErrors());}
     }
 
-    $teachers = array();
-    $initiator = array();
+    $initiator = new Teacher();
+    $initiator->startKey = $lesson->startKey;
+    $initiator->name = $request_params["Teacher"]["name"];
+    $initiator->status = "initiator";
+    if($lesson->poll_type == "team"){
+        $initiator->name = "template_do_not_display";
+        $initiator->status = "template";
+    }
+    $initiator->state = "prepared";
+    $initiator->activationkey = $initiator->generateUniqueRandomString("activationkey", 8);
+    $initiator->studentkey = $initiator->generateUniqueRandomString("studentkey", 8);
+    $initiator->resultkey = $initiator->generateUniqueRandomString("resultkey", 8);
+    if(!$initiator->save()){
+        echo "error 'saving initiator in actionTeacher_poll_codes.'";
+        if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($initiator->getErrors());}
+    }
     
-    $teacher_rows = Teacher::find()->where(['startKey'=>Yii::$app->getSession()->get("startKey")])->all();
-    if(count($teacher_rows)>0){
-        foreach($teacher_rows as $row){
-            if($row->status == "initiator"){$initiator = $row;}
-            $teachers[$row["name"]] = $row->toArray();
-        }
-    }else{
-
-        $initiator = new Teacher();
-        $initiator->startKey = $lesson->startKey;
-        $initiator->name = $request_params["Teacher"]["name"];
-        $initiator->status = "initiator";
-        $initiator->state = "prepared";
-        $initiator->activationkey = $initiator->generateUniqueRandomString("activationkey", 8);
-        $initiator->studentkey = $initiator->generateUniqueRandomString("studentkey", 8);
-        $initiator->resultkey = $initiator->generateUniqueRandomString("resultkey", 8);
-        if(!$initiator->save()){
-            echo "error 'saving initiator in actionTeacher_poll_codes.'";
-            if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($initiator->getErrors());}
-        }
-        //Yii::$app->getSession()->set("lessonTitle", $lesson->title);
-        //Yii::$app->getSession()->set("activationkey", $initiator->activationkey);
-            
-        $teachers = array($initiator->name=>$initiator->toArray());
-        
+    if($lesson->poll_type == "names"){
         foreach($teachers_collected as $this_teacher => $val){
             $teacher = new Teacher();
             $teacher->startKey = $lesson->startKey;
@@ -376,26 +358,40 @@ class SiteController extends \app\components\Controller
                 echo "error 'saving initiator in actionTeacher_poll_codes.'";
                 if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($teacher->getErrors());}
             }
-            $teachers[$this_teacher] = $teacher->toArray();
         }
     }
-    
+
+    $teachers = array();
+    $template_teacher = array();
+    $initiator_teacher = array();
+    $teacher_rows = Teacher::find()->where(['startKey'=>Yii::$app->getSession()->get("startKey")])->all();
+    foreach($teacher_rows as $row){
+        if($row->status == "initiator"){$initiator_teacher = $row;}
+        if($row->status == "template"){$template_teacher = $row;}
+        $teachers[$row["name"]] = $row->toArray();
+    }
     ksort($teachers);
     
         $this->layout = 'teacher';
         
-        if(count($teachers_collected) == 0){
-            return $this->render('teacher_join_poll', [
+        if($lesson->poll_type == "names"){
+            return $this->render('teacher_poll_codes', [
                 'lesson' => $lesson,
-                'teacher' => $initiator,
-                'num_teachers' => 1,
+                'initiator' => $template_teacher,
+                'teachers' => $teachers,
             ]);
         }
-        return $this->render('teacher_poll_codes', [
-            'lesson' => $lesson,
-            'initiator' => $initiator,
-            'teachers' => $teachers,
-        ]);
+        elseif($lesson->poll_type == "team"){
+            return $this->render('teacher_poll_code_single', [
+                'lesson' => $lesson,
+                'template_teacher' => $template_teacher,
+            ]);
+        }else{
+            return $this->render('teacher_join_poll', [
+                'lesson' => $lesson,
+                'teacher' => $initiator_teacher,
+            ]);
+        }
     }
 
     /**
@@ -460,18 +456,37 @@ class SiteController extends \app\components\Controller
         $teacher = Teacher::find()->where(['activationkey'=>$request_params["activationkey"]])->one();
         
         if($teacher !== null){
+
+            $lesson = Lesson::find()->where(['startKey'=>$teacher->startKey])->one();
+            
+            if($teacher->status == "template"){
+                $teacher = new Teacher();
+                $teacher->startKey = $lesson->startKey;
+                $teacher->activationkey = $teacher->generateUniqueRandomString("activationkey", 8);
+                $teacher->studentkey = $teacher->generateUniqueRandomString("studentkey", 8);
+                $teacher->resultkey = $teacher->generateUniqueRandomString("resultkey", 8);
+                $teacher->name = $teacher->activationkey;
+                $teacher->status = "teacher";
+                $teacher->state = "active";
+                if(!$teacher->save()){
+                    echo "error 'saving initiator in actionTeacher_poll_codes.'";
+                    if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($teacher->getErrors());}
+                }
+            }
+
+            if($teacher->state != "active"){
                 $teacher->state = "active";
                 if(!$teacher->save()){
                     if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($teacher->getErrors());}
                     die("teacher state not saved");
                 }
-                $lesson = Lesson::find()->where(['startKey'=>$teacher->startKey])->one();
-                $num_teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->count();
-                return $this->render('teacher_join_poll', [
-                 'teacher' => $teacher,
-                 'lesson' => $lesson,
-                 'num_teachers' => $num_teachers,
-                ]);
+            }
+            //$num_teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->count();
+            return $this->render('teacher_join_poll', [
+             'teacher' => $teacher,
+             'lesson' => $lesson,
+             //'num_teachers' => $num_teachers,
+            ]);
         }else{
             Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_activation_error'));
             Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
@@ -662,9 +677,10 @@ class SiteController extends \app\components\Controller
         $model = new Lesson();
 
         $request = Yii::$app->request;
-        $request_params = $request->get("Lesson");
-
+        
         if ($request->isGet)  {
+
+            $request_params = $request->get("Lesson");
             $model->load($request->get());
             $row = Lesson::find()->where(
                     [    'startKey'=>$request_params["startKey"]
@@ -686,9 +702,23 @@ class SiteController extends \app\components\Controller
         
         if ($request->isPost) {
 
+            $request_params = $request->post();
+            
+            //var_dump($request_params);
+            //exit;
+            
+
             $this_view_error = 'lesson';
-            if($request_params["type"] == 'poll'){
-                $this_view_error = 'poll_exact';
+            if(isset($request_params["type"])){
+                if($request_params["type"] == 'poll'){
+                    $this_view_error = 'poll_exact';
+                }
+            }
+            $poll_type = "single";
+            if(isset($request_params["poll_type"])){
+                if($request_params["poll_type"] == 'team'){
+                    $poll_type = 'team';
+                }
             }
             
             if ($model->load($request->post()) && $model->save()) {
@@ -720,7 +750,11 @@ class SiteController extends \app\components\Controller
                     
                     $this_view = 'think';
                     if($model->type == 'poll'){
-                        $this_view = 'teachers';
+                        if($poll_type == "team"){
+                            $this_view = 'poll_team';
+                        }else{
+                            $this_view = 'poll_single';
+                        }
                     }
                     return $this->render($this_view, [
                         'model' => $this->findLesson($model->startKey),

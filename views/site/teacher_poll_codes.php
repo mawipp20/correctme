@@ -27,10 +27,17 @@ $this->title = Yii::$app->_L->get("teacher_title");
 <div class="alert alert-success" style="margin-top: 0em; margin-bottom: 20px; font-size: large;">
     <?php
         $msg_success = Yii::$app->_L->get('teacher_poll_codes_title');
-        $deadline = new DateTime();
-        $deadline->add(new DateInterval('PT' . $lesson->thinkingMinutes . 'M'));
-        $deadline_results = new DateTime();
-        $deadline_results->add(new DateInterval('PT'.($lesson->thinkingMinutes + 10080).'M'));
+
+
+        $deadline = new DateTime($lesson->insert_timestamp);
+        $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
+        
+        $msg_deadline = Yii::$app->_L->get('teacher_join_poll_login_success_deadline');
+        $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline).'</b>', $msg_deadline);
+         
+        $deadline_results = $deadline;
+        $deadline_results->modify('+1 week');
+        
         $msg_success = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline).'</b>', $msg_success); 
         $msg_success = str_replace('#deadline_results#', '<b>'.Yii::$app->formatter->asDate($deadline_results).'</b>', $msg_success); 
         $msg_success = str_replace('#lesson_title#', '<b>'.$lesson->title.'</b>', $msg_success); 
@@ -40,10 +47,6 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
     <blockquote>
     <p><?= Yii::$app->_L->get('teacher_poll_codes_explanation') ?></p>
-    <?php   if($lesson->poll_show_teacher_names){
-                echo '<p>'.Yii::$app->_L->get('teacher_poll_codes_explanation_show_teacher_names').'</p>';   
-            }
-    ?>
     </blockquote>
 
 

@@ -80,3 +80,10 @@ $this->params['breadcrumbs'][] = $this->title;
     
 </div>
 
+<script>
+function cmConfigO(){
+    this.restcorrectmeBaseUrl = '<?= Yii::$app->params["restcorrectmeBaseUrl"] ?>';
+}
+var cmConfig = new cmConfigO();
+</script>
+

@@ -141,6 +141,7 @@ $this->title = Yii::$app->_L->get("poll_title");
     ]); ?>
 
     <?= $form->field($model, 'type')->hiddenInput(['value' => 'poll'])->label(false); ?>
+    <input type='hidden' id='poll_type' name='poll_type' value='single'>       
     
     <?php
     echo $form->field($model, 'title'
@@ -196,11 +197,19 @@ $this->title = Yii::$app->_L->get("poll_title");
     </div>    
 
         <div id="div_lesson_submit" class="" style="margin-top: 2em; display: none;">
-        
-            <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit')
+                
+            <?php echo  Html::Button(Yii::$app->_L->get('poll_submit_single')
                 , [
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
+                'onclick' => '$("#poll_type").val("single");this.form.submit();'
+                ]) ?>
+
+            <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit_team')
+                , [
+                'class' => 'btn btn-primary',
+                'id'=>'poll_exact_submit',
+                'onclick' => '$("#poll_type").val("team");this.form.submit();'
                 ]) ?>
 
         </div>

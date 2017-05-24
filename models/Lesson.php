@@ -21,7 +21,7 @@ use app\models\Language;
  * @property integer $earlyPairing
  * @property string $typeMixing
  * @property integer $namedPairing
- * @property poll_show_teacher_names
+ * @property integer poll_type
  */
 
 /**
@@ -74,9 +74,9 @@ class Lesson extends \app\components\ActiveRecord
             [['numStudents'], 'integer', 'min'=>2, 'max'=>50, 'message' => '2 - 50'],
 
             [['lessonFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'ini'],
+            
+            ['poll_type', 'in', 'range' => ['single', 'team', 'names']],
 
-            //[['startKey'], 'string', 'max' => 12, 'min' => 6],
-            //[['typeTasks', 'typeMixing'], 'string', 'max' => 20],
         ];
     }
 
@@ -99,7 +99,7 @@ class Lesson extends \app\components\ActiveRecord
             'earlyPairing' => Yii::$app->_L->get('LABEL_earlyPairing'),
             'typeMixing' => Yii::$app->_L->get('LABEL_typeMixing'),
             'namedPairing' => Yii::$app->_L->get('LABEL_namedPairing'),
-            'poll_show_teacher_names' => '',
+            'poll_type' => '',
         ];
     }
 

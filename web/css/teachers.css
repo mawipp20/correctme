@@ -33,3 +33,18 @@
 #poll_results_teachers td.data{
     font-weight: bold;
 }
+.well-teachers{
+    background-color: white;
+    color: darkblue;
+    margin-top: 1.6em;
+    margin-bottom: 0.3em;
+    font-size: larger;
+    padding: 0.4em;
+}
+.well-teachers:hover{
+    background-color:  rgb(51,122,183);
+    color: white;
+    cursor: pointer;
+    font-size: larger;
+    padding: 0.4em;
+}

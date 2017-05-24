@@ -42,7 +42,7 @@ class Teacher extends \app\components\ActiveRecord
             [['email'], 'string', 'max' => 150],
             [['activationkey'], 'string', 'max' => 12],
             ['state', 'in', "range" => ['prepared', 'active', 'finished']],
-            ['status', 'in', "range" => ['initiator', 'teacher']],
+            ['status', 'in', "range" => ['initiator', 'teacher', 'template']],
             [['studentkey'], 'string', 'max' => 50],
             [['startKey', 'name'], 'unique', 'targetAttribute' => ['startKey', 'name'], 'message' => 'The combination of Start Key and Name has already been taken.'],
             [['startKey'], 'exist', 'skipOnError' => true, 'targetClass' => Lesson::className(), 'targetAttribute' => ['startKey' => 'startKey']],

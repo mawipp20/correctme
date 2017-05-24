@@ -50,27 +50,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
 </div>
 
-<?php
-
-$restcorrectmeUrl = 'http://localhost/restcorrectme/web/student/think';
-if($_SERVER['HTTP_HOST'] == 'zelon.de'){
-    $restcorrectmeUrl = 'https://zelon.de/restcorrectme/web/student/think';
-}
-
-
-?>
-
 <script>
 var _L = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;
 function cmConfigO(){
-    this.restcorrectmeUrl = '';
+    this.restcorrectmeBaseUrl = '';
     this.displayThinkingMinutes = false;
     this.displayTaskNavSecond = false;
     this.displayTaskLabelNum = false;
     this.displayBtnHelp = false;
     this.studentRedirectAfterLastAnswer = true;
     this.taskFinishedButtonMoveOn = true;
-    this.restcorrectmeUrl = '<?= $restcorrectmeUrl ?>';
+    this.restcorrectmeBaseUrl = '<?= Yii::$app->params["restcorrectmeBaseUrl"] ?>';
 }
 var cmConfig = new cmConfigO();
 </script>

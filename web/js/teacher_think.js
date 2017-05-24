@@ -11,7 +11,7 @@ function getThinkingStudents(){
     data["teacherKey"] = $("[name=teacherKey]").val();
     
     $.ajax({
-        url: 'http://localhost/restcorrectme/web/lesson/think',
+        url: cmConfig.restcorrectmeBaseUrl + "web/lesson/think",
         type: 'POST',
         data: data,
         success: function(data) {

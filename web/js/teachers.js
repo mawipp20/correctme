@@ -1,26 +1,69 @@
-function teachers_add_team(){
-    $('#team_info').show();
+function teacher_join_poll_save_name(){
+
+    /**  */
+       
+    query = {};
+    query["activationkey"] = $("#activationkey").val();
+    query["teacher-name"] = $("#teacher-name").val();
+    
+    $.ajax({
+        url: cmConfig.restcorrectmeBaseUrl + "web/lesson/poll_save_teacher_name",
+        type: 'POST',
+        data: query,
+        success: function(data) {
+            
+            if(data["error"] == ""){
+                $("#div_save_name").hide();
+                $("#div_save_name_error").hide();
+                $("#div_save_name_success").html(_L['teacher_join_poll_save_name_success']);
+                $("#div_save_name_success").show();
+            }else{
+                if(data["error"] == "name-too-short"){
+                    $("#div_save_name_error").html(_L['teacher_join_poll_save_name_error_name_too_short']);
+                    $("#div_save_name_error").show();
+                }else{
+                    $("#div_save_name_error").html(_L['teacher_join_poll_save_name_error']);
+                    $("#div_save_name_error").show();
+                }
+            }
+            
+        },
+        error: function(xhr, status, error) {
+            state["rest_status"] = 0;
+            var err = eval("(" + xhr.responseText + ")");
+            if(state["program_version"]=="dev"){
+                $("#div_save_name_error").html("server error");
+                $("#div_save_name_error").show();
+            }else{
+                $("#div_save_name_error").html("server error");
+                $("#div_save_name_error").show();
+            }
+        }
+    });
+    
+}
+
+
+function teachers_add_names(){
+    $('#div_team_without_names').hide();
     $('#team_div').show();
     $('#team_names').find("input").focus();
     return false
 }
-function teachers_submit(){
+function teachers_submit_names(){
+    $('#lesson-poll_type').val('names');
     $('#teachers_collected').val(getTeachers().join("#"));
-    $('#poll_show_teacher_names').val($('#checkbox_poll_show_teacher_names').prop( "checked" ));
-    //$("form").attr("action", "teacher_poll_codes");
     $("form").submit();
 }
-function teachers_single_submit(){
-    if($('#team_info').is(":visible")){
-        $('#team_info').hide();
-        $('#team_div').hide();
-        return;
-    }
-    //alert($("form").attr("action"));
-    //$('#teachers_collected').val("");
-    //$("form").attr("action", "poll_start");
+function teachers_submit_single(){
+    $('#lesson-poll_type').val('single');
     $("form").submit();
 }          
+function teachers_submit_team(){
+    $('#lesson-poll_type').val("team");
+    $("form").submit();
+}          
+
 
 function teacherNameOnInput(elem){
 
