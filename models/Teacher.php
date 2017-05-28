@@ -67,6 +67,18 @@ class Teacher extends \app\components\ActiveRecord
         ];
     }
 
+
+    public function beforeValidate()
+    {
+        if (parent::beforeValidate()) {
+            if($this->activationkey == ""){$this->activationkey = $this->generateUniqueRandomString("activationkey", 8);}
+            if($this->studentkey == ""){$this->studentkey = $this->generateUniqueRandomString("studentkey", 8);}
+            if($this->resultkey == ""){$this->resultkey = $this->generateUniqueRandomString("resultkey", 8);}
+        }
+        return true;
+    }
+
+
     /**
      * @return \yii\db\ActiveQuery
      */

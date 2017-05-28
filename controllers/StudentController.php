@@ -82,6 +82,20 @@ class StudentController extends \app\components\Controller
     }
 
     /**
+     * Displays the student lesson Login page.
+     *
+     * @return string
+     */
+    public function actionCancel()
+    {
+        Yii::$app->session->destroy();
+        $model = new StudentJoinForm();
+        return $this->render('poll_or_lesson', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Displays the student poll Login page.
      *
      * @return string
@@ -114,11 +128,13 @@ class StudentController extends \app\components\Controller
             
             $post = $request->post();
             
+            
             /** from student_join_poll: get the startKey via studentkey of the teacher */
             
             if(isset($post["Teacher"])){
                 $post["StudentJoinForm"] = array("startKey"=>"", "name"=>Yii::$app->getSecurity()->generateRandomString(32));
                 $teacher = Teacher::find()->where(['studentkey' => $post["Teacher"]["studentkey"]])->one();
+                
                 if(!is_null($teacher)){
                     $post["StudentJoinForm"]["startKey"] = $teacher->startKey;
                     $post["StudentJoinForm"]["teacher_id"] = $teacher->id;

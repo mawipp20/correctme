@@ -32,13 +32,13 @@ $this->title = Yii::$app->_L->get("teacher_title");
         $deadline = new DateTime($lesson->insert_timestamp);
         $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
         
-        $msg_deadline = Yii::$app->_L->get('teacher_join_poll_login_success_deadline');
+        $msg_deadline = Yii::$app->_L->get('teacher_join_poll_one_activation_key_success_deadline');
         $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline).'</b>', $msg_deadline);
          
         $deadline_results = $deadline;
         $deadline_results->modify('+1 week');
         
-        $msg_deadline_results = Yii::$app->_L->get('teacher_join_poll_login_success_deadline_results');
+        $msg_deadline_results = Yii::$app->_L->get('teacher_join_poll_one_activation_key_success_deadline_results');
         $msg_deadline_results = str_replace('#deadline_results#', '<b>'.Yii::$app->formatter->asDate($deadline_results).'</b>', $msg_deadline_results);
          
         echo $msg_success."<br /><br />".$msg_deadline."<br />".$msg_deadline_results;      

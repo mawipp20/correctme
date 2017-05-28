@@ -12,6 +12,7 @@ LessonAsset::register($this);
 
 $this->title = Yii::$app->_L->get("poll_title");
 
+        
 ?>
 
 <div id='switch_activate_create' class='well well-lg  well-poll-or-lesson'
@@ -42,6 +43,9 @@ $this->title = Yii::$app->_L->get("poll_title");
                     'validateOnBlur'=>false,
         ]);
         ?>
+
+          <?= $form1->field($model, 'type')->hiddenInput(['value' => 'poll'])->label(false); ?>
+
         <?php if(Yii::$app->session->hasFlash('login_error')): ?>
             <div class="alert alert-danger" role="alert">
                 <?= Yii::$app->session->getFlash('login_error') ?>
@@ -134,7 +138,7 @@ $this->title = Yii::$app->_L->get("poll_title");
     <?php $form = ActiveForm::begin([
                 'enableClientValidation'=>true,
                 'validateOnChange'=>true,
-                'validateOnBlur'=>false,
+                'validateOnBlur'=>true,
                 'action' => ['think'],
                 'method' => 'post',
                 'id' => 'lesson_form',
@@ -163,6 +167,7 @@ $this->title = Yii::$app->_L->get("poll_title");
 
     <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
     <?= $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
+    <?= $form->field($model, 'type')->hiddenInput()->label(false); ?>
       
     
     <div id="tasks">
@@ -198,18 +203,20 @@ $this->title = Yii::$app->_L->get("poll_title");
 
         <div id="div_lesson_submit" class="" style="margin-top: 2em; display: none;">
                 
-            <?php echo  Html::Button(Yii::$app->_L->get('poll_submit_single')
+            <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit_single')
                 , [
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
-                'onclick' => '$("#poll_type").val("single");this.form.submit();'
+                'onclick' => '$("#poll_type").val("single");
+                            if(!lesson_exact_validate_tasks()){return false;}'
                 ]) ?>
 
             <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit_team')
                 , [
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
-                'onclick' => '$("#poll_type").val("team");this.form.submit();'
+                'onclick' => '$("#poll_type").val("team");
+                                if(lesson_exact_validate_tasks()){this.form.submit();}'
                 ]) ?>
 
         </div>
@@ -220,6 +227,7 @@ $this->title = Yii::$app->_L->get("poll_title");
 
 <script>
 var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;
+var _L_poll = <?= json_encode(Yii::$app->_L->get('poll')); ?>;
 var uploadedTasks = <?= json_encode($uploadedTasks); ?>;
 </script>
 

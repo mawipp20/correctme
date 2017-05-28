@@ -14,8 +14,10 @@
     padding:0.25em;
     border-bottom: 1px solid lightgrey;
 }
-#poll-codes .initiator{
+#poll-codes .template_teacher{
     font-weight: bold;
+    padding-top: 0.7em;
+    padding-bottom: 0.7em;
     b/order-left:1px solid black;
     b/order-right:1px solid black;
 }

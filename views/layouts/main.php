@@ -36,6 +36,9 @@ use yii\widgets\Breadcrumbs;
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             //['label' => Yii::$app->_L->get('top_nav_go_teacher'), 'url' => ['/site/teacher_poll_or_lesson']],
+            ['label' => 'Home', 'url' => ['/student/index']],
+            ['label' => Yii::$app->_L->get('gen_student'), 'url' => ['/student/student_join_poll']],
+            ['label' => Yii::$app->_L->get('gen_teacher'), 'url' => ['/site/lesson_exact?lesson_type=poll&show_teacher_join']],
             ['label' => Yii::$app->_L->get('top_nav_teacher_about'), 'url' => ['/site/about']],
         ],
     ]);

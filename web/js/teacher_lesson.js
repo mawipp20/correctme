@@ -1,4 +1,6 @@
 var textarea_autogrow_reduce_height_by = 0; /** autoGrow plugin adapted so that the textarea-row-line is the same as the type-button */ 
+var lesson_type = "";
+var init_title_validation = false;
 
 function taskO(){
     this.num = "1";
@@ -7,6 +9,8 @@ function taskO(){
 }
 
 $(document).ready(function() {
+
+    lesson_type = $('#lesson-type').val();
 
     if(typeof uploadedTasks != "undefined"){
             
@@ -42,19 +46,60 @@ $(document).ready(function() {
     if($('#lessonupload-lessonfile').length > 0){
         $('#lessonupload-lessonfile').val('');
         $('#lessonFile-info').html('&nbsp;');
-    }    
+    }
+    
+    $("#lesson_form").on("afterValidateAttribute", function(event, attribute, messages) {
+             if(messages != ""){$(window).scrollTop(0);}
+             return true;
+    });
+
+    $('body').mousemove(function( event ) {
+        if(!init_title_validation){
+            $('#lesson_form').yiiActiveForm('validateAttribute', 'lesson-title');
+            init_title_validation = true;
+        }
+    });
+    $(window).scroll(function( event ) {
+        if(!init_title_validation){
+            $('#lesson_form').yiiActiveForm('validateAttribute', 'lesson-title');
+            init_title_validation = true;
+        }
+    });
+    
+    //$('#lesson_form').yiiActiveForm('validateAttribute', 'lesson-title');
+
+    
+    /**    
     $('#lesson_form').on('beforeValidate', function (e) {
         console.log("lesson_exact_validate");
         return lesson_exact_validate_tasks();
     });
+    $('#lesson_form').submit(function (e) {
+        return false;
+        return lesson_exact_validate_tasks();
+    });
+    */
 });
 
 function dropdown_task_type(elem){
     var task_type = $(elem).closest('.task_type');
     task_type.attr("data-task-type", $(elem).attr("data-task-type"));
     task_type.children("button").first().html($(elem).text() + '<span class="caret"></span>');
-    $(elem).closest('.task').find(".task_input").focus();
+    var this_input = $(elem).closest('.task').find(".task_input");
+    this_input.focus();
+    
+    for(var this_class in this_input.prop("classList")){
+        var prop = this_input.prop("classList")[this_class];
+        if(typeof prop == "string"){
+            if(prop.substr(0, 10)=="task_type_"){
+                this_input.removeClass(prop);
+            }
+        }
+    }
+    this_input.addClass("task_type_" + $(elem).attr("data-task-type"));
+    console.log(this_input.prop("classList"));
 }
+
 function taskOnInput(elem){
 
     var elem = $(elem);
@@ -88,7 +133,12 @@ function addTask(text, type, atBottom){
     this_newTask.find(".task_input").attr('data-text-length', text.length);
     if(type != "clone"){
         this_newTask.find(".task_type").attr("data-task-type", type);
-        this_newTask.find(".task_type").find("button").html(_L_lesson['lesson_tasks_type_' + type] + ' <span class="caret"></span>');
+        var this_html = _L_lesson['lesson_tasks_type_' + type];
+        if(lesson_type == "poll"){
+            this_html = _L_poll['poll_tasks_type_' + type];
+        }
+        this_newTask.find(".task_type").find("button").html(this_html + ' <span class="caret"></span>');
+        this_newTask.find(".form-control").addClass("task_type_" + type)
     }
     this_newTask.find(".task_input").attr('placeholder', '');
     this_newTask.find(".btn_analyse_task_text").remove();
@@ -177,7 +227,6 @@ function lesson_exact_validate_tasks(){
     /** in case of quick lesson without specific task texts: skip tasks validation */
     if($('#tasks').length == 0){return true;}
     
-
     var this_num = 0;
     var ret = false;
     var new_tasks = {};
@@ -204,7 +253,7 @@ function lesson_exact_validate_tasks(){
             new_tasks[this_num] = this_task;
         }
     });
-    $('#new_tasks').val(JSON.stringify(new_tasks));  
+    $('#new_tasks').val(JSON.stringify(new_tasks));
     $('#lesson-numtasks').val(this_num);
     return ret;
 }

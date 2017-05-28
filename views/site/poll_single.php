@@ -59,9 +59,8 @@ $this->title = Yii::$app->_L->get("teacher_title");
     ]); ?>
 
 
-    <input type='hidden' id='teachers_collected' name='teachers_collected' value=''>       
     <?= $form->field($model, 'poll_type')->hiddenInput()->label(false); ?>
-    
+    <?= $form->field($model, 'startKey')->hiddenInput()->label(false); ?>   
 
           <?php
             echo $form->field($teacher, 'name'

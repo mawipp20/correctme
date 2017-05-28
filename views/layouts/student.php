@@ -57,7 +57,7 @@ use yii\widgets\Breadcrumbs;
         'items' => [
             //['label' => Yii::$app->_L->get('top_nav_student_cancel'), 'url' => ['/student/cancel']],
             '<button class="btn btn-success navbar-btn navbar-student-btn"'
-            .' onclick=\'window.location.href="'.\Yii::$app->getUrlManager()->getBaseUrl().'/site/about";\''
+            .' onclick=\'window.location.href="'.\Yii::$app->getUrlManager()->getBaseUrl().'/student/cancel";\''
             .'>'
             .Yii::$app->_L->get('top_nav_student_finish_'.$lesson_type).'</button>',
             /**

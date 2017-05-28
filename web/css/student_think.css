@@ -43,6 +43,7 @@
 }
 .task_label_info{
     background-color: white;
+    padding-left: 0em;
     border-color: transparent;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;

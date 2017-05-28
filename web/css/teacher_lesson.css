@@ -55,7 +55,9 @@
     -webkit-transition: height 0.2s -webkit-transform 0.2s;
     transition: height 0.2s, transform 0.2s;
 }
-
+.task_type_info{
+    background: lightgrey;
+}
 .btn_delete_task{
     margin-left: 0.3em;
 }

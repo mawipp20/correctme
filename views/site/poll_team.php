@@ -103,18 +103,20 @@ $this->title = Yii::$app->_L->get("teacher_title");
             </h3>
 
 
-            <div id='teacher_info_team' style="margin-top: 1em;">
+            <div id='teacher_info_team' style="margin-top: 1em; margin-bottom: 2em;">
                 <p><?= Yii::$app->_L->get('teacher_info_team') ?></p>
             </div>
             
 
 
             <div id="div_team_without_names">
-                <p style="font-weight: bold; margin-top: 2em;">
-                    <?= Yii::$app->_L->get('teacher_info_team_without_names_title') ?>
-                </p>
                 <div id='teacher_info_team_with_names'>
-                    <p><?= Yii::$app->_L->get('teacher_info_team_without_names') ?></p>
+                    <p>
+                    <span style="">
+                        <?= Yii::$app->_L->get('teacher_info_team_without_names_title') ?>
+                    </span>
+                        <?= Yii::$app->_L->get('teacher_info_team_without_names') ?>
+                    </p>
                 </div>
                 <?php 
                 echo  Html::button(
@@ -127,12 +129,15 @@ $this->title = Yii::$app->_L->get("teacher_title");
                     ?>
             </div>
 
-            <p style="font-weight: bold;; margin-top: 3em;">
-                <?= Yii::$app->_L->get('teacher_info_team_with_names_title') ?>
-            </p>
-            <div id='teacher_info_team_with_names'>
-                <p><?= Yii::$app->_L->get('teacher_info_team_with_names') ?></p>
+            <div id='teacher_info_team_without_names' style="margin-top:  3em;">
+                <p>
+                <span style="">
+                    <?= Yii::$app->_L->get('teacher_info_team_with_names_title') ?>
+                </span>
+                    <?= Yii::$app->_L->get('teacher_info_team_with_names') ?>
+                </p>
             </div>
+
             <?php 
             echo  Html::button(
                 '<i class="fa fa-user-plus" aria-hidden="true"></i>'
