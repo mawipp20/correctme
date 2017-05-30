@@ -157,7 +157,7 @@ function getTeachers(getCount){
     }
     if(getCount){
         var ret = Object.keys(teachers).length;
-        if(typeof teachers[$('#teacher-name').val()] == "undefined"){ret++;}
+        //if(typeof teachers[$('#teacher-name').val()] == "undefined"){ret++;}
         return ret;
     }    
     return Object.keys(teachers);

@@ -21,6 +21,11 @@ LessonAsset::register($this);
     if(Yii::$app->params["correctmeHasLesson"]){
         include_once(Yii::$app->basePath.'/views/components/_inc_poll_or_lesson_lessonButtons.php');
     }
+
+    if(Yii::$app->params["correctmeHasPoll"]){
+        include_once(Yii::$app->basePath.'/views/components/_inc_poll_explained.php');
+    }
+    
     ?>
 
         

@@ -19,9 +19,9 @@ $this->title = Yii::$app->_L->get("lesson_title");
     <?php
         foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
             $this_class = "alert ";
-            if(substr($key, 0, 6) == "error_"){$this_class .= "alert-danger";}
-            if(substr($key, 0, 8) == "warning_"){$this_class .= "alert-warning";}
-            if(substr($key, 0, 8) == "success_"){$this_class .= "alert-success";}
+            if(strpos($key, "error")!==false){$this_class .= "alert-danger";}
+            if(strpos($key, "warning")!==false){$this_class .= "alert-warning";}
+            if(strpos($key, "success")!==false){$this_class .= "alert-success";}
             echo '<div class="'.$this_class.'">' . $message . "</div>\n";
         }
     ?>

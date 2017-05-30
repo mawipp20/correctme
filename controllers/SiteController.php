@@ -476,15 +476,13 @@ class SiteController extends \app\components\Controller
             $lesson = Lesson::find()->where(['startKey'=>$teacher->startKey])->one();
             if($teacher === null){
                 Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_activation_error'));
-                Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
+                return Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
+            }
+            if($teacher->state != "prepared" & $teacher->status != "template"){
+                Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_activation_error_used_key'));
+                return Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
             }
             $teacher->state = "active";
-            /**
-            if(!$teacher->save()){
-                if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($teacher->getErrors());}
-                die("teacher state not saved");
-            }
-            */
             
         /** when a poll has been prepared and is started as an immediate single poll */
         }elseif($request_params = Yii::$app->request->post()){

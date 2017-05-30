@@ -41,14 +41,14 @@ $this->title = Yii::$app->_L->get("poll_title");
                     'method' => "get",    
                     'validateOnChange'=>true,
                     'validateOnBlur'=>false,
-        ]);
+        ]);        
         ?>
 
           <?= $form1->field($model, 'type')->hiddenInput(['value' => 'poll'])->label(false); ?>
 
         <?php if(Yii::$app->session->hasFlash('login_error')): ?>
             <div class="alert alert-danger" role="alert">
-                <?= Yii::$app->session->getFlash('login_error') ?>
+                <?php echo Yii::$app->session->getFlash('login_error'); ?>
             </div>
         <?php endif; ?>
 
