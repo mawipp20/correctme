@@ -13,67 +13,128 @@
         .activationkey{
             font-weight: bold;
             color: darkorange;
+            white-space: nowrap;
         }
         .studentkey{
             font-weight: bold;
             color: green;
+            white-space: nowrap;
         }
         .resultkey{
         }
-        ul {
-            list-style: none;
-            padding: 0px;
-        }
-        
-        ul li:before
-        {
-            content: '-';
-            margin: 0 1em;    /* any design */
-        }
         h4{
             padding: 0.3em;
-            background-color:rgb(217,237,247);
+            padding-bottom: 0em;
+            border-bottom:4px solid rgb(217,237,247);
+        }
+        p.sequence_info_link{
+            margin-top:1.5em;
+            cursor: pointer; 
+            color: darkblue;
+            font-size: larger;
+        }
+        ul {
+            list-style-type: "... ";
         }
         </style>
+
+        <p id="id_sequence_info_link" class="sequence_info_link" onclick="
+            $('#sequence-info').toggle();
+            $('#sequence-single-info').hide();
+            $('#id_sequence_single_info_link').css('font-weight', 'normal');
+            $(this).css('font-weight', 'bold');
+            ">
+        <?= Yii::$app->_L->get('info_sequence_link_show') ?>
+        </p>
         
-        <p style="margin-top:2em; cursor: pointer; color: darkblue;" onclick="$('#process-info').toggle();">>> So ist der Ablauf</p>
-        <div id="process-info" style="display: none; padding: 0.3em; border: 0px solid darkgrey; margin-top:1em;">
+        <p id="id_sequence_single_info_link" class="sequence_info_link" onclick="
+            $('#sequence-single-info').toggle();
+            $('#sequence-info').hide();
+            $('#id_sequence_info_link').css('font-weight', 'normal');
+            $(this).css('font-weight', 'bold');
+            ">
+        <?= Yii::$app->_L->get('info_sequence_single_link_show') ?>
+        </p>
+        
+        
+        
+        <div id="sequence-info" style="display: none; padding: 0.3em; border: 0px solid darkgrey; margin-top:1em;">
            
             <div class='w1ell w1ell-lg cm-info-well'>
-                <h4>Das Team</h4>
+                <h4><?= Yii::$app->_L->get('info_sequence_team_top_title') ?></h4>
                 <ul>
-                    <li>formuliert Fragen oder kopiert aus einem Katalog</li>
-                    <li>erstellt einen <span class="activationkey">Aktivierungscode</span></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_team_top_li_1') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_team_top_li_2') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_team_top_li_3') ?></li>
                 </ul>
             </div>
             <div class='cm-info-well'>
-                <h4>Die einzelne Lehrer/in</h4>
+                <h4><?= Yii::$app->_L->get('info_sequence_teacher_top_title') ?></h4>
                 <ul>
-                    <li>gibt den <span class="activationkey">Aktivierungscode</span> ein</li>
-                    <li>erhält einen eigenen <span class="studentkey">Schüler/innen-Zugangscode</span></li>
-                    <li>erhält einen eigenen <span class="resultkey">Ergebnis-Code</span></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_teacher_top_li_1') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_teacher_top_li_2') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_teacher_top_li_3') ?></li>
                 </ul>
             </div>
             <div class='cm-info-well'>
-                <h4>Die Schüler/innen</h4>
+                <h4><?= Yii::$app->_L->get('info_sequence_students_title') ?></h4>
                 <ul>
-                    <li>geben den <span class="studentkey">Schüler/innen-Zugangscode</span> ein</li>
-                    <li>beantworten die Fragen</p>
+                    <li><?= Yii::$app->_L->get('info_sequence_students_li_1') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_students_li_2') ?></p>
                 </ul>
             </div>
             <div class='cm-info-well'>
-                <h4>Die einzelne Lehrer/in</h4>
+                <h4><?= Yii::$app->_L->get('info_sequence_teacher_bottom_title') ?></h4>
                 <ul>
-                    <li>gibt ihren <span class="resultkey">Ergebnis-Code</span> ein</li>
-                    <li>erhält exklusiv ihre eigenen Ergebnisse</li>
-                    <li>erhält die Team-Durchschnittswerte zum Vergleich</li>
+                    <li><?= Yii::$app->_L->get('info_sequence_teacher_bottom_li_1') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_teacher_bottom_li_2') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_teacher_bottom_li_3') ?></li>
                 </ul>
             </div>
             <div class='cm-info-well'>
-                <h4>Das Team</h4>
+                <h4><?= Yii::$app->_L->get('info_sequence_team_bottom_title') ?></h4>
                 <ul>
-                    <li>diskutiert die Team-Durchschnittswerte</li>
-                    <li>hat keinen Zugriff auf die Einzelergebnisse, und auch sonst niemand</li>
+                    <li><?= Yii::$app->_L->get('info_sequence_team_bottom_li_1') ?></li>
+                    <li  style="background-color: rgb(217,237,247);">
+                    <?= Yii::$app->_L->get('info_sequence_team_bottom_li_2') ?>
+                    </li>
+                    <li  style="background-color: rgb(217,237,247);">
+                    <?= Yii::$app->_L->get('info_sequence_team_bottom_li_3') ?>
+                    </li>
+                    <li><a href="../web/site/about">
+                    <?= Yii::$app->_L->get('info_sequence_team_bottom_link_privacy') ?>
+                    </a></li>
+                </ul>
+            </div>
+        </div>    
+                
+
+        <div id="sequence-single-info" style="display: none; padding: 0.3em; border: 0px solid darkgrey; margin-top:1em;">
+           
+            <div class='w1ell w1ell-lg cm-info-well'>
+                <h4><?= Yii::$app->_L->get('info_sequence_single_team_top_title') ?></h4>
+                <ul>
+                    <li><?= Yii::$app->_L->get('info_sequence_single_team_top_li_1') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_single_team_top_li_2') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_single_team_top_li_3') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_single_team_top_li_4') ?></li>
+                </ul>
+            </div>
+            <div class='cm-info-well'>
+                <h4><?= Yii::$app->_L->get('info_sequence_students_title') ?></h4>
+                <ul>
+                    <li><?= Yii::$app->_L->get('info_sequence_students_li_1') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_students_li_2') ?></p>
+                </ul>
+            </div>
+            <div class='cm-info-well'>
+                <h4><?= Yii::$app->_L->get('info_sequence_single_team_bottom_title') ?></h4>
+                <ul>
+                    <li><?= Yii::$app->_L->get('info_sequence_single_team_bottom_li_1') ?></li>
+                    <li><?= Yii::$app->_L->get('info_sequence_single_team_bottom_li_2') ?></li>
+                    <li><a href="../web/site/about">
+                    <?= Yii::$app->_L->get('info_sequence_team_bottom_link_privacy') ?>
+                    </a></li>
                 </ul>
             </div>
         </div>    

@@ -21,20 +21,6 @@
     b/order-left:1px solid black;
     b/order-right:1px solid black;
 }
-
-#poll_results_teachers td{
-    padding:0.3em;
-    padding-bottom:0.0em;
-}
-#poll_results_teachers tr.margin-top td{
-    padding-top:2em;
-}
-#poll_results_teachers td.prompt{
-    text-align: right;
-}
-#poll_results_teachers td.data{
-    font-weight: bold;
-}
 .well-teachers{
     background-color: white;
     color: darkblue;

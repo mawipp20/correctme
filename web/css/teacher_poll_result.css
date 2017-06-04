@@ -1,0 +1,18 @@
+#poll_results_teachers td{
+    padding:0.3em;
+    padding-bottom:0.0em;
+    vertical-align: top;
+    border-bottom: 1px solid darkgrey;
+}
+#poll_results_teachers tr.margin-top td{
+    padding-top:2em;
+}
+#poll_results_teachers td.prompt{
+    text-align: right;
+}
+#poll_results_teachers td.data{
+    font-weight: bold;
+}
+#poll_results_teachers span.names{
+    font-weight: normal;
+}

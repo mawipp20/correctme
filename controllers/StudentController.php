@@ -115,7 +115,7 @@ class StudentController extends \app\components\Controller
      */
     public function actionThink()
     {
-        
+                
         $model = new Student();
         $this->layout = 'student';
 
@@ -128,6 +128,8 @@ class StudentController extends \app\components\Controller
             
             $post = $request->post();
             
+            $error_page = 'student/student_join_poll';
+            if($post["type"] == "lesson"){$error_page = 'student/student_join';}
             
             /** from student_join_poll: get the startKey via studentkey of the teacher */
             
@@ -141,13 +143,13 @@ class StudentController extends \app\components\Controller
                 }else{
                     /** check if student tried a lesson key as a poll key */
                     $check_lesson = Lesson::find()->where(['startKey' => $post["Teacher"]["studentkey"]])->one();
-                    if(!is_null($check_lesson)){
-                        Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error_is_lesson'));
-                        Yii::$app->response->redirect(['student/student_join']);
+                    if(is_null($check_lesson)){
+                        Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
+                        Yii::$app->response->redirect([$error_page]);
                         return;
                     }
-                    Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
-                    Yii::$app->response->redirect(['student/student_join_poll']);
+                    Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_poll_login_error_is_lesson'));
+                    Yii::$app->response->redirect([$error_page]);
                     return;
                 }
             }
@@ -156,9 +158,22 @@ class StudentController extends \app\components\Controller
             
             if($model->load($post, "StudentJoinForm")){
                 $lesson = Lesson::find()->where(['startKey' => $model->startKey])->one();
+
+                /** still active or has time run out */
+                $deadline = new \DateTime($lesson->insert_timestamp);
+                $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
+                if(new \DateTime() >= $deadline){
+                    $msg_deadline = Yii::$app->_L->get('student_join_poll_login_error_time');
+                    $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline, 'dd. MMM').'</b>', $msg_deadline);
+                    $msg_deadline = str_replace('#lesson-title#', '"<b>'.$lesson->title.'</b>"', $msg_deadline);                    
+                    Yii::$app->getSession()->setFlash('login_error', $msg_deadline);
+                    Yii::$app->response->redirect([$error_page]);
+                    return;
+                }
+                
                 if(is_null($lesson)){
                     Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
-                    Yii::$app->response->redirect(['student/student_join']);
+                    Yii::$app->response->redirect([$error_page]);
                     return;
                 }
                 $student_with_the_same_name = Student::find()->where(

@@ -27,6 +27,23 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'assetManager' => [
+            'appendTimestamp' => true,
+            'bundles' => [
+            
+                //YII_ENV_DEV ? 'jquery.js' : 'jquery.min.js'
+                YII_ENV_DEV ? '' : 
+                'yii\web\JqueryAsset' => [
+                    'sourcePath' => null,   // do not publish the bundle
+                    'js' => [
+                        '//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js',
+                    ]
+                ],
+            ],
+
+
+
+        ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set
@@ -50,6 +67,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 "team" => "site/team",
+                //"teacher" => "site/lesson_exact?lesson_type=poll&show_teacher_join",
             /**
                 "UserForm" => "site/userform",
                 "hello" => "site/hello",

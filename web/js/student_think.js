@@ -67,7 +67,8 @@ var state = {
     ,"goto_taskNum":1 /** number of the requested task */
     ,"numNavButtons":5 /** is adapted to window width */
     ,"rest_status":"" /** empty string means display tasks for the first time; 0 = not in connection; 1 waiting for rest answer */
-    ,"restInterval_seconds":5 /** interval when the the rest service is called */
+    ,"restInterval_seconds":5000 /** interval millisecondes when the the rest service is called */
+    ,"howOftenNextTaskDelay":500 /** interval milliseconds when the the rest service is called */
     ,"hasChanges":0
     ,"lastSaved":0
     ,"pollStart":true /** at the start of a poll the title of the poll and the name of the teacher is shown with a start-now-button */
@@ -87,7 +88,7 @@ $(document).ready(function() {
         saveAnswer();
         rest_service();
         //if (/* stop */) clearInterval(restInterval)       
-    }, state["restInterval_seconds"] * 1000);
+    }, state["restInterval_seconds"]);
 });
 
 function getTask(){
@@ -172,7 +173,7 @@ function saveAnswer(){
     }    
 }
 
-function rest_service(){
+function rest_service(redirectTo){
 
     /** called by interval every 10 seconds (or more depending on server work load)  */
 
@@ -184,8 +185,10 @@ function rest_service(){
 
 
     /* stop if the last query (rest_status) is still going on or when there are no changes */
-    if(   state["rest_status"] == 1
+    if( typeof redirectTo == "undefined" &
+        (state["rest_status"] == 1
         | state["hasChanges"] === false
+        )
     ){
         console.log("no changes:" + state["rest_status"]);
         return;
@@ -206,8 +209,13 @@ function rest_service(){
     
     state["rest_status"] = 1;
     
+    var restUrl = "../../../" + cmConfig.restcorrectmePath + "web/student/think";
+    
+    //alert(restUrl);
+    
     $.ajax({
-        url: cmConfig.restcorrectmeBaseUrl + "web/student/think",
+
+        url: restUrl,
         type: 'POST',
         data: query,
         success: function(data) {
@@ -223,6 +231,9 @@ function rest_service(){
             state["error"] = data["error"];
             state["debug"] = data["debug"];
             state["lastSaved"] = data["lastSaved"];
+            
+            if(typeof redirectTo != "undefined"){window.location.href = redirectTo; return;}
+
             
             state["hasChanges"] = false;
             
@@ -672,10 +683,31 @@ function show_btn_finished(){
         state["hasChanges"] = true;
         saveAnswer();
         state["eventPageX"] = event.pageX;
+        if(whenPollFinished()){return;}
         state["goto_taskNum"] = task["num"] + this_step;
         getTask();
     });    
 }
+function whenPollFinished(){
+    if(state["goto_taskNum"] == lesson.numTasks){
+        if(cmConfig.studentRedirectAfterLastAnswer){
+            rest_service('poll_finished');
+            $('#taskNav_first').html('<div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i></div>');
+            /**
+                <div id="displayTasks">
+        <div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i></div>
+    </div>
+    <div id="taskNav_first" class="row"></div>
+    <div class="lessonInfo" id="lessonInfo"></div>
+    <div id="taskNav_second"></div>
+
+            */
+            return true;
+        }
+    }
+    return false;
+}
+
 function task_how_often_true_button_click(elem){
 
     answer.answer_text = $(elem).attr("data-val");
@@ -683,12 +715,7 @@ function task_how_often_true_button_click(elem){
     state["hasChanges"] = true;
     saveAnswer();
     
-    if(state["goto_taskNum"] == lesson.numTasks){
-        if(cmConfig.studentRedirectAfterLastAnswer){
-            window.location.href = 'poll_finished';
-        }
-        return;
-    }
+    if(whenPollFinished()){return;}
     
     $('.task_label').css('background-color', 'white');
     $('.task_how_true_often_button').each(function() {
@@ -700,5 +727,5 @@ function task_how_often_true_button_click(elem){
     setTimeout(function() {
         state["goto_taskNum"] = task["num"] + 1;
         getTask();
-    }, 1000)
+    }, state["howOftenNextTaskDelay"])
 }

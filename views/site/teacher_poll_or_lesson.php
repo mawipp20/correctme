@@ -11,19 +11,6 @@ LessonAsset::register($this);
 
 ?>
 
-<style>
-.well-poll-or-lesson{
-    color: darkblue;
-    margin-bottom: 2em;
-    font-size: large;
-}
-.well-poll-or-lesson:hover{
-    background-color:  rgb(51,122,183);
-    color: white;
-    margin-bottom: 2em;
-    cursor: pointer;
-    font-size: large;
-}
 </style>
 
     <form id="start_lesson_form" name="start_lesson_form" method="get" action="">
@@ -35,7 +22,7 @@ LessonAsset::register($this);
     </h3>
 
 
-    <div class='well well-lg well-poll-or-lesson'
+    <div class='well well-lg well-correctme-as-button'
         onclick='$("#lesson_type").val("lesson");
                  $("#start_lesson_form").attr("action", "lesson");
                  $("#start_lesson_form").submit();
@@ -47,7 +34,7 @@ LessonAsset::register($this);
     </div>
 
 
-    <div class='well well-lg well-poll-or-lesson'
+    <div class='well well-lg well-correctme-as-button'
         onclick='$("#lesson_type").val("poll");
                  $("#start_lesson_form").attr("action", "lesson_exact");
                  $("#start_lesson_form").submit();

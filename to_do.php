@@ -1,7 +1,17 @@
 <?php exit; ?>
 
+
+------- sofort ---------------
+
+- thinkingMinutes: nach Ablauf wirklich sperren!!!
+
+------- mittelfristig ---------------
+
 - Lehrerinnen können die Umfrage ohne Werte testen
+- Checkbox zum einverstanden-sein mit den Nutzungsbedingungen und dem 
 
-- Fragen-Sortieren: Text-Export aus poll_exact heraus
+------- später ---------------
 
-- Name speichern auf dem Handy (nach Eingabe des template Activationkeys)
+Fragen-Sortieren: Button "In einem großen Textfeld bearbeiten und sortieren."
+Text-Export aus poll_exact heraus
+

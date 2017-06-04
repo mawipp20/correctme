@@ -15,7 +15,7 @@ $this->title = Yii::$app->_L->get("poll_title");
         
 ?>
 
-<div id='switch_activate_create' class='well well-lg  well-poll-or-lesson'
+<div id='switch_activate_create' class='well well-lg  well-correctme-as-button'
     style="margin-top: 1em; margin-bottom: 3em;<?php if(!$show_teacher_join){echo 'display:none;';} ?>"
     onclick='   
         $("#switch_activate_create").hide();
@@ -93,7 +93,7 @@ $this->title = Yii::$app->_L->get("poll_title");
 
             <div  class="col-md-4">
                 <?php
-                echo $form1->field($teacher, 'resultkey'
+                echo $form2->field($teacher, 'resultkey'
                 , [
                 'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
                 ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
@@ -167,7 +167,6 @@ $this->title = Yii::$app->_L->get("poll_title");
 
     <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
     <?= $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
-    <?= $form->field($model, 'type')->hiddenInput()->label(false); ?>
       
     
     <div id="tasks">

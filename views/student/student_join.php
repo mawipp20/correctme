@@ -32,6 +32,8 @@ $this->title = Yii::$app->_L->get("student_join_lesson_title");
                 'validateOnBlur'=>false,
     ]); ?>
 
+          <?= Html::hiddenInput('type', 'poll')  ?>
+
           <?= $form->field($model, 'startKey'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-student-join' ]

@@ -121,6 +121,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
 var _L = <?= json_encode(Yii::$app->_L->get('teacher_join_poll')); ?>;
 function cmConfigO(){
     this.restcorrectmeBaseUrl = '<?= Yii::$app->params["restcorrectmeBaseUrl"] ?>';
+    this.restcorrectmePath = '<?= Yii::$app->params["restcorrectmePath"] ?>';
 }
 var cmConfig = new cmConfigO();
 </script>

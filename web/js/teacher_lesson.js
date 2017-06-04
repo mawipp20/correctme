@@ -65,20 +65,7 @@ $(document).ready(function() {
             init_title_validation = true;
         }
     });
-    
-    //$('#lesson_form').yiiActiveForm('validateAttribute', 'lesson-title');
 
-    
-    /**    
-    $('#lesson_form').on('beforeValidate', function (e) {
-        console.log("lesson_exact_validate");
-        return lesson_exact_validate_tasks();
-    });
-    $('#lesson_form').submit(function (e) {
-        return false;
-        return lesson_exact_validate_tasks();
-    });
-    */
 });
 
 function dropdown_task_type(elem){

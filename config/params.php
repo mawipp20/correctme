@@ -4,5 +4,6 @@ return [
     'adminEmail' => 'admin@example.com',
     'correctmeHasPoll' => true,
     'correctmeHasLesson' => false,
-    'restcorrectmeBaseUrl' => 'http://localhost/restcorrectme/',
+    'restcorrectmeBaseUrl' => 'https://localhost/restcorrectme/',
+    'restcorrectmePath' => 'restcorrectme/',
 ];

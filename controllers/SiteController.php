@@ -478,6 +478,18 @@ class SiteController extends \app\components\Controller
                 Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_activation_error'));
                 return Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
             }
+
+            /** still active or has time run out */
+            $deadline = new \DateTime($lesson->insert_timestamp);
+            $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
+            if(new \DateTime() >= $deadline){
+                $msg_deadline = Yii::$app->_L->get('teacher_join_poll_login_error_time');
+                $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline, 'dd. MMM').'</b>', $msg_deadline);
+                $msg_deadline = str_replace('#lesson-title#', '"<b>'.$lesson->title.'</b>"', $msg_deadline);                    
+                Yii::$app->getSession()->setFlash('login_error', $msg_deadline);
+                return Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
+            }
+
             if($teacher->state != "prepared" & $teacher->status != "template"){
                 Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_activation_error_used_key'));
                 return Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
@@ -489,7 +501,7 @@ class SiteController extends \app\components\Controller
             $lesson = Lesson::find()->where(['startKey' => $request_params["Lesson"]["startKey"]])->one();
             if($lesson === null){
                 Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_activation_error'));
-                Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
+                return Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
             }
             $lesson->thinkingMinutes = $this->transformThinkingMinutes($request_params["Lesson"]["thinkingMinutes"]);
             $lesson->poll_type = "single";
@@ -532,6 +544,8 @@ class SiteController extends \app\components\Controller
      */
     public function actionTeacher_results()
     {
+    
+        $countStudentsLimit = 3;
         $request_params = Yii::$app->request->get();
         $request_params = $request_params["Teacher"];
         $teacher = Teacher::find()->where(['resultkey'=>$request_params["resultkey"]])->one();
@@ -541,6 +555,19 @@ class SiteController extends \app\components\Controller
             return;
         }
         $lesson = Lesson::find()->where(['startKey'=>$teacher->startKey])->one();
+        
+        /** still active or has time run out */
+        $deadline = new \DateTime($lesson->insert_timestamp);
+        $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
+        if(new \DateTime() >= $deadline){
+            $msg_deadline = Yii::$app->_L->get('teacher_join_poll_results_error_time');
+            $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline, 'dd. MMM').'</b>', $msg_deadline);
+            $msg_deadline = str_replace('#lesson-title#', '"<b>'.$lesson->title.'</b>"', $msg_deadline);                    
+            Yii::$app->getSession()->setFlash('login_error', $msg_deadline);
+            Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
+            return;
+        }
+        
         $teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->all();
         $students = Student::find()->where(['startKey'=>$teacher->startKey, 'status'=>'finished'])->all();
         $tasks = Task::find()->where(['startKey'=>$teacher->startKey])->all();
@@ -569,7 +596,7 @@ class SiteController extends \app\components\Controller
         }
         
         foreach($teachersArr["students"] as $this_teacher_id => $val_arr){
-            if($val_arr["countStudents"] >= 5){$teachersArr["withStudents"]++;}
+            if($val_arr["countStudents"] >= $countStudentsLimit){$teachersArr["withStudents"]++;}
         }
         
 
@@ -621,6 +648,7 @@ class SiteController extends \app\components\Controller
          'teachersArr' => $teachersArr,
          'numStudents' => $numStudents,
          'taskAnswers' => $taskAnswers,
+         'countStudentsLimit' => $countStudentsLimit
         ]);
     }
 
@@ -655,10 +683,11 @@ class SiteController extends \app\components\Controller
         $content .= "\r\n\r\n[general]";
         $content .= "\r\ntitle = ".$lesson["title"];
         $content .= "\r\ntype = ".$lesson["type"];
-        $content .= "\r\n\r\n[tasks]\r\n";
+        $content .= "\r\n\r\n[tasks]";
         
         $tasks = Task::findAll(['startKey' => Yii::$app->getSession()->get("startKey")]);
         foreach($tasks as $task){
+            if($task["type"] == "sysinfo"){continue;}
             $content .= "\r\n". $task["type"]." = ".$task["task_text"];
         }
         
@@ -758,6 +787,10 @@ class SiteController extends \app\components\Controller
                     $poll_type = 'team';
                 }
             }
+            
+            
+            //var_dump($request->post());
+            //exit;
             
             if ($model->load($request->post()) && $model->save()) {
                     Yii::$app->getSession()->set("startKey", $model->startKey);

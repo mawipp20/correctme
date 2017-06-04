@@ -5,11 +5,7 @@ use yii\helpers\Html;
 use app\assets\AppAsset;
 AppAsset::register($this);
 
-use app\assets\LessonAsset;
-LessonAsset::register($this);
-
 ?>
-
 
     <?php
     

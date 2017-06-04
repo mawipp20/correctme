@@ -6,20 +6,20 @@ use yii\widgets\ActiveForm;
 use app\assets\AppAsset;
 AppAsset::register($this);
 
-use app\assets\TeachersAsset;
-TeachersAsset::register($this);
+use app\assets\TeacherPollResultAsset;
+TeacherPollResultAsset::register($this);
 
 
 $this->title = Yii::$app->_L->get("teacher_title");
 
-/**
-print_r($lesson);
-print_r($teachersArr);
-print_r($numStudents);
-print_r($taskAnswers);
 
-exit();
-*/
+//print_r($lesson);
+//print_r($teachersArr);
+//print_r($numStudents);
+//print_r($taskAnswers);
+
+//exit();
+
 
 ?>
 
@@ -64,6 +64,14 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 
 <table id="poll_results_teachers">
   <tr>
+    <td class="prompt" style="font-weight:  bold;">
+        <?php echo Yii::$app->_L->get('teacher_poll_results_teachersArr_title'); ?>
+    </td><td class="data">
+        
+    </td>
+  </tr>
+  
+  <tr>
     <td class="prompt">
         <?php echo Yii::$app->_L->get('teacher_poll_results_teachersArr_countAll'); ?>
     </td><td class="data">
@@ -81,18 +89,44 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 
   <tr>
     <td class="prompt">
+    <a href="#" onclick="$('#names_teachersArr_countWithoutStudents').toggle();">
         <?php echo Yii::$app->_L->get('teacher_poll_results_teachersArr_countWithoutStudents'); ?>
+    </a>
     </td><td class="data">
         <?php echo $teachersArr["countActive"]  - $teachersArr["withStudents"]; ?>
+        <span class="names" id="names_teachersArr_countWithoutStudents" style="display: none;">
+            <br />
+            <?php
+            $this_names = array();
+            foreach($teachersArr["students"] as $key => $val){
+                if($val["countStudents"] < $countStudentsLimit  & $val["name"] != "template_do_not_display"){
+                    $this_names[] = $val["name"];
+                }
+            }echo implode(", ", $this_names);
+            ?>
+        </span>
     </td>
   </tr>
 
   <tr>
   <tr>
     <td class="prompt">
+    <a href="#" onclick="$('#names_teachersArr_countWithStudents').toggle();">
         <?php echo Yii::$app->_L->get('teacher_poll_results_teachersArr_countWithStudents'); ?>
+    </a>
     </td><td class="data">
         <?php echo $teachersArr["withStudents"]; ?>
+        <span class="names" id="names_teachersArr_countWithStudents" style="display: none;">
+            <br />
+            <?php
+            $this_names = array();
+            foreach($teachersArr["students"] as $key => $val){
+                if($val["countStudents"] >= $countStudentsLimit  & $val["name"] != "template_do_not_display"){
+                    $this_names[] = $val["name"];
+                }
+            }echo implode(", ", $this_names);
+            ?>
+        </span>
     </td>
   </tr>
 

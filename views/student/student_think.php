@@ -61,6 +61,7 @@ function cmConfigO(){
     this.studentRedirectAfterLastAnswer = true;
     this.taskFinishedButtonMoveOn = true;
     this.restcorrectmeBaseUrl = '<?= Yii::$app->params["restcorrectmeBaseUrl"] ?>';
+    this.restcorrectmePath = '<?= Yii::$app->params["restcorrectmePath"] ?>';
 }
 var cmConfig = new cmConfigO();
 </script>

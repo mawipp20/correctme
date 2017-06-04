@@ -6,9 +6,6 @@ use yii\widgets\ActiveForm;
 use app\assets\AppAsset;
 AppAsset::register($this);
 
-use app\assets\LessonAsset;
-LessonAsset::register($this);
-
 $this->title = Yii::$app->_L->get("student_join_poll_title");
 
 ?>
@@ -29,6 +26,8 @@ $this->title = Yii::$app->_L->get("student_join_poll_title");
                 'validateOnChange'=>true,
                 'validateOnBlur'=>false,
     ]); ?>
+
+          <?= Html::hiddenInput('type', 'poll')  ?>
 
           <?= $form->field($teacher, 'studentkey'
             , [

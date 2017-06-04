@@ -13,11 +13,11 @@
                 }
             ?>
             
-            <div class='well well-lg well-poll-or-lesson' style="margin-bottom: 1.2em;"
+            <div class='well well-lg well-correctme-as-button' style="margin-bottom: 1.2em;"
                 onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/student/student_join_poll'; ?>"'><?= Yii::$app->_L->get('gen_student') ?>
             </div>
     
-            <div class='well well-lg well-poll-or-lesson'
+            <div class='well well-lg well-correctme-as-button'
                 onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/site/lesson_exact?lesson_type=poll&show_teacher_join'; ?>"'><?= Yii::$app->_L->get('gen_teacher') ?>
             </div>
     </div>

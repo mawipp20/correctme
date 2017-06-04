@@ -6,8 +6,10 @@ function teacher_join_poll_save_name(){
     query["activationkey"] = $("#activationkey").val();
     query["teacher-name"] = $("#teacher-name").val();
     
+    var restUrl = "../../../" + cmConfig.restcorrectmePath + "web/lesson/poll_save_teacher_name";
+    
     $.ajax({
-        url: cmConfig.restcorrectmeBaseUrl + "web/lesson/poll_save_teacher_name",
+        url: restUrl,
         type: 'POST',
         data: query,
         success: function(data) {

@@ -36,7 +36,7 @@ use yii\widgets\Breadcrumbs;
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             //['label' => Yii::$app->_L->get('top_nav_go_teacher'), 'url' => ['/site/teacher_poll_or_lesson']],
-            ['label' => 'Home', 'url' => ['/student/index']],
+            ['label' => Yii::$app->_L->get('gen_the_start'), 'url' => ['/student/index']],
             ['label' => Yii::$app->_L->get('gen_student'), 'url' => ['/student/student_join_poll']],
             ['label' => Yii::$app->_L->get('gen_teacher'), 'url' => ['/site/lesson_exact?lesson_type=poll&show_teacher_join']],
             ['label' => Yii::$app->_L->get('top_nav_teacher_about'), 'url' => ['/site/about']],
@@ -52,7 +52,14 @@ use yii\widgets\Breadcrumbs;
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; correctme.de <?= date('Y') ?></p>
+        <p class="pull-left">
+        &copy; correctme.de <?= date('Y') ?>
+        <span style="padding-left: 1em;">
+        <a href="../site/about" style="color:  black; text-decoration:none;">
+        ><?= Yii::$app->_L->get('top_nav_teacher_imprint') ?>
+        </a>
+        </span>
+        </p>
 
         <p class="pull-right"></p>
     </div>

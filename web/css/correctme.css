@@ -3,10 +3,19 @@
     margin-bottom: 0em;
 }
 
-
-
-
-
+.well-correctme-as-button{
+    color: darkblue;
+    margin-bottom: 0.6em;
+    font-size: large;
+    padding: 0.6em;
+}
+.well-correctme-as-button:hover{
+    background-color:  rgb(51,122,183);
+    color: white;
+    cursor: pointer;
+    font-size: large;
+    padding: 0.6em;
+}
 
  /* The switch - the box around the slider */
 .switch {
