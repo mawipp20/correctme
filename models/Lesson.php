@@ -39,8 +39,18 @@ class Lesson extends \app\components\ActiveRecord
      
     public $lessonFile; 
     public $taskTypes = array(  "text"=>"string",
-                                "how-often"=>"numeric",
-                                "how-true"=>"numeric",
+                                "how-often"=>array("x"=>"x"
+                                                  ,"1"=>1
+                                                  ,"2"=>2
+                                                  ,"3"=>3
+                                                  ,"4"=>4
+                                                  ),
+                                "how-true"=>array("x"=>"x"
+                                                  ,"1"=>1
+                                                  ,"2"=>2
+                                                  ,"3"=>3
+                                                  ,"4"=>4
+                                                  ),
                                 "sysinfo"=>"",
                                 "info"=>"",
                                 ); 

@@ -579,8 +579,9 @@ class SiteController extends \app\components\Controller
         $teachersArr["students"] = array();
         
         foreach($teachers as $this_teacher){
+            if($this_teacher["name"] == "template_do_not_display"){continue;}
             if($this_teacher->state == "active"){$teachersArr["countActive"]++;}
-            $teachersArr["students"][$this_teacher->id] = array("name"=>$this_teacher->name, "countStudents"=>0);
+            $teachersArr["students"][$this_teacher->id] = array("name"=>$this_teacher->name, "countStudents"=>0, "state"=>$this_teacher->state);
         }
         $myStudentsIds = array();
         $numStudents = array("all"=>count($students));
@@ -606,10 +607,14 @@ class SiteController extends \app\components\Controller
             if($lesson->taskTypes[$this_task->type]==""){continue;}
             $taskAnswers[$this_task->taskId] = $this_task->toArray();
             $taskAnswers[$this_task->taskId]["countAnswers"] = 0;
+            $taskAnswers[$this_task->taskId]["countNumericAnswers"] = 0;
             $taskAnswers[$this_task->taskId]["sumAnswers"] = 0;
-            $taskAnswers[$this_task->taskId]["myCountAnswers"] = 0;
-            $taskAnswers[$this_task->taskId]["mySumAnswers"] = 0;
-            $taskAnswers[$this_task->taskId]["myTextAnswers"] = array();
+            $taskAnswers[$this_task->taskId]["distribution"] = array();
+            $taskAnswers[$this_task->taskId]["my_countAnswers"] = 0;
+            $taskAnswers[$this_task->taskId]["my_countNumericAnswers"] = 0;
+            $taskAnswers[$this_task->taskId]["my_sumAnswers"] = 0;
+            $taskAnswers[$this_task->taskId]["my_distribution"] = array();
+            $taskAnswers[$this_task->taskId]["my_textAnswers"] = array();
         }
 
         foreach($answers as $this_answer){
@@ -628,17 +633,33 @@ class SiteController extends \app\components\Controller
                 $isMyStudent = true;
             }
 
-            if($this_answer_type=="numeric"){
+            if(is_array($this_answer_type)){
                 $taskAnswers[$this_answer->taskId]["countAnswers"] += 1;
-                $taskAnswers[$this_answer->taskId]["sumAnswers"] += intval($this_answer->answer_text);
+                if(is_numeric($this_answer->answer_text)){
+                    $taskAnswers[$this_answer->taskId]["sumAnswers"] += intval($this_answer->answer_text);
+                    $taskAnswers[$this_answer->taskId]["countNumericAnswers"] += 1;
+                    if(!isset($taskAnswers[$this_answer->taskId]["distribution"][$this_answer->answer_text])){
+                        $taskAnswers[$this_answer->taskId]["distribution"][$this_answer->answer_text] = 1;
+                    }else{
+                        $taskAnswers[$this_answer->taskId]["distribution"][$this_answer->answer_text] += 1;
+                    }
+                }
                 if($isMyStudent){
-                    $taskAnswers[$this_answer->taskId]["myCountAnswers"] += 1;
-                    $taskAnswers[$this_answer->taskId]["mySumAnswers"] += intval($this_answer->answer_text);
+                    $taskAnswers[$this_answer->taskId]["my_countAnswers"] += 1;
+                    if(is_numeric($this_answer->answer_text)){
+                        $taskAnswers[$this_answer->taskId]["my_sumAnswers"] += intval($this_answer->answer_text);
+                        $taskAnswers[$this_answer->taskId]["my_countNumericAnswers"] += 1;
+                        if(!isset($taskAnswers[$this_answer->taskId]["my_distribution"][$this_answer->answer_text])){
+                            $taskAnswers[$this_answer->taskId]["my_distribution"][$this_answer->answer_text] = 1;
+                        }else{
+                            $taskAnswers[$this_answer->taskId]["my_distribution"][$this_answer->answer_text] += 1;
+                        }
+                    }
                 }
             }
              if($isMyStudent & $this_answer_type=="string"
                 ){
-                    $taskAnswers[$this_answer->taskId]["myTextAnswers"][] = $this_answer->answer_text;
+                    $taskAnswers[$this_answer->taskId]["my_textAnswers"][] = $this_answer->answer_text;
              }
         }
 

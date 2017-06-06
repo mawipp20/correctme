@@ -4,6 +4,11 @@
 ------- sofort ---------------
 
 - thinkingMinutes: nach Ablauf wirklich sperren!!!
+- Abstand beim Result-Vergleich je nach Abweichung der Quota
+
+    ($task["my_sumAnswers"]/$task["my_countNumericAnswers"])-($task["sumAnswers"]/$task["countNumericAnswers"])
+
+        
 
 ------- mittelfristig ---------------
 

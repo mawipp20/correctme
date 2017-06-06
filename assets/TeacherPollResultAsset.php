@@ -21,7 +21,6 @@ class TeacherPollResultAsset extends AssetBundle
         'css/teacher_poll_result.css',
     ];
     public $js = [
-        //'js/jquery.autogrowtextarea.js',
-        //'js/teachers.js',
+        'js/teacher_poll_results.js',
     ];
 }
