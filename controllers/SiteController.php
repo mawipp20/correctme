@@ -545,7 +545,7 @@ class SiteController extends \app\components\Controller
     public function actionTeacher_results()
     {
     
-        $countStudentsLimit = 3;
+        $countStudentsLimit = 5;
         $request_params = Yii::$app->request->get();
         $request_params = $request_params["Teacher"];
         $teacher = Teacher::find()->where(['resultkey'=>$request_params["resultkey"]])->one();
@@ -559,6 +559,7 @@ class SiteController extends \app\components\Controller
         /** still active or has time run out */
         $deadline = new \DateTime($lesson->insert_timestamp);
         $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
+        $deadline->modify('+2 week');
         if(new \DateTime() >= $deadline){
             $msg_deadline = Yii::$app->_L->get('teacher_join_poll_results_error_time');
             $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline, 'dd. MMM').'</b>', $msg_deadline);
@@ -581,6 +582,10 @@ class SiteController extends \app\components\Controller
         foreach($teachers as $this_teacher){
             if($this_teacher["name"] == "template_do_not_display"){continue;}
             if($this_teacher->state == "active"){$teachersArr["countActive"]++;}
+            $this_teacher_name = "";
+            if($this_teacher->name != $this_teacher->activationkey){
+                $this_teacher_name = $this_teacher->name;
+            }
             $teachersArr["students"][$this_teacher->id] = array("name"=>$this_teacher->name, "countStudents"=>0, "state"=>$this_teacher->state);
         }
         $myStudentsIds = array();

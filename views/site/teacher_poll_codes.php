@@ -38,7 +38,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
         $msg_success = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline).'</b>', $msg_success); 
          
         $deadline_results = $deadline;
-        $deadline_results->modify('+1 week');
+        $deadline_results->modify('+2 week');
         
         $msg_success = str_replace('#deadline_results#', '<b>'.Yii::$app->formatter->asDate($deadline_results).'</b>', $msg_success); 
         echo $msg_success;      

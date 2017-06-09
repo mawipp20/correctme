@@ -3,16 +3,25 @@
 
 ------- sofort ---------------
 
-- thinkingMinutes: nach Ablauf wirklich sperren!!!
-- Abstand beim Result-Vergleich je nach Abweichung der Quota
+- keine Teamergebnisse, wenn zu wenige Teilnehmer vorhanden sind
+- show explanations for result bars:
+    .distribution_one_value => visibility
+    .Fragentypen mit options
+    .Fragentyp bei jeder Frage einblenden
+    ."(Anzahl Antworten)" neben Fragetext
 
-    ($task["my_sumAnswers"]/$task["my_countNumericAnswers"])-($task["sumAnswers"]/$task["countNumericAnswers"])
+    
 
         
 
 ------- mittelfristig ---------------
 
 - Lehrerinnen können die Umfrage ohne Werte testen
+- Results: drucken, exportieren, Eingabe abschließen
+    Drucken:
+        https://tcpdf.org/
+        http://ourcodeworld.com/articles/read/226/top-5-best-open-source-pdf-generation-libraries-for-php     
+    
 - Checkbox zum einverstanden-sein mit den Nutzungsbedingungen und dem 
 
 ------- später ---------------

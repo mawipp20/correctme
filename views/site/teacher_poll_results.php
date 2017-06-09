@@ -20,7 +20,22 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 //exit();
 
-
+$show_team_results = false;
+if ($lesson["poll_type"] != "single"
+            & $numStudents["mine"] >= $countStudentsLimit
+            & $teachersArr["withStudents"] >= 3
+            ){
+            $show_team_results = true;
+}
+$msg_team_result_not_yet = "";
+if($teachersArr["withStudents"] < 3){
+    $msg_team_result_not_yet .= Yii::$app->_L->get('teacher_poll_results_not_enough_teachers')." ";
+}
+if($numStudents["mine"] < $countStudentsLimit){
+    if($msg_team_result_not_yet != ""){$msg_team_result_not_yet .= "<br /><br />";}
+    $m = Yii::$app->_L->get('teacher_poll_results_not_enough_students');
+    $msg_team_result_not_yet .= str_replace("#limit#", $countStudentsLimit, $m);
+}
 
 ?>
 
@@ -135,8 +150,8 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
             </span>
         </td>
       </tr>
-    
-      <tr>
+<?php endif; ?>    
+<?php if ($lesson["poll_type"] == "names" | $lesson["poll_type"] == "team"): ?>
       <tr>
         <td class="prompt">
         <a href="#" onclick="$('#names_teachersArr_countWithStudents').toggle();">
@@ -165,7 +180,7 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         </td>
       </tr>
 <?php endif; ?>
-<?php if ($lesson["poll_type"] != "single"): ?>
+<?php if ($lesson["poll_type"] == "names"): ?>
       <tr>
         <td class="prompt">
             <?php echo Yii::$app->_L->get('teacher_poll_results_teachersArr_countAll'); ?>
@@ -174,6 +189,7 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         </td>
       </tr>
 <?php endif; ?>
+
       <tr class="margin-top">
         <td class="prompt">
             <?php echo Yii::$app->_L->get('teacher_poll_results_countMyStudents'); ?>
@@ -182,6 +198,8 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         </td>
       </tr>
     </table>
+
+<!-- tabs for team results: show even if not yet accessible  -->
 
 <?php if ($lesson["poll_type"] != "single"): ?>
     <ul class="nav nav-tabs" id="result-nav-tabs">
@@ -195,12 +213,15 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
       <?= Yii::$app->_L->get('teacher_poll_results_tab_mixed_results') ?></a></li>
     </ul>
 <?php endif; ?>
-    
+
+
+<!-- results for me -->
     <div class="results" id="my_results">
         <?php
         foreach($taskAnswers as $task){
             $t = "\n<div class='task'>\n";
-            $t .= '<div class="task_text">'.$task["task_text"]."</div>\n";
+            $t .= '<div class="task_text">'.$task["task_text"];
+            $t .= "<span class='num_answers'>(".$task["my_countNumericAnswers"].")</span></div>\n";
             $t .= teacher_poll_results_get_distribution($lesson, $task, "my_");
             $t .= "\n</div>\n";
             echo $t;              
@@ -208,43 +229,52 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         ?>
     </div>
 
-<?php if ($lesson["poll_type"] != "single"): ?>
-    <div class="results" id="all_results" style="display: none;">
+<!-- results for the team -->
+<div class="results" id="all_results" style="display: none;">
         <?php
-        foreach($taskAnswers as $task){
-            if($task["type"]=="text"){continue;}
-            $t = "\n<div class='task'>\n";
-            $t .= '<div class="task_text">'.$task["task_text"]."</div>\n";
-            $t .= teacher_poll_results_get_distribution($lesson, $task, "");
-            $t .= "\n</div>\n";
-            echo $t;              
+        if ($show_team_results){
+            foreach($taskAnswers as $task){
+                if($task["type"]=="text"){continue;}
+                $t = "\n<div class='task'>\n";
+                $t .= '<div class="task_text">'.$task["task_text"];
+                $t .= "<span class='num_answers'>(".$task["countNumericAnswers"].")</span></div>\n";
+                $t .= teacher_poll_results_get_distribution($lesson, $task, "");
+                $t .= "\n</div>\n";
+                echo $t;              
+            }
+        }else{
+            echo "<p class='msg_team_result_not_yet'>".$msg_team_result_not_yet."</p>";
         }
         ?>
-    </div>
+</div>
+
+<!-- results compared -->
+<div class="results" id="mixed_results" style="display: none;">
+        <?php
+        if ($show_team_results){
+            foreach($taskAnswers as $task){
+                if($task["type"]=="text"){continue;}
+                $t = "\n<div class='task'>\n";
+                $t .= '<div class="task_text">'.$task["task_text"]."</div>\n";
+                $t .= teacher_poll_results_get_distribution($lesson, $task, "my_");
+                $q_my = round($task["my_sumAnswers"]/$task["my_countNumericAnswers"], 1);
+                $q = round($task["sumAnswers"]/$task["countNumericAnswers"], 1);
     
-    <div class="results" id="mixed_results" style="display: none;">
-        <?php
-        foreach($taskAnswers as $task){
-            if($task["type"]=="text"){continue;}
-            $t = "\n<div class='task'>\n";
-            $t .= '<div class="task_text">'.$task["task_text"]."</div>\n";
-            $t .= teacher_poll_results_get_distribution($lesson, $task, "my_");
-            $q_my = round($task["my_sumAnswers"]/$task["my_countNumericAnswers"], 1);
-            $q = round($task["sumAnswers"]/$task["countNumericAnswers"], 1);
-
-            $margin_top = ($q_my - $q) * 4;
-
-            $t .= teacher_poll_results_get_distribution($lesson, $task, "", $margin_top);
-            $t .= "\n</div>\n";
-            echo $t;              
+                $line_gap = ($q_my - $q) * 4;
+    
+                $t .= teacher_poll_results_get_distribution($lesson, $task, "", $line_gap);
+                $t .= "\n</div>\n";
+                echo $t;              
+            }
+        }else{
+            echo "<p class='msg_team_result_not_yet'>".$msg_team_result_not_yet."</p>";
         }
         ?>
-    </div>
-<?php endif; ?>
+</div>
 
 <?php
 
-    function teacher_poll_results_get_distribution($lesson, $task, $prefix, $margin_top = 0){
+    function teacher_poll_results_get_distribution($lesson, $task, $prefix, $line_gap = 0){
         
         $t = "";
         
@@ -263,7 +293,12 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
             
             $width_max = 100 - $width_quota;
             
-            $t = "<div class='distribution' style='width:100%; border-top:".abs($margin_top)."em solid orange;'>\n";
+            $margin_color = "rgb(0,255,0)";
+            if($line_gap < 0){$margin_color = "rgb(255,142,30)";}
+            
+            
+            
+            $t = "<div class='distribution' style='width:100%; border-top:".abs($line_gap)."em solid ".$margin_color.";'>\n";
             $t .= "<div class='one_distribution quota' style='width:".$width_quota."%;";
             $t .= "'>".$q."</div>";
 
@@ -290,7 +325,7 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
                     $t .= "<div class='one_distribution'";
                     $t .= " style='width:".$width."%; color:".$font_color.";".$border_style;
                     $t .= " background: rgba(".$this_color_code.",".$this_opacity.");'>";
-                    $t .= $val."</div>";
+                    $t .= "<span class='one_distribution_val'>".$val."</span></div>";
                 }
             $t .= "\n</div>\n";
         }elseif($prefix == "my_"){

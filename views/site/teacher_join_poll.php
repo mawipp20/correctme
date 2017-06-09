@@ -30,7 +30,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
         $msg_deadline = str_replace('#deadline#', Yii::$app->formatter->asDate($deadline), $msg_deadline);
          
         $deadline_results = $deadline;
-        $deadline_results->modify('+1 week');
+        $deadline_results->modify('+2 week');
         
         //$msg_deadline_results = Yii::$app->_L->get('teacher_join_poll_login_success_deadline_results');
         $msg_deadline_results = Yii::$app->_L->get('teacher_join_poll_resultkey');

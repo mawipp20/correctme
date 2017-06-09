@@ -36,7 +36,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
         $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline).'</b>', $msg_deadline);
          
         $deadline_results = $deadline;
-        $deadline_results->modify('+1 week');
+        $deadline_results->modify('+2 week');
         
         $msg_deadline_results = Yii::$app->_L->get('teacher_join_poll_one_activation_key_success_deadline_results');
         $msg_deadline_results = str_replace('#deadline_results#', '<b>'.Yii::$app->formatter->asDate($deadline_results).'</b>', $msg_deadline_results);
