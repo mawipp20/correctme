@@ -14,6 +14,7 @@ use app\models\Student;
 use app\models\Task;
 use app\models\Answer;
 use yii\web\UploadedFile;
+use app\components\ResultsDisplay;
 
 class SiteController extends \app\components\Controller
 {
@@ -547,8 +548,17 @@ class SiteController extends \app\components\Controller
     
         $countStudentsLimit = 5;
         $request_params = Yii::$app->request->get();
-        $request_params = $request_params["Teacher"];
-        $teacher = Teacher::find()->where(['resultkey'=>$request_params["resultkey"]])->one();
+        
+        if(isset($request_params["Teacher"])){
+            $resultkey = $request_params["Teacher"]["resultkey"];
+        }elseif(Yii::$app->getSession()->get("resultkey") != ""){
+            $resultkey = Yii::$app->getSession()->get("resultkey");
+        }else{
+            Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
+            return;
+        }
+        
+        $teacher = Teacher::find()->where(['resultkey'=>$resultkey])->one();
         if($teacher == null){
             Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('teacher_join_poll_resultkey_error'));
             Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
@@ -568,6 +578,8 @@ class SiteController extends \app\components\Controller
             Yii::$app->response->redirect(['site/lesson_exact?lesson_type=poll&show_teacher_join']);
             return;
         }
+        
+        Yii::$app->getSession()->set("resultkey", $teacher->resultkey);
         
         $teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->all();
         $students = Student::find()->where(['startKey'=>$teacher->startKey, 'status'=>'finished'])->all();
@@ -668,16 +680,257 @@ class SiteController extends \app\components\Controller
              }
         }
 
-        return $this->render('teacher_poll_results', [
+        $render_arr = [
          'lesson' => $lesson,
          'teacher' => $teacher,
          'teachersArr' => $teachersArr,
          'numStudents' => $numStudents,
          'taskAnswers' => $taskAnswers,
          'countStudentsLimit' => $countStudentsLimit
-        ]);
+        ];
+
+
+        if(isset($request_params["print"])){
+            return $this->teacher_result_pdf($render_arr, $request_params["print"]);
+        }
+        
+        return $this->render('teacher_poll_results', $render_arr);
+        
     }
 
+    private function teacher_result_pdf($arr, $print){
+        
+        $t = "<style>\n".file_get_contents(\Yii::$app->basePath.'/web/css/teacher_poll_result_print.css')."\n</style>\n";
+        if($print == "my"){
+            foreach($arr["taskAnswers"] as $task){
+                $t .= "\n<div class='task'>\n";
+                $t .= '<div class="task_text">'.$task["task_text"];
+                $t .= "<span class='num_answers'>(".$task["my_countNumericAnswers"].")</span></div>\n";
+                $t .= ResultsDisplay::get_distribution($arr["lesson"], $task, "my_");
+                $t .= "\n</div>\n";
+            }
+        }
+        
+        //echo $t;
+        //exit;
+        
+        require_once(\Yii::$app->basePath.'/vendor/tecnick.com/tcpdf/tcpdf.php');
+        $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+/**
+        // set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Martin Wippersteg');
+        $pdf->SetTitle('Befragungsergebnisse');
+        $pdf->SetSubject('Befragungsergebnisse');
+        $pdf->SetKeywords('correctme, Befragung');
+        
+        // set default header data
+        $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 061', PDF_HEADER_STRING);
+        
+        // set header and footer fonts
+        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+        
+        // set default monospaced font
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+        
+        // set margins
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+        
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+        
+        // set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+        
+        // set font
+        $pdf->SetFont('helvetica', '', 10);
+*/        
+
+$html = '
+<!-- EXAMPLE OF CSS STYLE -->
+<style>
+    h1 {
+        color: navy;
+        font-family: times;
+        font-size: 24pt;
+        text-decoration: underline;
+    }
+    p.first {
+        color: #003300;
+        font-family: helvetica;
+        font-size: 12pt;
+    }
+    p.first span {
+        color: #006600;
+        font-style: italic;
+    }
+    p#second {
+        color: rgb(00,63,127);
+        font-family: times;
+        font-size: 12pt;
+        text-align: justify;
+    }
+    p#second > span {
+        background-color: #FFFFAA;
+    }
+    table.first {
+        color: #003300;
+        font-family: helvetica;
+        font-size: 8pt;
+        border-left: 3px solid red;
+        border-right: 3px solid #FF00FF;
+        border-top: 3px solid green;
+        border-bottom: 3px solid blue;
+        background-color: #ccffcc;
+    }
+    td {
+        border: 2px solid blue;
+        background-color: #ffffee;
+    }
+    td.second {
+        border: 2px dashed green;
+    }
+    div.test {
+        color: #CC0000;
+        background-color: #FFFF66;
+        font-family: helvetica;
+        font-size: 10pt;
+        border-style: solid solid solid solid;
+        border-width: 2px 2px 2px 2px;
+        border-color: green #FF00FF blue red;
+        text-align: center;
+    }
+    .lowercase {
+        text-transform: lowercase;
+    }
+    .uppercase {
+        text-transform: uppercase;
+    }
+    .capitalize {
+        text-transform: capitalize;
+    }
+</style>
+
+<h1 class="title">Example of <i style="color:#990000">XHTML + CSS</i></h1>
+
+<p class="first">Example of paragraph with class selector. <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sed imperdiet lectus. Phasellus quis velit velit, non condimentum quam. Sed neque urna, ultrices ac volutpat vel, laoreet vitae augue. Sed vel velit erat. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras eget velit nulla, eu sagittis elit. Nunc ac arcu est, in lobortis tellus. Praesent condimentum rhoncus sodales. In hac habitasse platea dictumst. Proin porta eros pharetra enim tincidunt dignissim nec vel dolor. Cras sapien elit, ornare ac dignissim eu, ultricies ac eros. Maecenas augue magna, ultrices a congue in, mollis eu nulla. Nunc venenatis massa at est eleifend faucibus. Vivamus sed risus lectus, nec interdum nunc.</span></p>
+
+<p id="second">Example of paragraph with ID selector. <span>Fusce et felis vitae diam lobortis sollicitudin. Aenean tincidunt accumsan nisi, id vehicula quam laoreet elementum. Phasellus egestas interdum erat, et viverra ipsum ultricies ac. Praesent sagittis augue at augue volutpat eleifend. Cras nec orci neque. Mauris bibendum posuere blandit. Donec feugiat mollis dui sit amet pellentesque. Sed a enim justo. Donec tincidunt, nisl eget elementum aliquam, odio ipsum ultrices quam, eu porttitor ligula urna at lorem. Donec varius, eros et convallis laoreet, ligula tellus consequat felis, ut ornare metus tellus sodales velit. Duis sed diam ante. Ut rutrum malesuada massa, vitae consectetur ipsum rhoncus sed. Suspendisse potenti. Pellentesque a congue massa.</span></p>
+
+<div class="test">example of DIV with border and fill.
+<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+<br /><span class="lowercase">text-transform <b>LOWERCASE</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
+<br /><span class="uppercase">text-transform <b>uppercase</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
+<br /><span class="capitalize">text-transform <b>cAPITALIZE</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
+</div>
+
+<br />
+
+<table class="first" cellpadding="4" cellspacing="6">
+ <tr>
+  <td width="30" align="center"><b>No.</b></td>
+  <td width="140" align="center" bgcolor="#FFFF00"><b>XXXX</b></td>
+  <td width="140" align="center"><b>XXXX</b></td>
+  <td width="80" align="center"> <b>XXXX</b></td>
+  <td width="80" align="center"><b>XXXX</b></td>
+  <td width="45" align="center"><b>XXXX</b></td>
+ </tr>
+ <tr>
+  <td width="30" align="center">1.</td>
+  <td width="140" rowspan="6" class="second">XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX</td>
+  <td width="140">XXXX<br />XXXX</td>
+  <td width="80">XXXX<br />XXXX</td>
+  <td width="80">XXXX</td>
+  <td align="center" width="45">XXXX<br />XXXX</td>
+ </tr>
+ <tr>
+  <td width="30" align="center" rowspan="3">2.</td>
+  <td width="140" rowspan="3">XXXX<br />XXXX</td>
+  <td width="80">XXXX<br />XXXX</td>
+  <td width="80">XXXX<br />XXXX</td>
+  <td align="center" width="45">XXXX<br />XXXX</td>
+ </tr>
+ <tr>
+  <td width="80">XXXX<br />XXXX<br />XXXX<br />XXXX</td>
+  <td width="80">XXXX<br />XXXX</td>
+  <td align="center" width="45">XXXX<br />XXXX</td>
+ </tr>
+ <tr>
+  <td width="80" rowspan="2" >XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX</td>
+  <td width="80">XXXX<br />XXXX</td>
+  <td align="center" width="45">XXXX<br />XXXX</td>
+ </tr>
+ <tr>
+  <td width="30" align="center">3.</td>
+  <td width="140">XXXX<br />XXXX</td>
+  <td width="80">XXXX<br />XXXX</td>
+  <td align="center" width="45">XXXX<br />XXXX</td>
+ </tr>
+ <tr bgcolor="#FFFF80">
+  <td width="30" align="center">4.</td>
+  <td width="140" bgcolor="#00CC00" color="#FFFF00">XXXX<br />XXXX</td>
+  <td width="80">XXXX<br />XXXX</td>
+  <td width="80">XXXX<br />XXXX</td>
+  <td align="center" width="45">XXXX<br />XXXX</td>
+ </tr>
+</table>
+';
+
+$html = '
+<style>
+.task{
+    margin-bottom: 3em;
+    margin-top: 3em;
+}
+.task .first{
+    margin-top: 1.5em;
+}
+.task_text{
+    margin-bottom: 0.5em;
+}
+.num_answers{
+    color: grey;
+    padding-left: 30px;
+}
+.one_distribution_quota{
+    font-weight: bold;
+    border: 1px solid black;
+    width: 50px;
+}
+table.first{
+    background-color: yellow;
+}
+</style>
+
+<table class="first" cellpadding="4" cellspacing="0">
+ <tr>
+  <td width="10%" align="center"><b>No.</b></td>
+  <td width="20%" align="center" bgcolor="#FFFF00"><b>XXXX</b></td>
+  <td width="20%" align="center"><b>XXXX</b></td>
+  <td width="50%" align="center" style="border: 1px solid black;"><b>XXXX</b></td>
+ </tr>
+</table>
+
+<div class="task">
+<div class="task_text">Ich habe die gestellten Aufgaben  erledigt.<span class="num_answers">(3)</span></div>
+<div class="one_distribution_quota">3</div>
+<div class="one_distribution" style="color:white; background-color: rgb(0,30,0);"><span class="one_distribution_val">1</span></div><div class="one_distribution" style="color:white; background-color: rgb(0,30,0);"><span class="one_distribution_val">1</span></div><div class="one_distribution" style="color:white; background-color: rgb(0,30,0);"><span class="one_distribution_val">1</span></div>
+</div>
+</div>
+';
+
+        // add a page
+        $pdf->AddPage();
+        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->lastPage();
+        $pdf->Output('filename.pdf', 'I');
+        Yii::app()->end();                    
+        
+    }
 
 
     /**

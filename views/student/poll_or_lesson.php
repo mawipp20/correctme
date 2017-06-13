@@ -5,9 +5,6 @@ use yii\helpers\Html;
 use app\assets\AppAsset;
 AppAsset::register($this);
 
-?>
-
-    <?php
     
     if(Yii::$app->params["correctmeHasPoll"]){
         include_once(Yii::$app->basePath.'/views/components/_inc_poll_or_lesson_pollButtons.php');

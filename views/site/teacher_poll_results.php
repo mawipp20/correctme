@@ -9,6 +9,7 @@ AppAsset::register($this);
 use app\assets\TeacherPollResultAsset;
 TeacherPollResultAsset::register($this);
 
+use app\components\ResultsDisplay;
 
 $this->title = Yii::$app->_L->get("teacher_title");
 
@@ -199,6 +200,14 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
       </tr>
     </table>
 
+
+
+
+
+
+
+
+
 <!-- tabs for team results: show even if not yet accessible  -->
 
 <?php if ($lesson["poll_type"] != "single"): ?>
@@ -217,12 +226,13 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 
 <!-- results for me -->
     <div class="results" id="my_results">
+        <p><a href="teacher_results?print=my" target="_blank"><i class="fa fa-print" aria-hidden="true"></i></a></p>
         <?php
         foreach($taskAnswers as $task){
             $t = "\n<div class='task'>\n";
             $t .= '<div class="task_text">'.$task["task_text"];
             $t .= "<span class='num_answers'>(".$task["my_countNumericAnswers"].")</span></div>\n";
-            $t .= teacher_poll_results_get_distribution($lesson, $task, "my_");
+            $t .= ResultsDisplay::get_distribution($lesson, $task, "my_");
             $t .= "\n</div>\n";
             echo $t;              
         }
@@ -238,7 +248,7 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
                 $t = "\n<div class='task'>\n";
                 $t .= '<div class="task_text">'.$task["task_text"];
                 $t .= "<span class='num_answers'>(".$task["countNumericAnswers"].")</span></div>\n";
-                $t .= teacher_poll_results_get_distribution($lesson, $task, "");
+                $t .= ResultsDisplay::get_distribution($lesson, $task, "");
                 $t .= "\n</div>\n";
                 echo $t;              
             }
@@ -256,13 +266,13 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
                 if($task["type"]=="text"){continue;}
                 $t = "\n<div class='task'>\n";
                 $t .= '<div class="task_text">'.$task["task_text"]."</div>\n";
-                $t .= teacher_poll_results_get_distribution($lesson, $task, "my_");
+                $t .= ResultsDisplay::get_distribution($lesson, $task, "my_");
                 $q_my = round($task["my_sumAnswers"]/$task["my_countNumericAnswers"], 1);
                 $q = round($task["sumAnswers"]/$task["countNumericAnswers"], 1);
     
                 $line_gap = ($q_my - $q) * 4;
     
-                $t .= teacher_poll_results_get_distribution($lesson, $task, "", $line_gap);
+                $t .= ResultsDisplay::get_distribution($lesson, $task, "");
                 $t .= "\n</div>\n";
                 echo $t;              
             }

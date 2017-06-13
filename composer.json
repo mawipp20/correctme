@@ -18,7 +18,8 @@
         "yiisoft/yii2": "~2.0.5",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
-        "rmrevin/yii2-fontawesome": "~2.17"
+        "rmrevin/yii2-fontawesome": "~2.17",
+        "tecnick.com/tcpdf": "~6.2.9@stable"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
@@ -30,7 +31,8 @@
         "codeception/specify": "~0.4.3"
     },
     "config": {
-        "process-timeout": 1800
+        "process-timeout": 1800,
+        "preferred-install": "dist"
     },
     "scripts": {
         "post-create-project-cmd": [

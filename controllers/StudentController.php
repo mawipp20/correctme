@@ -10,6 +10,7 @@ use app\models\StudentJoinForm;
 use app\models\Student;
 use app\models\Teacher;
 use app\models\Lesson;
+//use yii\tcpdf\TCPDF;
 
 class StudentController extends \app\components\Controller
 {

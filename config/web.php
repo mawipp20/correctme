@@ -20,6 +20,9 @@ $config = [
         '_L' => [
             'class' => 'app\components\Language',
         ],
+        'resultsDisplay' => [
+            'class' => 'app\components\ResultsDisplay',
+        ],
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
