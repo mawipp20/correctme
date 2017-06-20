@@ -700,33 +700,129 @@ class SiteController extends \app\components\Controller
 
     private function teacher_result_pdf($arr, $print){
         
+        /**
+         * $print: my/all/compare
+        /*
+        
+/**
         $t = "<style>\n".file_get_contents(\Yii::$app->basePath.'/web/css/teacher_poll_result_print.css')."\n</style>\n";
         if($print == "my"){
             foreach($arr["taskAnswers"] as $task){
-                $t .= "\n<div class='task'>\n";
-                $t .= '<div class="task_text">'.$task["task_text"];
-                $t .= "<span class='num_answers'>(".$task["my_countNumericAnswers"].")</span></div>\n";
-                $t .= ResultsDisplay::get_distribution($arr["lesson"], $task, "my_");
+                //$t .= '<div class="task_text">';
+                $q = "";
+                if($task["my_countNumericAnswers"]>0){
+                    $q = round($task["my_sumAnswers"]/$task["my_countNumericAnswers"], 1);
+                }
+                $t .= "<table style='width:100%'><tr>\n";
+                $t .= "<td class='quota' width='30px;'>".$q."</td>";
+                $t .= "<td class='task_text'>".$task["task_text"];
+                $t .= "<span class='num_answers'>(".$task["my_countNumericAnswers"].")</span>";
+                $t .= "</td></tr>\n";
+                $t .= ResultsDisplay::get_distribution_print($arr["lesson"], $task, "my_");
+                $t .= "</table>\n";
+            }
+        }
+*/        
+
+        //var_dump($arr);
+        //exit;
+
+        $lesson = $arr["lesson"];
+        $t = "";
+        
+        foreach($arr["taskAnswers"] as $task){
+            
+            if(is_array($lesson->taskTypes[$task["type"]]) & $task["countNumericAnswers"] > 0){
+            
+                $my_q = "";
+                if($task["my_countNumericAnswers"]>0){
+                    $my_q = round($task["my_sumAnswers"]/$task["my_countNumericAnswers"], 1);
+                }
+                if(strpos((STRING)$my_q, ".")===false){$my_q .= ".0";}
+
+                $q = "";
+                if($task["countNumericAnswers"]>0){
+                    $q = round($task["sumAnswers"]/$task["countNumericAnswers"], 1);
+                }
+                if(strpos((STRING)$q, ".")!==false){$q .= ".0";}
+                
+                $t .= "<p style='padding:0.3em; margin-bottom: 0em;'>\n";
+                
+                $t .= '<span style="">'.$task["task_text"].'</span>';
+                                
+                $t .= "\n</p>\n";
+
+
+                $q_span = "<div style='display: inline-block; font-weight: bold; border: 1px solid black; width;  text-align: center'>";
+                
+                $my_div = str_replace("width", "width:".($my_q*2)."em", $q_span).$my_q."</div>";
+                $all_div = str_replace("width", "width:".($q*2)."em", $q_span).$q."</div>";
+                
+                if($print == "my"){$t .= $my_div;}
+                if($print == "all"){$t .= $all_div;}
+                if($print == "compare"){$t .= $my_div." ".$all_div;}
+
+                $t .= "<span style='padding-left: 0.5em;padding-right: 0.5em; color: black;'>";
+                $t .= $task["my_countNumericAnswers"]." ::</span>";
+                
+                $val_arr_my = array();
+                $val_arr_all = array();
+ 
+                 foreach($lesson->taskTypes[$task["type"]] as $task_type => $task_type_val){
+                    if(isset($task["my_distribution"][$task_type_val])){
+                        
+                       $val = $task["my_distribution"][$task_type_val];
+                       $val_arr_my[] = $val;
+                       
+                       $val = $task["distribution"][$task_type_val];
+                       $val_arr_all[] = $val;
+                       
+                    }else{
+                       $val_arr_my[] = "0";
+                       $val_arr_all[] = "0";
+                    }
+                }
+                if($print == "my"){$t .= implode("/", $val_arr_my);}
+                if($print == "all"){$t .= implode("/", $val_arr_all);}
+                if($print == "compare"){$t .= implode("/", $val_arr_my)." :: ".implode("-", $val_arr_all);}
+
+    
                 $t .= "\n</div>\n";
+                
+            }elseif($print == "my"){
+                /** Text-Antworten */
+                $t .= "<p style='padding:0.3em;'>\n";
+                $t .= '<span style="">'.$task["task_text"].'</span>';
+                if(count($task['my_textAnswers'])>0){
+                    $t .= "<ul>";
+                    foreach($task['my_textAnswers'] as $text){
+                        $t .= "<li>".$text."</li>";
+                    }
+                    $t .= "</ul>";
+                }else{
+                    $t .= "---";
+                }
+                $t .= "</p>";
             }
         }
         
-        //echo $t;
-        //exit;
-        
+
+        echo $t;
+        exit;
+                
         require_once(\Yii::$app->basePath.'/vendor/tecnick.com/tcpdf/tcpdf.php');
         $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-/**
         // set document information
         $pdf->SetCreator(PDF_CREATOR);
-        $pdf->SetAuthor('Martin Wippersteg');
+        $pdf->SetAuthor('correctme.de');
         $pdf->SetTitle('Befragungsergebnisse');
         $pdf->SetSubject('Befragungsergebnisse');
-        $pdf->SetKeywords('correctme, Befragung');
+        $pdf->SetKeywords('correctme, Schülerbefragung');
         
         // set default header data
-        $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 061', PDF_HEADER_STRING);
+        $this_title = $lesson->title." - ".Yii::$app->formatter->asDate(new \DateTime($lesson->insert_timestamp));
+        $pdf->SetHeaderData("", "", $this_title);
         
         // set header and footer fonts
         $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -747,187 +843,13 @@ class SiteController extends \app\components\Controller
         $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
         
         // set font
-        $pdf->SetFont('helvetica', '', 10);
-*/        
-
-$html = '
-<!-- EXAMPLE OF CSS STYLE -->
-<style>
-    h1 {
-        color: navy;
-        font-family: times;
-        font-size: 24pt;
-        text-decoration: underline;
-    }
-    p.first {
-        color: #003300;
-        font-family: helvetica;
-        font-size: 12pt;
-    }
-    p.first span {
-        color: #006600;
-        font-style: italic;
-    }
-    p#second {
-        color: rgb(00,63,127);
-        font-family: times;
-        font-size: 12pt;
-        text-align: justify;
-    }
-    p#second > span {
-        background-color: #FFFFAA;
-    }
-    table.first {
-        color: #003300;
-        font-family: helvetica;
-        font-size: 8pt;
-        border-left: 3px solid red;
-        border-right: 3px solid #FF00FF;
-        border-top: 3px solid green;
-        border-bottom: 3px solid blue;
-        background-color: #ccffcc;
-    }
-    td {
-        border: 2px solid blue;
-        background-color: #ffffee;
-    }
-    td.second {
-        border: 2px dashed green;
-    }
-    div.test {
-        color: #CC0000;
-        background-color: #FFFF66;
-        font-family: helvetica;
-        font-size: 10pt;
-        border-style: solid solid solid solid;
-        border-width: 2px 2px 2px 2px;
-        border-color: green #FF00FF blue red;
-        text-align: center;
-    }
-    .lowercase {
-        text-transform: lowercase;
-    }
-    .uppercase {
-        text-transform: uppercase;
-    }
-    .capitalize {
-        text-transform: capitalize;
-    }
-</style>
-
-<h1 class="title">Example of <i style="color:#990000">XHTML + CSS</i></h1>
-
-<p class="first">Example of paragraph with class selector. <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sed imperdiet lectus. Phasellus quis velit velit, non condimentum quam. Sed neque urna, ultrices ac volutpat vel, laoreet vitae augue. Sed vel velit erat. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras eget velit nulla, eu sagittis elit. Nunc ac arcu est, in lobortis tellus. Praesent condimentum rhoncus sodales. In hac habitasse platea dictumst. Proin porta eros pharetra enim tincidunt dignissim nec vel dolor. Cras sapien elit, ornare ac dignissim eu, ultricies ac eros. Maecenas augue magna, ultrices a congue in, mollis eu nulla. Nunc venenatis massa at est eleifend faucibus. Vivamus sed risus lectus, nec interdum nunc.</span></p>
-
-<p id="second">Example of paragraph with ID selector. <span>Fusce et felis vitae diam lobortis sollicitudin. Aenean tincidunt accumsan nisi, id vehicula quam laoreet elementum. Phasellus egestas interdum erat, et viverra ipsum ultricies ac. Praesent sagittis augue at augue volutpat eleifend. Cras nec orci neque. Mauris bibendum posuere blandit. Donec feugiat mollis dui sit amet pellentesque. Sed a enim justo. Donec tincidunt, nisl eget elementum aliquam, odio ipsum ultrices quam, eu porttitor ligula urna at lorem. Donec varius, eros et convallis laoreet, ligula tellus consequat felis, ut ornare metus tellus sodales velit. Duis sed diam ante. Ut rutrum malesuada massa, vitae consectetur ipsum rhoncus sed. Suspendisse potenti. Pellentesque a congue massa.</span></p>
-
-<div class="test">example of DIV with border and fill.
-<br />Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-<br /><span class="lowercase">text-transform <b>LOWERCASE</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-<br /><span class="uppercase">text-transform <b>uppercase</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-<br /><span class="capitalize">text-transform <b>cAPITALIZE</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-</div>
-
-<br />
-
-<table class="first" cellpadding="4" cellspacing="6">
- <tr>
-  <td width="30" align="center"><b>No.</b></td>
-  <td width="140" align="center" bgcolor="#FFFF00"><b>XXXX</b></td>
-  <td width="140" align="center"><b>XXXX</b></td>
-  <td width="80" align="center"> <b>XXXX</b></td>
-  <td width="80" align="center"><b>XXXX</b></td>
-  <td width="45" align="center"><b>XXXX</b></td>
- </tr>
- <tr>
-  <td width="30" align="center">1.</td>
-  <td width="140" rowspan="6" class="second">XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX</td>
-  <td width="140">XXXX<br />XXXX</td>
-  <td width="80">XXXX<br />XXXX</td>
-  <td width="80">XXXX</td>
-  <td align="center" width="45">XXXX<br />XXXX</td>
- </tr>
- <tr>
-  <td width="30" align="center" rowspan="3">2.</td>
-  <td width="140" rowspan="3">XXXX<br />XXXX</td>
-  <td width="80">XXXX<br />XXXX</td>
-  <td width="80">XXXX<br />XXXX</td>
-  <td align="center" width="45">XXXX<br />XXXX</td>
- </tr>
- <tr>
-  <td width="80">XXXX<br />XXXX<br />XXXX<br />XXXX</td>
-  <td width="80">XXXX<br />XXXX</td>
-  <td align="center" width="45">XXXX<br />XXXX</td>
- </tr>
- <tr>
-  <td width="80" rowspan="2" >XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX<br />XXXX</td>
-  <td width="80">XXXX<br />XXXX</td>
-  <td align="center" width="45">XXXX<br />XXXX</td>
- </tr>
- <tr>
-  <td width="30" align="center">3.</td>
-  <td width="140">XXXX<br />XXXX</td>
-  <td width="80">XXXX<br />XXXX</td>
-  <td align="center" width="45">XXXX<br />XXXX</td>
- </tr>
- <tr bgcolor="#FFFF80">
-  <td width="30" align="center">4.</td>
-  <td width="140" bgcolor="#00CC00" color="#FFFF00">XXXX<br />XXXX</td>
-  <td width="80">XXXX<br />XXXX</td>
-  <td width="80">XXXX<br />XXXX</td>
-  <td align="center" width="45">XXXX<br />XXXX</td>
- </tr>
-</table>
-';
-
-$html = '
-<style>
-.task{
-    margin-bottom: 3em;
-    margin-top: 3em;
-}
-.task .first{
-    margin-top: 1.5em;
-}
-.task_text{
-    margin-bottom: 0.5em;
-}
-.num_answers{
-    color: grey;
-    padding-left: 30px;
-}
-.one_distribution_quota{
-    font-weight: bold;
-    border: 1px solid black;
-    width: 50px;
-}
-table.first{
-    background-color: yellow;
-}
-</style>
-
-<table class="first" cellpadding="4" cellspacing="0">
- <tr>
-  <td width="10%" align="center"><b>No.</b></td>
-  <td width="20%" align="center" bgcolor="#FFFF00"><b>XXXX</b></td>
-  <td width="20%" align="center"><b>XXXX</b></td>
-  <td width="50%" align="center" style="border: 1px solid black;"><b>XXXX</b></td>
- </tr>
-</table>
-
-<div class="task">
-<div class="task_text">Ich habe die gestellten Aufgaben  erledigt.<span class="num_answers">(3)</span></div>
-<div class="one_distribution_quota">3</div>
-<div class="one_distribution" style="color:white; background-color: rgb(0,30,0);"><span class="one_distribution_val">1</span></div><div class="one_distribution" style="color:white; background-color: rgb(0,30,0);"><span class="one_distribution_val">1</span></div><div class="one_distribution" style="color:white; background-color: rgb(0,30,0);"><span class="one_distribution_val">1</span></div>
-</div>
-</div>
-';
+        $pdf->SetFont('helvetica', '', 11);
 
         // add a page
         $pdf->AddPage();
-        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->writeHTML($t, true, false, true, false, '');
         $pdf->lastPage();
-        $pdf->Output('filename.pdf', 'I');
+        $pdf->Output('befragung.pdf', 'I');
         Yii::app()->end();                    
         
     }

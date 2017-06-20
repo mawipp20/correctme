@@ -241,6 +241,7 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 
 <!-- results for the team -->
 <div class="results" id="all_results" style="display: none;">
+        <p><a href="teacher_results?print=all" target="_blank"><i class="fa fa-print" aria-hidden="true"></i></a></p>
         <?php
         if ($show_team_results){
             foreach($taskAnswers as $task){
@@ -260,6 +261,7 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 
 <!-- results compared -->
 <div class="results" id="mixed_results" style="display: none;">
+        <p><a href="teacher_results?print=compare" target="_blank"><i class="fa fa-print" aria-hidden="true"></i></a></p>
         <?php
         if ($show_team_results){
             foreach($taskAnswers as $task){

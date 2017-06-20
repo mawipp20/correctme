@@ -88,7 +88,7 @@ class ResultsDisplay extends Component{
             $num_options = count($lesson->taskTypes[$task["type"]]);
             $opacity_count = 0;
             $width_sum = 0;
-            $width_quota = 12;
+            $width_quota = 0;
             
             $width_max = 100 - $width_quota;
             
@@ -98,11 +98,11 @@ class ResultsDisplay extends Component{
             
             
             $t = "<tr class='distribution' style='width:100%; border-top:".abs($line_gap)."em solid ".$margin_color.";'>\n";
-            $t .= "<td class='quota' style='width:".$width_quota."%;";
-            $t .= "'>".$q."</td>\n";
+            //$t .= "<td class='quota' style='max-width:".$width_quota."px;";
+            //$t .= "'>".$q."</td>\n";
 
                 foreach($lesson->taskTypes[$task["type"]] as $task_type => $task_type_val){
-                    $this_opacity = round($opacity_count / $num_options, 2)*255;
+                    $this_opacity = (1.1 - round($opacity_count / $num_options, 2))*255;
                     $font_color = "white";
                     if($this_opacity > 180){
                         $font_color = "black";
