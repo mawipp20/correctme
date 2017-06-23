@@ -16,6 +16,7 @@
 
 ------- mittelfristig ---------------
 
+- Ergebnisbalken mit Hintergrundbild ++ + - --
 - Lehrerinnen können die Umfrage ohne Werte testen
 - Results: drucken, exportieren, Eingabe abschließen
     Drucken:

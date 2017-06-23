@@ -1,3 +1,14 @@
+<style>
+.one_distribution{
+    display: inline-block;
+    padding: 0.3em;
+    text-align: center;
+    border-right: 2px solid white;
+    b/ackground-image: url(<?php echo  $_SERVER[""].\Yii::$app->request->BaseUrl ?>/images/plusplus.gif);
+    background-image: url(correctme/web/images/plusplus.gif);
+    background-repeat: no-repeat; 
+}
+</style>
 <?php
 
 use yii\helpers\Html;
@@ -224,10 +235,32 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 <?php endif; ?>
 
 
+<?php
+
+$btn_print = '
+
+
+        <p style="font-size:large; padding-top:2em;margin-bottom:0em; text-align: center;">
+        <a class="btn_print" href="#" onclick=\'
+            window.open("teacher_results?print=prefix_var&how=printer",null,"height=800,width=600,status=yes,toolbar=no,menubar=no,location=no");return false;
+            \'>
+        <i class="fa fa-print" aria-hidden="true"></i></a>
+        &nbsp;&nbsp;&nbsp;
+        <a class="btn_print" href="teacher_results?print=prefix_var&how=pdf" target="_blank">
+        pdf</a>
+        </p>
+        
+        
+';
+
+?>
+
 <!-- results for me -->
     <div class="results" id="my_results">
-        <p><a href="teacher_results?print=my" target="_blank"><i class="fa fa-print" aria-hidden="true"></i></a></p>
         <?php
+
+        echo str_replace("prefix_var", "my", $btn_print);
+        
         foreach($taskAnswers as $task){
             $t = "\n<div class='task'>\n";
             $t .= '<div class="task_text">'.$task["task_text"];
@@ -241,8 +274,8 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 
 <!-- results for the team -->
 <div class="results" id="all_results" style="display: none;">
-        <p><a href="teacher_results?print=all" target="_blank"><i class="fa fa-print" aria-hidden="true"></i></a></p>
         <?php
+        echo str_replace("prefix_var", "all", $btn_print);
         if ($show_team_results){
             foreach($taskAnswers as $task){
                 if($task["type"]=="text"){continue;}
@@ -261,8 +294,8 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 
 <!-- results compared -->
 <div class="results" id="mixed_results" style="display: none;">
-        <p><a href="teacher_results?print=compare" target="_blank"><i class="fa fa-print" aria-hidden="true"></i></a></p>
         <?php
+        echo str_replace("prefix_var", "compare", $btn_print);
         if ($show_team_results){
             foreach($taskAnswers as $task){
                 if($task["type"]=="text"){continue;}
@@ -274,7 +307,7 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
     
                 $line_gap = ($q_my - $q) * 4;
     
-                $t .= ResultsDisplay::get_distribution($lesson, $task, "");
+                $t .= ResultsDisplay::get_distribution($lesson, $task, "", $line_gap);
                 $t .= "\n</div>\n";
                 echo $t;              
             }
@@ -283,78 +316,4 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         }
         ?>
 </div>
-
-<?php
-
-    function teacher_poll_results_get_distribution($lesson, $task, $prefix, $line_gap = 0){
-        
-        $t = "";
-        
-        $this_color_code = "0,0,30";
-        if($prefix == "my_"){
-            $this_color_code = "0,30,0";
-        }
-        
-        if(is_array($lesson->taskTypes[$task["type"]]) & $task[$prefix."countNumericAnswers"] > 0){
-            
-            $q = round($task[$prefix."sumAnswers"]/$task[$prefix."countNumericAnswers"], 1);
-            $num_options = count($lesson->taskTypes[$task["type"]]);
-            $opacity_count = 0;
-            $width_sum = 0;
-            $width_quota = 12;
-            
-            $width_max = 100 - $width_quota;
-            
-            $margin_color = "rgb(0,255,0)";
-            if($line_gap < 0){$margin_color = "rgb(255,142,30)";}
-            
-            
-            
-            $t = "<div class='distribution' style='width:100%; border-top:".abs($line_gap)."em solid ".$margin_color.";'>\n";
-            $t .= "<div class='one_distribution quota' style='width:".$width_quota."%;";
-            $t .= "'>".$q."</div>";
-
-                foreach($lesson->taskTypes[$task["type"]] as $task_type => $task_type_val){
-                    $this_opacity = round($opacity_count / $num_options, 2);
-                    $font_color = "white";
-                    if($this_opacity < 0.6){
-                        $font_color = "black";
-                        $this_opacity = $this_opacity * 0.75;
-                    }
-                    $opacity_count++;
-                    $val = 0;
-                    $border_style = "";
-                    if(isset($task[$prefix."distribution"][$task_type_val])){
-                       $val = $task[$prefix."distribution"][$task_type_val];
-                       $width = floor(round($val/$task[$prefix."countNumericAnswers"], 3)*$width_max);
-                       $width_sum += $width;
-                       
-                       if($opacity_count == $num_options){
-                        $width += ($width_max - $width_sum);$width_sum += ($width_max - $width_sum);}
-                    }else{
-                        continue;
-                    }
-                    $t .= "<div class='one_distribution'";
-                    $t .= " style='width:".$width."%; color:".$font_color.";".$border_style;
-                    $t .= " background: rgba(".$this_color_code.",".$this_opacity.");'>";
-                    $t .= "<span class='one_distribution_val'>".$val."</span></div>";
-                }
-            $t .= "\n</div>\n";
-        }elseif($prefix == "my_"){
-            if(count($task['my_textAnswers'])>0){
-                $t .= "<ul class='task_text_answers'>";
-                foreach($task['my_textAnswers'] as $text){
-                    $t .= "<li>".$text."</li>";
-                }
-                $t .= "</ul>";
-            }else{
-                $t .= "<div class='task_text_answers'>---</div>";
-            }
-        }
-    
-        return $t;
-    }
-
-
-?>
 

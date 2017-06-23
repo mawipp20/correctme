@@ -546,7 +546,7 @@ class SiteController extends \app\components\Controller
     public function actionTeacher_results()
     {
     
-        $countStudentsLimit = 5;
+        $countStudentsLimit = 0;
         $request_params = Yii::$app->request->get();
         
         if(isset($request_params["Teacher"])){
@@ -621,7 +621,7 @@ class SiteController extends \app\components\Controller
         $taskAnswers = array();
         foreach($tasks as $this_task){
             if(!isset($lesson->taskTypes[$this_task->type])){continue;}
-            if($lesson->taskTypes[$this_task->type]==""){continue;}
+            if($lesson->taskTypes[$this_task->type]["type"]!="numeric"){continue;}
             $taskAnswers[$this_task->taskId] = $this_task->toArray();
             $taskAnswers[$this_task->taskId]["countAnswers"] = 0;
             $taskAnswers[$this_task->taskId]["countNumericAnswers"] = 0;
@@ -643,14 +643,14 @@ class SiteController extends \app\components\Controller
             
             if(!isset($lesson->taskTypes[$taskAnswers[$this_answer->taskId]["type"]])){continue;}
             
-            $this_answer_type = $lesson->taskTypes[$taskAnswers[$this_answer->taskId]["type"]];
+            $this_answer_type = $lesson->taskTypes[$taskAnswers[$this_answer->taskId]["type"]]["type"];
             
             $isMyStudent = false;
             if(isset($myStudentsIds[$this_answer->studentId])){
                 $isMyStudent = true;
             }
 
-            if(is_array($this_answer_type)){
+            if($this_answer_type == "numeric"){
                 $taskAnswers[$this_answer->taskId]["countAnswers"] += 1;
                 if(is_numeric($this_answer->answer_text)){
                     $taskAnswers[$this_answer->taskId]["sumAnswers"] += intval($this_answer->answer_text);
@@ -691,169 +691,26 @@ class SiteController extends \app\components\Controller
 
 
         if(isset($request_params["print"])){
-            return $this->teacher_result_pdf($render_arr, $request_params["print"]);
+            $render_arr["print"] = $request_params["print"];
+            $print_how = "printer";
+            if(isset($request_params["print"])){
+                $print_how = $request_params["how"];
+            }
+            if($print_how == "pdf"){
+                require_once(\Yii::$app->basePath.'/vendor/autoload.php');
+                
+                $mpdf = new \mPDF();
+                $mpdf->WriteHTML($this->renderPartial('teacher_poll_results_print', $render_arr));
+                $mpdf->Output();
+                exit;
+            }else{
+                return $this->renderPartial('teacher_poll_results_print', $render_arr);
+            }
         }
         
         return $this->render('teacher_poll_results', $render_arr);
         
     }
-
-    private function teacher_result_pdf($arr, $print){
-        
-        /**
-         * $print: my/all/compare
-        /*
-        
-/**
-        $t = "<style>\n".file_get_contents(\Yii::$app->basePath.'/web/css/teacher_poll_result_print.css')."\n</style>\n";
-        if($print == "my"){
-            foreach($arr["taskAnswers"] as $task){
-                //$t .= '<div class="task_text">';
-                $q = "";
-                if($task["my_countNumericAnswers"]>0){
-                    $q = round($task["my_sumAnswers"]/$task["my_countNumericAnswers"], 1);
-                }
-                $t .= "<table style='width:100%'><tr>\n";
-                $t .= "<td class='quota' width='30px;'>".$q."</td>";
-                $t .= "<td class='task_text'>".$task["task_text"];
-                $t .= "<span class='num_answers'>(".$task["my_countNumericAnswers"].")</span>";
-                $t .= "</td></tr>\n";
-                $t .= ResultsDisplay::get_distribution_print($arr["lesson"], $task, "my_");
-                $t .= "</table>\n";
-            }
-        }
-*/        
-
-        //var_dump($arr);
-        //exit;
-
-        $lesson = $arr["lesson"];
-        $t = "";
-        
-        foreach($arr["taskAnswers"] as $task){
-            
-            if(is_array($lesson->taskTypes[$task["type"]]) & $task["countNumericAnswers"] > 0){
-            
-                $my_q = "";
-                if($task["my_countNumericAnswers"]>0){
-                    $my_q = round($task["my_sumAnswers"]/$task["my_countNumericAnswers"], 1);
-                }
-                if(strpos((STRING)$my_q, ".")===false){$my_q .= ".0";}
-
-                $q = "";
-                if($task["countNumericAnswers"]>0){
-                    $q = round($task["sumAnswers"]/$task["countNumericAnswers"], 1);
-                }
-                if(strpos((STRING)$q, ".")!==false){$q .= ".0";}
-                
-                $t .= "<p style='padding:0.3em; margin-bottom: 0em;'>\n";
-                
-                $t .= '<span style="">'.$task["task_text"].'</span>';
-                                
-                $t .= "\n</p>\n";
-
-
-                $q_span = "<div style='display: inline-block; font-weight: bold; border: 1px solid black; width;  text-align: center'>";
-                
-                $my_div = str_replace("width", "width:".($my_q*2)."em", $q_span).$my_q."</div>";
-                $all_div = str_replace("width", "width:".($q*2)."em", $q_span).$q."</div>";
-                
-                if($print == "my"){$t .= $my_div;}
-                if($print == "all"){$t .= $all_div;}
-                if($print == "compare"){$t .= $my_div." ".$all_div;}
-
-                $t .= "<span style='padding-left: 0.5em;padding-right: 0.5em; color: black;'>";
-                $t .= $task["my_countNumericAnswers"]." ::</span>";
-                
-                $val_arr_my = array();
-                $val_arr_all = array();
- 
-                 foreach($lesson->taskTypes[$task["type"]] as $task_type => $task_type_val){
-                    if(isset($task["my_distribution"][$task_type_val])){
-                        
-                       $val = $task["my_distribution"][$task_type_val];
-                       $val_arr_my[] = $val;
-                       
-                       $val = $task["distribution"][$task_type_val];
-                       $val_arr_all[] = $val;
-                       
-                    }else{
-                       $val_arr_my[] = "0";
-                       $val_arr_all[] = "0";
-                    }
-                }
-                if($print == "my"){$t .= implode("/", $val_arr_my);}
-                if($print == "all"){$t .= implode("/", $val_arr_all);}
-                if($print == "compare"){$t .= implode("/", $val_arr_my)." :: ".implode("-", $val_arr_all);}
-
-    
-                $t .= "\n</div>\n";
-                
-            }elseif($print == "my"){
-                /** Text-Antworten */
-                $t .= "<p style='padding:0.3em;'>\n";
-                $t .= '<span style="">'.$task["task_text"].'</span>';
-                if(count($task['my_textAnswers'])>0){
-                    $t .= "<ul>";
-                    foreach($task['my_textAnswers'] as $text){
-                        $t .= "<li>".$text."</li>";
-                    }
-                    $t .= "</ul>";
-                }else{
-                    $t .= "---";
-                }
-                $t .= "</p>";
-            }
-        }
-        
-
-        echo $t;
-        exit;
-                
-        require_once(\Yii::$app->basePath.'/vendor/tecnick.com/tcpdf/tcpdf.php');
-        $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-        // set document information
-        $pdf->SetCreator(PDF_CREATOR);
-        $pdf->SetAuthor('correctme.de');
-        $pdf->SetTitle('Befragungsergebnisse');
-        $pdf->SetSubject('Befragungsergebnisse');
-        $pdf->SetKeywords('correctme, Schülerbefragung');
-        
-        // set default header data
-        $this_title = $lesson->title." - ".Yii::$app->formatter->asDate(new \DateTime($lesson->insert_timestamp));
-        $pdf->SetHeaderData("", "", $this_title);
-        
-        // set header and footer fonts
-        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-        
-        // set default monospaced font
-        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-        
-        // set margins
-        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-        
-        // set auto page breaks
-        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-        
-        // set image scale factor
-        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-        
-        // set font
-        $pdf->SetFont('helvetica', '', 11);
-
-        // add a page
-        $pdf->AddPage();
-        $pdf->writeHTML($t, true, false, true, false, '');
-        $pdf->lastPage();
-        $pdf->Output('befragung.pdf', 'I');
-        Yii::app()->end();                    
-        
-    }
-
 
     /**
      * download questions before start of the lesson or poll

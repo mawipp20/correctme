@@ -57,11 +57,6 @@ div.quota{
     text-align: center;
     */
 }
-.one_distribution{
-    display: inline-block;
-    padding: 0.3em;
-    text-align: center;
-}
 .task_text_answers{
     padding: 0;
     padding-left: 0em;
@@ -80,4 +75,9 @@ div.quota{
   content: "::";
   margin-left: -1.3em; /* same as padding-left set on li */
   width: 1.3em; /* same as padding-left set on li */
+}
+.btn_print{
+    padding: 1em;
+    border-radius: 6px;
+    border: 1px solid grey;    
 }
