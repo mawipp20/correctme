@@ -546,7 +546,7 @@ class SiteController extends \app\components\Controller
     public function actionTeacher_results()
     {
     
-        $countStudentsLimit = 0;
+        $countStudentsLimit = 5;
         $request_params = Yii::$app->request->get();
         
         if(isset($request_params["Teacher"])){
@@ -598,7 +598,10 @@ class SiteController extends \app\components\Controller
             if($this_teacher->name != $this_teacher->activationkey){
                 $this_teacher_name = $this_teacher->name;
             }
-            $teachersArr["students"][$this_teacher->id] = array("name"=>$this_teacher->name, "countStudents"=>0, "state"=>$this_teacher->state);
+            $teachersArr["students"][$this_teacher->id] = array("name"=>$this_teacher_name,
+                                                                "countStudents"=>0,
+                                                                "state"=>$this_teacher->state,
+                                                                );
         }
         $myStudentsIds = array();
         $numStudents = array("all"=>count($students));

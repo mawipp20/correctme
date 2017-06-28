@@ -1,18 +1,12 @@
-<style>
-.one_distribution{
-    display: inline-block;
-    padding: 0.3em;
-    text-align: center;
-    border-right: 2px solid white;
-    b/ackground-image: url(<?php echo  $_SERVER[""].\Yii::$app->request->BaseUrl ?>/images/plusplus.gif);
-    background-image: url(correctme/web/images/plusplus.gif);
-    background-repeat: no-repeat; 
-}
-</style>
 <?php
 
+
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+
+//print_r(URL::base()); exit;
+
 
 use app\assets\AppAsset;
 AppAsset::register($this);
@@ -24,6 +18,22 @@ use app\components\ResultsDisplay;
 
 $this->title = Yii::$app->_L->get("teacher_title");
 
+?>
+
+<style>
+.one_distribution{
+    display: inline-block;
+    padding: 0.3em;
+    text-align: center;
+    border-right: 2px solid white;
+    b/ackground-image: url(<?php echo  URL::base(); ?>/images/plus.gif);
+    b/ackground-repeat: repeat;
+    b/ackground-position: right;
+}
+</style>
+
+<?php
+
 
 //print_r($lesson);
 //print_r($teachersArr);
@@ -31,6 +41,8 @@ $this->title = Yii::$app->_L->get("teacher_title");
 //print_r($taskAnswers);
 
 //exit();
+
+
 
 $show_team_results = false;
 if ($lesson["poll_type"] != "single"
@@ -119,16 +131,26 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         </td><td class="data">
             <?php
                 $this_names = array();
+                $count_anonymous = 0;
+                $count_prepared = 0;
                 foreach($teachersArr["students"] as $key => $val){
                     if($val["state"]=="prepared"){
-                        $this_names[] = $val["name"];
+                        $count_prepared++;
+                        if($val["name"]==""){
+                            $count_anonymous++;
+                        }else{
+                            $this_names[] = $val["name"];
+                        }
                     }
                 }
-                echo count($this_names);
+                echo $count_prepared;
             ?>
             <span class="names" id="names_teachersArr_countInactive" style="display: none;">
                 <br />
                 <?php
+                if($count_anonymous > 0){
+                    array_unshift($this_names, Yii::$app->_L->get('teacher_poll_results_anonymous_teachers')." (".$count_anonymous.")");
+                }
                 echo implode(", ", $this_names);
                 ?>
             </span>
@@ -147,16 +169,26 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         </td><td class="data">
             <?php
             $this_names = array();
+            $count_anonymous = 0;
+            $count_active = 0;
             foreach($teachersArr["students"] as $key => $val){
                 if($val["countStudents"] < $countStudentsLimit & $val["state"]!="prepared"){
-                    $this_names[] = $val["name"];
+                    $count_active++;
+                    if($val["name"]==""){
+                        $count_anonymous++;
+                    }else{
+                        $this_names[] = $val["name"];
+                    }
                 }
             }
-            echo count($this_names);
+            echo $count_active;
             ?>
             <span class="names" id="names_teachersArr_countWithoutStudents" style="display: none;">
                 <br />
                 <?php
+                if($count_anonymous > 0){
+                    array_unshift($this_names, Yii::$app->_L->get('teacher_poll_results_anonymous_teachers')." (".$count_active.")");
+                }
                 echo implode(", ", $this_names);
                 ?>
             </span>
@@ -176,16 +208,26 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         </td><td class="data">
             <?php
             $this_names = array();
+            $count_anonymous = 0;
+            $count_active = 0;
             foreach($teachersArr["students"] as $key => $val){
                 if($val["countStudents"] >= $countStudentsLimit & $val["state"]!="prepared"){
-                    $this_names[] = $val["name"];
+                    $count_active++;
+                    if($val["name"]==""){
+                        $count_anonymous++;
+                    }else{
+                        $this_names[] = $val["name"];
+                    }
                 }
             }
-            echo count($this_names);
+            echo $count_active;
             ?>
             <span class="names" id="names_teachersArr_countWithStudents" style="display: none;">
                 <br />
                 <?php
+                if($count_anonymous > 0){
+                    array_unshift($this_names, Yii::$app->_L->get('teacher_poll_results_anonymous_teachers')." (".$count_active.")");
+                }
                 echo implode(", ", $this_names);
                 ?>
             </span>

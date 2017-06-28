@@ -211,7 +211,6 @@ function rest_service(redirectTo){
     
     var restUrl = "../../../" + cmConfig.restcorrectmePath + "web/student/think";
     
-    //alert(restUrl);
     
     $.ajax({
 

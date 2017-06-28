@@ -8,6 +8,7 @@
     margin-bottom: 0.6em;
     font-size: large;
     padding: 0.6em;
+    font-weight: bold;
 }
 .well-correctme-as-button:hover{
     background-color:  rgb(51,122,183);
@@ -15,6 +16,7 @@
     cursor: pointer;
     font-size: large;
     padding: 0.6em;
+    font-weight: bold;
 }
 
  /* The switch - the box around the slider */

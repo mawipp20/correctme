@@ -48,6 +48,18 @@ class Lesson extends \app\components\ActiveRecord
                                                   ,"3"=>3
                                                   ,"4"=>4
                                                   ),
+                                        "background-colors" => array("x"=>"rgb(255,255,255)"
+                                                  ,"1"=>"rgb(150,150,255)"
+                                                  ,"2"=>"rgb(70,70,255)"
+                                                  ,"3"=>"rgb(0,0,200)"
+                                                  ,"4"=>"rgb(0,0,60)"
+                                                  ),
+                                        "font-colors" => array("x"=>"black"
+                                                  ,"1"=>"black"
+                                                  ,"2"=>"black"
+                                                  ,"3"=>"white"
+                                                  ,"4"=>"white"
+                                                  ),
                                         ),
                                 "how-often"=>array(
                                         "type" => "numeric",
@@ -57,6 +69,18 @@ class Lesson extends \app\components\ActiveRecord
                                                   ,"2"=>2
                                                   ,"3"=>3
                                                   ,"4"=>4
+                                                  ),
+                                        "background-colors" => array("x"=>"rgb(255,255,255)"
+                                                  ,"1"=>"rgb(200,200,255)"
+                                                  ,"2"=>"rgb(150,150,255)"
+                                                  ,"3"=>"rgb(0,0,170)"
+                                                  ,"4"=>"rgb(0,0,60)"
+                                                  ),
+                                        "font-colors" => array("x"=>"black"
+                                                  ,"1"=>"black"
+                                                  ,"2"=>"black"
+                                                  ,"3"=>"white"
+                                                  ,"4"=>"white"
                                                   ),
                                         ),
                                 "sysinfo"=>array("type" => "info"),

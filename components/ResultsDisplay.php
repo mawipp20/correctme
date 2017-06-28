@@ -12,11 +12,10 @@ class ResultsDisplay extends Component{
 	public function get_distribution($lesson, $task, $prefix, $line_gap = 0){
 	   
         $t = "";
+        $task_type = $lesson->taskTypes[$task["type"]];
         
-        $this_color_code = "0,0,30";
-        if($prefix == "my_"){
-            $this_color_code = "0,30,0";
-        }
+        //die(print_r($task_type));    
+
         
         if(is_array($lesson->taskTypes[$task["type"]]) & $task[$prefix."countNumericAnswers"] > 0){
             
@@ -37,16 +36,8 @@ class ResultsDisplay extends Component{
             $t .= "<div class='one_distribution quota' style='width:".$width_quota."%;";
             $t .= "'>".$q."</div>";
 
-                foreach($lesson->taskTypes[$task["type"]]["values"] as $task_type => $task_type_val){
-                    $this_opacity = round($opacity_count / $num_options, 2);
-                    $font_color = "white";
-                    if($this_opacity < 0.6){
-                        $font_color = "black";
-                        $this_opacity = $this_opacity * 0.75;
-                    }
-                    $opacity_count++;
+                foreach($lesson->taskTypes[$task["type"]]["values"] as $key => $task_type_val){
                     $val = 0;
-                    $border_style = "";
                     if(isset($task[$prefix."distribution"][$task_type_val])){
                        $val = $task[$prefix."distribution"][$task_type_val];
                        $width = floor(round($val/$task[$prefix."countNumericAnswers"], 3)*$width_max);
@@ -60,8 +51,8 @@ class ResultsDisplay extends Component{
                         continue;
                     }
                     $t .= "<div class='one_distribution'";
-                    $t .= " style='width:".$width."%; color:".$font_color.";".$border_style;
-                    $t .= " background: rgba(".$this_color_code.",".$this_opacity.");'>";
+                    $t .= " style='width:".$width."%; color:".$task_type["font-colors"][$key].";";
+                    $t .= " background-color: ".$task_type["background-colors"][$key].";'>";
                     $t .= "<span class='one_distribution_val'>".$val."</span></div>";
                 }
             $t .= "\n</div>\n";

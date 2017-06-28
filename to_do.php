@@ -4,6 +4,7 @@
 ------- sofort ---------------
 
 - keine Teamergebnisse, wenn zu wenige Teilnehmer vorhanden sind
+- Hintergrundfarben zu den Optionswerten ins Model 
 - show explanations for result bars:
     .distribution_one_value => visibility
     .Fragentypen mit options
