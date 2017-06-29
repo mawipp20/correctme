@@ -18,26 +18,11 @@ use app\components\ResultsDisplay;
 
 $this->title = Yii::$app->_L->get("teacher_title");
 
-?>
-
-<style>
-.one_distribution{
-    display: inline-block;
-    padding: 0.3em;
-    text-align: center;
-    border-right: 2px solid white;
-    b/ackground-image: url(<?php echo  URL::base(); ?>/images/plus.gif);
-    b/ackground-repeat: repeat;
-    b/ackground-position: right;
-}
-</style>
-
-<?php
-
 
 //print_r($lesson);
 //print_r($teachersArr);
 //print_r($numStudents);
+//print_r($taskTypes_used);
 //print_r($taskAnswers);
 
 //exit();
@@ -46,11 +31,19 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 $show_team_results = false;
 if ($lesson["poll_type"] != "single"
-            & $numStudents["mine"] >= $countStudentsLimit
+            //& $numStudents["mine"] >= $countStudentsLimit
             & $teachersArr["withStudents"] >= 3
             ){
             $show_team_results = true;
-}
+            }
+
+$show_compared_results = false;
+if ( $show_team_results
+            & $numStudents["mine"] >= $countStudentsLimit
+            ){
+            $show_compared_results = true;
+            }
+
 $msg_team_result_not_yet = "";
 if($teachersArr["withStudents"] < 3){
     $msg_team_result_not_yet .= Yii::$app->_L->get('teacher_poll_results_not_enough_teachers')." ";
@@ -253,14 +246,6 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
       </tr>
     </table>
 
-
-
-
-
-
-
-
-
 <!-- tabs for team results: show even if not yet accessible  -->
 
 <?php if ($lesson["poll_type"] != "single"): ?>
@@ -284,7 +269,7 @@ $btn_print = '
 
         <p style="font-size:large; padding-top:2em;margin-bottom:0em; text-align: center;">
         <a class="btn_print" href="#" onclick=\'
-            window.open("teacher_results?print=prefix_var&how=printer",null,"height=800,width=600,status=yes,toolbar=no,menubar=no,location=no");return false;
+            window.open("teacher_results?print=prefix_var&how=printer",null,"height=800,width=600,status=yes,toolbar=no,menubar=no,location=no,scrollbars=yes");return false;
             \'>
         <i class="fa fa-print" aria-hidden="true"></i></a>
         &nbsp;&nbsp;&nbsp;
@@ -295,6 +280,35 @@ $btn_print = '
         
 ';
 
+        $t = "";
+        
+        foreach($lesson->taskTypes as $type_name => $task_type){
+
+            if(!isset($taskTypes_used[$type_name])){continue;}
+            if($task_type["type"] !== "scale"){continue;}
+            
+            $t .= "\n<div class='task_explanation' style='padding: 1em;'>\n";
+            $t .= '<div class="task_text">';
+            $t .= Yii::$app->_L->get('gen_type').' "'.Yii::$app->_L->get('scale_'.$type_name.'-title').'"';
+            $t .= "</div><div class='distribution'>\n";
+            
+            foreach($task_type["values"] as $key => $val){
+                $t .= "<div class='one_distribution one_distribution_explanation'";
+                $t .= " style='";
+                $t .= " color:".$task_type["font-colors"][$val].";";
+                $t .= " background-color: ".$task_type["background-colors"][$val].";";
+                if(isset($task_type["background-images"][$val])){
+                    $t .= " background-image: url(".\yii\helpers\Url::base()."/images/".$task_type["background-images"][$val].");";
+                }
+                $t .= "'>";
+                $t .= '"'.Yii::$app->_L->get('scale_'.$type_name.'-'.$key).'"';
+                $t .= " :: ".Yii::$app->_L->get('gen_value')."=".$val;
+                $t .= "</div>\n";
+            }
+            $t .= "</div></div>\n";
+        }
+        $explanations_html = $t;
+
 ?>
 
 <!-- results for me -->
@@ -302,11 +316,21 @@ $btn_print = '
         <?php
 
         echo str_replace("prefix_var", "my", $btn_print);
+        echo $explanations_html;
         
         foreach($taskAnswers as $task){
             $t = "\n<div class='task'>\n";
             $t .= '<div class="task_text">'.$task["task_text"];
-            $t .= "<span class='num_answers'>(".$task["my_countNumericAnswers"].")</span></div>\n";
+            $t .= "<span class='num_answers'>";
+            $t .= " &nbsp;&nbsp;&nbsp;";
+            $t .= Yii::$app->_L->get('gen_type');
+            $t .= '&nbsp;"'.Yii::$app->_L->get('scale_'.$task["type"]."-title").'"';
+            if($task["my_countNumericAnswers"]>0){
+                $t .= "&nbsp;&nbsp;";
+                $t .= implode("/", $task["val_arr_my"]);
+                $t .= "&nbsp;=&nbsp;".$task["my_countNumericAnswers"];
+            }
+            $t .= "</span></div>\n";
             $t .= ResultsDisplay::get_distribution($lesson, $task, "my_");
             $t .= "\n</div>\n";
             echo $t;              
@@ -318,12 +342,21 @@ $btn_print = '
 <div class="results" id="all_results" style="display: none;">
         <?php
         echo str_replace("prefix_var", "all", $btn_print);
-        if ($show_team_results){
+        if($show_team_results){
+            echo $explanations_html;
             foreach($taskAnswers as $task){
-                if($task["type"]=="text"){continue;}
                 $t = "\n<div class='task'>\n";
                 $t .= '<div class="task_text">'.$task["task_text"];
-                $t .= "<span class='num_answers'>(".$task["countNumericAnswers"].")</span></div>\n";
+                $t .= "<span class='num_answers'>";
+                $t .= " &nbsp;&nbsp;&nbsp;";
+                $t .= Yii::$app->_L->get('gen_type');
+                $t .= '&nbsp;"'.Yii::$app->_L->get('scale_'.$task["type"]."-title").'"';
+                if($task["countNumericAnswers"]>0){
+                    $t .= "&nbsp;&nbsp;";
+                    $t .= implode("/", $task["val_arr_all"]);
+                    $t .= "&nbsp;=&nbsp;".$task["countNumericAnswers"];
+                }
+                $t .= "</span></div>\n";
                 $t .= ResultsDisplay::get_distribution($lesson, $task, "");
                 $t .= "\n</div>\n";
                 echo $t;              
@@ -338,11 +371,31 @@ $btn_print = '
 <div class="results" id="mixed_results" style="display: none;">
         <?php
         echo str_replace("prefix_var", "compare", $btn_print);
-        if ($show_team_results){
+        if ($show_compared_results){
+            echo $explanations_html;
             foreach($taskAnswers as $task){
                 if($task["type"]=="text"){continue;}
                 $t = "\n<div class='task'>\n";
-                $t .= '<div class="task_text">'.$task["task_text"]."</div>\n";
+                $t .= '<div class="task_text">'.$task["task_text"];
+                $t .= "<span class='num_answers'>";
+                $t .= " &nbsp;&nbsp;&nbsp;";
+                $t .= Yii::$app->_L->get('gen_type');
+                $t .= '&nbsp;"'.Yii::$app->_L->get('scale_'.$task["type"]."-title").'"';
+                
+                if($task["my_countNumericAnswers"]>0){
+                    $t .= "&nbsp;&nbsp;&nbsp;&nbsp;".Yii::$app->_L->get('gen_me').":&nbsp;";
+                    $t .= implode("/", $task["val_arr_my"]);
+                    $t .= "&nbsp;=&nbsp;".$task["my_countNumericAnswers"];
+                }
+                
+                if($task["countNumericAnswers"]>0){
+                    $t .= "&nbsp;&nbsp;&nbsp;".Yii::$app->_L->get('gen_team').":&nbsp;";
+                    $t .= implode("/", $task["val_arr_all"]);
+                    $t .= "&nbsp;=&nbsp;".$task["countNumericAnswers"];
+                }
+                
+                $t .= "</span></div>\n";
+                
                 $t .= ResultsDisplay::get_distribution($lesson, $task, "my_");
                 $q_my = round($task["my_sumAnswers"]/$task["my_countNumericAnswers"], 1);
                 $q = round($task["sumAnswers"]/$task["countNumericAnswers"], 1);

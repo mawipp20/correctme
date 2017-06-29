@@ -2,6 +2,7 @@
 namespace app\components;
 
 use yii\base\Component;
+use yii\helpers\Url;
 
 class ResultsDisplay extends Component{
 
@@ -14,36 +15,45 @@ class ResultsDisplay extends Component{
         $t = "";
         $task_type = $lesson->taskTypes[$task["type"]];
         
-        //die(print_r($task_type));    
-
-        
         if(is_array($lesson->taskTypes[$task["type"]]) & $task[$prefix."countNumericAnswers"] > 0){
             
             $q = round($task[$prefix."sumAnswers"]/$task[$prefix."countNumericAnswers"], 1);
-            $num_options = count($lesson->taskTypes[$task["type"]]["values"]);
-            $opacity_count = 0;
+            $num_options = count($task[$prefix."distribution"]);
+            $count = 0;
             $width_sum = 0;
             $width_quota = 12;
+            $slug = 2;
             
-            $width_max = 100 - $width_quota;
+            $width_max = 100 - $width_quota - $slug;
             
-            $margin_color = "rgb(0,255,0)";
-            if($line_gap < 0){$margin_color = "rgb(255,142,30)";}
+            if($line_gap > 0){
+                $gap_color = "white";
+                //$gap_color = "rgb(255,142,30)";
+                $t .= "<div style='width:".(100-$slug)."%;'>";
+                $t .= "<div style='";
+                //$t .= " background-image: url(".\yii\helpers\Url::base()."/images/gap.gif);";
+                //$t .= " background-repeat: repeat;";
+                $t .= " margin-left:10px;";
+                $t .= " height:".$line_gap."em;";
+                $t .= " width:".(100-$slug)."%;";
+                $t .= " border-left: ".$line_gap."em solid darkgrey;";
+                $t .= "'>&nbsp;</div></div>";
+            }
             
-            
-            
-            $t = "<div class='distribution' style='width:100%; border-top:".abs($line_gap)."em solid ".$margin_color.";'>\n";
+            $t .= "<div class='distribution' style='width:".(100-$slug)."%; background-width:".(100-$slug)."%;";
+            //$t .= " border-top:".abs($line_gap)."em solid ".$margin_color.";'>\n";
+            $t .= "'>\n";
             $t .= "<div class='one_distribution quota' style='width:".$width_quota."%;";
             $t .= "'>".$q."</div>";
 
                 foreach($lesson->taskTypes[$task["type"]]["values"] as $key => $task_type_val){
                     $val = 0;
                     if(isset($task[$prefix."distribution"][$task_type_val])){
+                       $count++;
                        $val = $task[$prefix."distribution"][$task_type_val];
                        $width = floor(round($val/$task[$prefix."countNumericAnswers"], 3)*$width_max);
                        $width_sum += $width;
-                       
-                       if($opacity_count == $num_options){
+                       if($count == $num_options){
                             $width += ($width_max - $width_sum);
                             $width_sum += ($width_max - $width_sum);
                         }
@@ -51,8 +61,15 @@ class ResultsDisplay extends Component{
                         continue;
                     }
                     $t .= "<div class='one_distribution'";
-                    $t .= " style='width:".$width."%; color:".$task_type["font-colors"][$key].";";
-                    $t .= " background-color: ".$task_type["background-colors"][$key].";'>";
+                    $t .= " style='";
+                    $t .= " width:".$width."%;";
+                    $t .= " background-width:".$width."%;";
+                    $t .= " color:".$task_type["font-colors"][$task_type_val].";";
+                    $t .= " background-color: ".$task_type["background-colors"][$task_type_val].";";
+                    if(isset($task_type["background-images"][$task_type_val])){
+                        $t .= " background-image: url(".\yii\helpers\Url::base()."/images/".$task_type["background-images"][$task_type_val].");";
+                    }
+                    $t .= "'>";
                     $t .= "<span class='one_distribution_val'>".$val."</span></div>";
                 }
             $t .= "\n</div>\n";

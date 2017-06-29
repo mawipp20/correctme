@@ -622,9 +622,14 @@ class SiteController extends \app\components\Controller
         
 
         $taskAnswers = array();
+        $taskTypes_used = array();
         foreach($tasks as $this_task){
+            if(!isset($taskTypes_used[$this_task->type])){
+                $taskTypes_used[$this_task->type] = 0;
+            }
+            $taskTypes_used[$this_task->type]++;
             if(!isset($lesson->taskTypes[$this_task->type])){continue;}
-            if($lesson->taskTypes[$this_task->type]["type"]!="numeric"){continue;}
+            if($lesson->taskTypes[$this_task->type]["type"]!="scale"){continue;}
             $taskAnswers[$this_task->taskId] = $this_task->toArray();
             $taskAnswers[$this_task->taskId]["countAnswers"] = 0;
             $taskAnswers[$this_task->taskId]["countNumericAnswers"] = 0;
@@ -653,7 +658,7 @@ class SiteController extends \app\components\Controller
                 $isMyStudent = true;
             }
 
-            if($this_answer_type == "numeric"){
+            if($this_answer_type == "scale"){
                 $taskAnswers[$this_answer->taskId]["countAnswers"] += 1;
                 if(is_numeric($this_answer->answer_text)){
                     $taskAnswers[$this_answer->taskId]["sumAnswers"] += intval($this_answer->answer_text);
@@ -683,13 +688,39 @@ class SiteController extends \app\components\Controller
              }
         }
 
+
+        foreach($taskAnswers as $key => $task){
+            $val_arr_my = array();
+            $val_arr_all = array();
+            foreach($lesson->taskTypes[$task["type"]]["values"] as $task_type => $task_type_val){
+                if(!is_numeric($task_type_val)){continue;}
+                if(isset($task["my_distribution"][$task_type_val])){
+                   $val = $task["my_distribution"][$task_type_val];
+                   $val_arr_my[$task_type_val] = $val;
+                }else{
+                   $val_arr_my[$task_type_val] = "0";
+                }
+                
+                if(isset($task["distribution"][$task_type_val])){
+                   $val = $task["distribution"][$task_type_val];
+                   $val_arr_all[$task_type_val] = $val;
+                }else{
+                   $val_arr_all[$task_type_val] = "0";
+                }
+            }
+            $taskAnswers[$key]["val_arr_my"] = $val_arr_my;
+            $taskAnswers[$key]["val_arr_all"] = $val_arr_all;
+        }
+
+
         $render_arr = [
          'lesson' => $lesson,
          'teacher' => $teacher,
          'teachersArr' => $teachersArr,
          'numStudents' => $numStudents,
          'taskAnswers' => $taskAnswers,
-         'countStudentsLimit' => $countStudentsLimit
+         'countStudentsLimit' => $countStudentsLimit,
+         'taskTypes_used' => $taskTypes_used,
         ];
 
 

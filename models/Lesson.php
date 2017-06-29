@@ -40,47 +40,88 @@ class Lesson extends \app\components\ActiveRecord
     public $lessonFile; 
     public $taskTypes = array(  "text"=>array("type" => "string"),
                                 "how-true"=>array(
-                                        "type" => "numeric",
+                                        "type" => "scale",
                                         "max_value" => 4,
-                                        "values" => array("x"=>"x"
-                                                  ,"1"=>1
-                                                  ,"2"=>2
-                                                  ,"3"=>3
-                                                  ,"4"=>4
+                                        "values" => array(
+                                                  "1"=>1,
+                                                  "2"=>2,
+                                                  "3"=>3,
+                                                  "4"=>4,
+                                                  "x"=>"x",
                                                   ),
-                                        "background-colors" => array("x"=>"rgb(255,255,255)"
-                                                  ,"1"=>"rgb(150,150,255)"
-                                                  ,"2"=>"rgb(70,70,255)"
-                                                  ,"3"=>"rgb(0,0,200)"
-                                                  ,"4"=>"rgb(0,0,60)"
+                                        "background-colors" => array(
+                                                  "1"=>"rgb(240,240,240)",
+                                                  "2"=>"rgb(210,210,210)",
+                                                  "3"=>"rgb(120,120,120)",
+                                                  "4"=>"rgb(40,40,40)",
+                                                  "x"=>"rgb(255,255,255)",
+                                                  /**
+                                                  "1"=>"rgb(235,235,255)",
+                                                  "2"=>"rgb(200,200,255)",
+                                                  "3"=>"rgb(100,100,200)",
+                                                  "4"=>"rgb(0,0,60)",
+                                                  "x"=>"rgb(255,255,255)",
+                                                  */
                                                   ),
-                                        "font-colors" => array("x"=>"black"
-                                                  ,"1"=>"black"
-                                                  ,"2"=>"black"
-                                                  ,"3"=>"white"
-                                                  ,"4"=>"white"
+                                        "font-colors" => array(
+                                                  "1"=>"black",
+                                                  "2"=>"black",
+                                                  "3"=>"white",
+                                                  "4"=>"white",
+                                                  "x"=>"black",
+                                                  ),
+                                        "background-images" => array(
+                                                  "1"=>"minus_minus_black.gif",
+                                                  "2"=>"minus_black.gif",
+                                                  "3"=>"plus.gif",
+                                                  "4"=>"plus_plus.gif",
+                                                  "x"=>"",
+                                                  ),
+                                        "pie_percentages" => array(
+                                                  "1"=>0,
+                                                  "2"=>25,
+                                                  "3"=>75,
+                                                  "4"=>100,
+                                                  "x"=>"",
                                                   ),
                                         ),
                                 "how-often"=>array(
-                                        "type" => "numeric",
+                                        "type" => "scale",
                                         "max_value" => 4,
-                                        "values" => array("x"=>"x"
-                                                  ,"1"=>1
-                                                  ,"2"=>2
-                                                  ,"3"=>3
-                                                  ,"4"=>4
+                                        "values" => array(
+                                                  "1"=>1,
+                                                  "2"=>2,
+                                                  "3"=>3,
+                                                  "4"=>4,
+                                                  "x"=>"x",
                                                   ),
-                                        "background-colors" => array("x"=>"rgb(255,255,255)"
-                                                  ,"1"=>"rgb(200,200,255)"
-                                                  ,"2"=>"rgb(150,150,255)"
-                                                  ,"3"=>"rgb(0,0,170)"
-                                                  ,"4"=>"rgb(0,0,60)"
+                                        "background-colors" => array(
+                                                   "1"=>"rgb(240,240,240)",
+                                                  "2"=>"rgb(210,210,210)",
+                                                  "3"=>"rgb(120,120,120)",
+                                                  "4"=>"rgb(40,40,40)",
+                                                  "x"=>"rgb(255,255,255)",
                                                   ),
-                                        "font-colors" => array("x"=>"black"
-                                                  ,"1"=>"black"
-                                                  ,"2"=>"black"
-                                                  ,"3"=>"white"
-                                                  ,"4"=>"white"
+                                        "font-colors" => array(
+                                                  "1"=>"black",
+                                                  "2"=>"black",
+                                                  "3"=>"white",
+                                                  "4"=>"white",
+                                                  "x"=>"black",
+                                                  ),
+                                        "background-images" => array(
+                                                  "1"=>"minus_minus_black.gif",
+                                                  "2"=>"minus_black.gif",
+                                                  "3"=>"plus.gif",
+                                                  "4"=>"plus_plus.gif",
+                                                  "x"=>"",
+                                                  ),
+                                        "pie_percentages" => array(
+                                                  "1"=>0,
+                                                  "2"=>25,
+                                                  "3"=>75,
+                                                  "4"=>100,
+                                                  "x"=>"",
                                                   ),
                                         ),
                                 "sysinfo"=>array("type" => "info"),

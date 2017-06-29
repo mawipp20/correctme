@@ -30,6 +30,10 @@
     margin-bottom: 3em;
     margin-top: 3em;
 }
+.task_explanation{
+    margin-bottom: 0em;
+    margin-top: 0em;
+}
 .task .first{
     margin-top: 1.5em;
 }
@@ -46,6 +50,30 @@
 .msg_team_result_not_yet{
     margin-top: 1em;    
 }
+.one_distribution{
+    display: inline-block;
+    padding: 0.3em;
+    text-align: center;
+    border-right: 2px solid white;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.one_distribution_explanation{
+    width:50%;
+    background-width:50%;
+    border-bottom: 2px solid rgb(230,230,230);
+    background-position:left;
+    padding-left: 3em;
+    text-align: left;
+}
+@media only screen and (max-width: 800px) {
+    .one_distribution_explanation{
+        width:100%;
+        background-width:100%;
+    }
+}
+
+
 div.quota{
     font-weight: bold;
     border: 1px solid grey;

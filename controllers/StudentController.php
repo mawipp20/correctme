@@ -208,6 +208,7 @@ class StudentController extends \app\components\Controller
                     
                     return $this->render('student_think', [
                         'model' => $this->findStudent($model->startKey, $model->studentKey),
+                        'lesson' => $lesson,
                     ]);
             }
             

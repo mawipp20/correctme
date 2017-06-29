@@ -52,6 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <script>
 var _L = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;
+var task_types = <?= json_encode($lesson->taskTypes); ?>;
 function cmConfigO(){
     this.restcorrectmeBaseUrl = '';
     this.displayThinkingMinutes = false;

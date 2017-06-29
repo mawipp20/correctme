@@ -353,14 +353,21 @@ function displayTasks(){
     
     if(task.type == "how-true" | task.type == "how-often"){
         
-        //taskDisplay.addClass('taskDisplay_how_often_true');
         $('#student_think_btn_task_finished').css('visibility', 'hidden');
         
         var str = "";
+
+/**
         pie_percentage = ["", "0", "25", "75", "100", ""];
         for(var i = 1; i <= 5; i++){
             str += get_taskDisplay_how_often_true_button(task.type, pie_percentage[i], i);
         }
+*/        
+        for(var i in task_types[task.type]["values"]){
+            str += get_taskDisplay_how_often_true_button(task.type, i);
+        }
+        
+        
         taskDisplay.append($(str));
         $(".pie").progressPie({color:$(".task_label").css("background-color"), valueData:"val", size:30, strokeWidth: 1});
     }   
@@ -370,23 +377,25 @@ function displayTasks(){
         
 }
 
-function get_taskDisplay_how_often_true_button(type, pie_percentage, orderNum){
-        var data_val = orderNum;
-        if(data_val == 5){data_val = 'x';}
+function get_taskDisplay_how_often_true_button(type, key){
+        var scale = task_types[type];
+        var data_val = scale["values"][key];
+        var pie_percentage = scale["pie_percentages"][key];
+        
         var this_btn_css_class = 'btn btn-block btn-primary task_how_true_often_button';
         if(answer["answer_text"] == data_val){
             this_btn_css_class += ' task_how_true_often_button_selected';
         }
-        else if(pie_percentage == ''){
+        else if(pie_percentage === ''){
             this_btn_css_class += ' task_how_true_often_button_dont_know';
         }
         var btn_start = '<button onclick="task_how_often_true_button_click(this);" data-val="' + data_val + '" type="button" class="' + this_btn_css_class + '">';
         var this_class = 'pie';
-        if(pie_percentage == ''){
+        if(pie_percentage === ''){
             this_class += ' invisible';
         }
         var ret = btn_start + '<span class="' + this_class + '" data-val="' + pie_percentage + '"></span>';
-        ret += '<span class="task_how_true_often_label">' + _L['student_think_' + type + '-' + orderNum] + '</span></button>';
+        ret += '<span class="task_how_true_often_label">' + _L['scale_' + type + '-' + key] + '</span></button>';
         return ret;
 }
 
