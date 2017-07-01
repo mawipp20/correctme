@@ -50,6 +50,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
 </div>
 
+<?php
+
+/** need to build a string from taskType - values to keep the order in js */
+foreach($lesson->taskTypes as $key => $val){
+    if(isset($lesson->taskTypes[$key]["values"])){
+        $lesson->taskTypes[$key]["values_string"] = implode("#|#", array_keys($lesson->taskTypes[$key]["values"]));
+    }
+}
+
+?>
+
 <script>
 var _L = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;
 var task_types = <?= json_encode($lesson->taskTypes); ?>;

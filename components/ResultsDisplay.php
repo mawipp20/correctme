@@ -15,7 +15,7 @@ class ResultsDisplay extends Component{
         $t = "";
         $task_type = $lesson->taskTypes[$task["type"]];
         
-        if(is_array($lesson->taskTypes[$task["type"]]) & $task[$prefix."countNumericAnswers"] > 0){
+        if($task_type["type"]=="scale" & $task[$prefix."countNumericAnswers"] > 0){
             
             $q = round($task[$prefix."sumAnswers"]/$task[$prefix."countNumericAnswers"], 1);
             $num_options = count($task[$prefix."distribution"]);

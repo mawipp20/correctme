@@ -39,10 +39,12 @@
 }
 .task_text{
     margin-bottom: 0.5em;
+    font-size: large;
 }
 .num_answers{
     color: grey;
     padding-left: 0.3em;
+    font-size: small;
 }
 .one_distribution_val{
     visibility: hidden;

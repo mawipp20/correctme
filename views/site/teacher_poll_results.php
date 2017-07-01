@@ -98,7 +98,10 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 */ ?>
 
     <table class="poll_results_teachers">
-<?php if ($lesson["poll_type"] != "single"): ?>
+
+
+
+<?php if (false & $lesson["poll_type"] != "single"): ?>
       <tr>
         <td class="prompt" style="font-weight:  bold;">
             <?php echo Yii::$app->_L->get('teacher_poll_results_teachersArr_title'); ?>
@@ -110,8 +113,11 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         ?>            
         </td>
       </tr>
+      
+      
 <?php endif; ?>
-<?php if ($lesson["poll_type"] == "names"): ?>
+
+<?php if (false & $lesson["poll_type"] == "names"): ?>
    
       <tr>
         <td class="prompt">
@@ -187,13 +193,22 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
             </span>
         </td>
       </tr>
-<?php endif; ?>    
+<?php endif; ?>
+
+
+
+
+
+
+    
 <?php if ($lesson["poll_type"] == "names" | $lesson["poll_type"] == "team"): ?>
       <tr>
         <td class="prompt">
         <a href="#" onclick="$('#names_teachersArr_countWithStudents').toggle();">
             <?php 
-                $msg = Yii::$app->_L->get('teacher_poll_results_teachersArr_countWithStudents');
+                //$msg = Yii::$app->_L->get('teacher_poll_results_teachersArr_countWithStudents');
+                $msg = Yii::$app->_L->get('teacher_poll_results_teachersArr_title');
+                
                 $msg = str_replace("#countStudentsLimit#", $countStudentsLimit, $msg);
                 echo $msg;
             ?>
@@ -227,7 +242,8 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         </td>
       </tr>
 <?php endif; ?>
-<?php if ($lesson["poll_type"] == "names"): ?>
+
+<?php if (false & $lesson["poll_type"] == "names"): ?>
       <tr>
         <td class="prompt">
             <?php echo Yii::$app->_L->get('teacher_poll_results_teachersArr_countAll'); ?>
@@ -241,9 +257,23 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
         <td class="prompt">
             <?php echo Yii::$app->_L->get('teacher_poll_results_countMyStudents'); ?>
         </td><td class="data">
-            <?php echo $teachersArr["students"][$teacher->id]["countStudents"]; ?>
+            <?php echo $numStudents["mine"]; ?>
         </td>
       </tr>
+
+<?php if ($lesson["poll_type"] != "single"): ?>
+      <tr>
+        <td class="prompt">
+            <?php echo Yii::$app->_L->get('gen_all_togehter'); ?>
+        </td><td class="data">
+            <?php echo $numStudents["all"]; ?>
+        </td>
+      </tr>
+<?php endif; ?>
+
+
+
+
     </table>
 
 <!-- tabs for team results: show even if not yet accessible  -->
@@ -269,7 +299,7 @@ $btn_print = '
 
         <p style="font-size:large; padding-top:2em;margin-bottom:0em; text-align: center;">
         <a class="btn_print" href="#" onclick=\'
-            window.open("teacher_results?print=prefix_var&how=printer",null,"height=800,width=600,status=yes,toolbar=no,menubar=no,location=no,scrollbars=yes");return false;
+            window.open("teacher_results?print=prefix_var&how=printer",null,"height=800,width=800,status=yes,toolbar=no,menubar=no,location=no,scrollbars=yes");return false;
             \'>
         <i class="fa fa-print" aria-hidden="true"></i></a>
         &nbsp;&nbsp;&nbsp;
@@ -319,18 +349,24 @@ $btn_print = '
         echo $explanations_html;
         
         foreach($taskAnswers as $task){
+            if($lesson->taskTypes[$task["type"]]["type"] == "info"){
+                continue;
+            }
             $t = "\n<div class='task'>\n";
             $t .= '<div class="task_text">'.$task["task_text"];
-            $t .= "<span class='num_answers'>";
-            $t .= " &nbsp;&nbsp;&nbsp;";
-            $t .= Yii::$app->_L->get('gen_type');
-            $t .= '&nbsp;"'.Yii::$app->_L->get('scale_'.$task["type"]."-title").'"';
-            if($task["my_countNumericAnswers"]>0){
-                $t .= "&nbsp;&nbsp;";
-                $t .= implode("/", $task["val_arr_my"]);
-                $t .= "&nbsp;=&nbsp;".$task["my_countNumericAnswers"];
+            if($lesson->taskTypes[$task["type"]]["type"] == "scale"){
+                $t .= "<span class='num_answers'>";
+                $t .= " &nbsp;&nbsp;&nbsp;";
+                $t .= Yii::$app->_L->get('gen_type');
+                $t .= '&nbsp;"'.Yii::$app->_L->get('scale_'.$task["type"]."-title").'"';
+                if($task["my_countNumericAnswers"]>0){
+                    $t .= "&nbsp;&nbsp;";
+                    $t .= implode("/", $task["val_arr_my"]);
+                    $t .= "&nbsp;=&nbsp;".$task["my_countNumericAnswers"];
+                }
+                $t .= "</span>";
             }
-            $t .= "</span></div>\n";
+            $t .= "</div>\n";
             $t .= ResultsDisplay::get_distribution($lesson, $task, "my_");
             $t .= "\n</div>\n";
             echo $t;              

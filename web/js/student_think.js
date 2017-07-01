@@ -351,21 +351,18 @@ function displayTasks(){
         $("#answer_text").focus();
     }
     
-    if(task.type == "how-true" | task.type == "how-often"){
+    if(task_types[task.type]["type"] == "scale"){
         
         $('#student_think_btn_task_finished').css('visibility', 'hidden');
         
         var str = "";
 
-/**
-        pie_percentage = ["", "0", "25", "75", "100", ""];
-        for(var i = 1; i <= 5; i++){
-            str += get_taskDisplay_how_often_true_button(task.type, pie_percentage[i], i);
+        var keys = task_types[task.type]["values_string"].split("#|#");
+        for(var i = 0; i < keys.length; i++){
+            var key = keys[i];
+            str += get_taskDisplay_how_often_true_button(task.type, key);
         }
-*/        
-        for(var i in task_types[task.type]["values"]){
-            str += get_taskDisplay_how_often_true_button(task.type, i);
-        }
+        
         
         
         taskDisplay.append($(str));

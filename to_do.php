@@ -1,6 +1,8 @@
 <?php exit; ?>
 
 
+SELECT lesson.startKey, teacher.name, teacher.resultkey, teacher.studentkey, count(student.id) as students FROM teacher inner JOIN lesson on lesson.startKey = teacher.startKey inner join student on student.teacher_id = teacher.id WHERE lesson.title like "%2017%" group by teacher.id
+
 ------- sofort ---------------
 
 - keine Teamergebnisse, wenn zu wenige Teilnehmer vorhanden sind

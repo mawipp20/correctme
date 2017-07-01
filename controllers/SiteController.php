@@ -586,6 +586,8 @@ class SiteController extends \app\components\Controller
         $tasks = Task::find()->where(['startKey'=>$teacher->startKey])->all();
         $answers = Answer::find()->where(['startKey'=>$teacher->startKey])->all();
         
+        
+        
         $teachersArr = array("countAll"=>count($teachers));
         $teachersArr["countActive"] = 0;
         $teachersArr["withStudents"] = 0;
@@ -604,9 +606,11 @@ class SiteController extends \app\components\Controller
                                                                 );
         }
         $myStudentsIds = array();
+        $studentIds = array();
         $numStudents = array("all"=>count($students));
         $numStudents["mine"] = 0;
         foreach($students as $this_student){
+            $studentIds[$this_student->id] = "";
             if(isset($teachersArr["students"][$this_student->teacher_id])){
                 $teachersArr["students"][$this_student->teacher_id]["countStudents"]++;
             }
@@ -629,7 +633,6 @@ class SiteController extends \app\components\Controller
             }
             $taskTypes_used[$this_task->type]++;
             if(!isset($lesson->taskTypes[$this_task->type])){continue;}
-            if($lesson->taskTypes[$this_task->type]["type"]!="scale"){continue;}
             $taskAnswers[$this_task->taskId] = $this_task->toArray();
             $taskAnswers[$this_task->taskId]["countAnswers"] = 0;
             $taskAnswers[$this_task->taskId]["countNumericAnswers"] = 0;
@@ -643,13 +646,18 @@ class SiteController extends \app\components\Controller
         }
 
         foreach($answers as $this_answer){
-            
+           
+            /** only answers from student who have finished the poll */
+            if(!isset($studentIds[$this_answer->studentId])){continue;}
+                
             if(trim($this_answer->answer_text)==""){continue;}
             
             if(!isset($taskAnswers[$this_answer->taskId])){continue;}
+            
             if(!isset($taskAnswers[$this_answer->taskId]["type"])){continue;}
             
             if(!isset($lesson->taskTypes[$taskAnswers[$this_answer->taskId]["type"]])){continue;}
+            
             
             $this_answer_type = $lesson->taskTypes[$taskAnswers[$this_answer->taskId]["type"]]["type"];
             
@@ -682,34 +690,44 @@ class SiteController extends \app\components\Controller
                     }
                 }
             }
+            
              if($isMyStudent & $this_answer_type=="string"
                 ){
                     $taskAnswers[$this_answer->taskId]["my_textAnswers"][] = $this_answer->answer_text;
              }
         }
 
-
         foreach($taskAnswers as $key => $task){
+            if($lesson->taskTypes[$task["type"]]["type"]!="scale"){continue;}
             $val_arr_my = array();
             $val_arr_all = array();
+            $val_arr_my_percent = array();
+            $val_arr_all_percent = array();
             foreach($lesson->taskTypes[$task["type"]]["values"] as $task_type => $task_type_val){
                 if(!is_numeric($task_type_val)){continue;}
+                
                 if(isset($task["my_distribution"][$task_type_val])){
                    $val = $task["my_distribution"][$task_type_val];
                    $val_arr_my[$task_type_val] = $val;
+                   $val_arr_my_percent[$task_type_val] = (100*round($val/$task["my_countNumericAnswers"], 2));
                 }else{
                    $val_arr_my[$task_type_val] = "0";
+                   $val_arr_my_percent[$task_type_val] = "0";
                 }
                 
                 if(isset($task["distribution"][$task_type_val])){
                    $val = $task["distribution"][$task_type_val];
                    $val_arr_all[$task_type_val] = $val;
+                   $val_arr_all_percent[$task_type_val] = (100*round($val/$task["countNumericAnswers"], 2));
                 }else{
                    $val_arr_all[$task_type_val] = "0";
+                   $val_arr_all_percent[$task_type_val] = "0";
                 }
             }
             $taskAnswers[$key]["val_arr_my"] = $val_arr_my;
             $taskAnswers[$key]["val_arr_all"] = $val_arr_all;
+            $taskAnswers[$key]["val_arr_my_percent"] = $val_arr_my_percent;
+            $taskAnswers[$key]["val_arr_all_percent"] = $val_arr_all_percent;
         }
 
 
