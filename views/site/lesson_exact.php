@@ -157,6 +157,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
 <script>
 var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;
 var uploadedTasks = <?= json_encode($uploadedTasks); ?>;
+var controller_lesson = <?= json_encode($model); ?>;
 </script>
 
 <?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>

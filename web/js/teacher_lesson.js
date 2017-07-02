@@ -20,7 +20,7 @@ $(document).ready(function() {
         for (var key in uploadedTasks){tempArr.unshift(key);}
         for(var i = 0; i < tempArr.length; i++) {
             var this_question = tempArr[i];
-            addTask(this_question, type = uploadedTasks[this_question], atBottom = false);
+            addTask(this_question, type = uploadedTasks[this_question], "top");
         }
         $('#lesson_btn_submit').closest('.form-group').show();
     }
@@ -106,13 +106,13 @@ function taskOnInput(elem){
 
     /** if working on the last input element then add one more */
     if(!input_is_empty & $(elem).closest('.task').is($('#tasks').children('.task').last())){
-        addTask(text = "", type = "clone", atBottom = true);
+        addTask(text = "", type = "clone", "bottom");
     }
     
     
 }
 
-function addTask(text, type, atBottom){
+function addTask(text, type, where){
     /** type can be "clone" so that the type of the last task is copied  */
     var last_task = $("#tasks").children('.task').last();
     var this_newTask = last_task.clone(true);
@@ -129,11 +129,13 @@ function addTask(text, type, atBottom){
     }
     this_newTask.find(".task_input").attr('placeholder', '');
     this_newTask.find(".btn_analyse_task_text").remove();
-    if(atBottom){
+    if(where == "bottom"){
         this_newTask.appendTo($('#tasks'));
-    }else{
+    }else if(where == "top"){
         var first_task = $("#tasks").children('.task').first();
         first_task.before(this_newTask);
+    }else if(isObject(where)){
+        this_newTask.insertBefore(where);
     }   
     this_newTask.find(".task_input").autoGrow();
     $('#div_lesson_submit').show();
@@ -198,12 +200,19 @@ function split_task_text(elem){
             /** numbered tasks texts with dots or bracket are cleaned of these numbers */
             t = t.replace(/^[0-9]{1,}[.)]{0,1}([ ]|[\t])*/g, '');
             
-            var this_newTask = this_task.clone(true);
-            this_newTask.find(".task_input").val(t);
-            this_newTask.find(".task_input").attr('placeholder', '');
-            this_newTask.find(".btn_analyse_task_text").remove();
-            this_newTask.insertAfter(this_task);
-            this_newTask.find(".task_input").autoGrow();
+            var type_use = this_task.find(".task_type").attr("data-task-type");
+            
+            /** check if a task-type is given at the start of the line */
+            var line_arr = t.split("=");
+            if(line_arr.length > 1){
+                if(typeof controller_lesson["taskTypes"][line_arr[0].trim()] != "undefined"){
+                    type_use = line_arr[0].trim();
+                }
+                line_arr.shift();
+            }
+            
+            addTask(line_arr.join("="), type_use, this_task);
+
         }
     }
     this_task.remove();

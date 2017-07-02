@@ -83,6 +83,8 @@ class ResultsDisplay extends Component{
             }else{
                 $t .= "<div class='task_text_answers'>---</div>";
             }
+        }else{
+            $t .= "[".\Yii::$app->_L->get('teacher_poll_results_answers_hidden')."]";
         }
     
         return $t;

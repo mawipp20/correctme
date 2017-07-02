@@ -5,13 +5,7 @@ SELECT lesson.startKey, teacher.name, teacher.resultkey, teacher.studentkey, cou
 
 ------- sofort ---------------
 
-- keine Teamergebnisse, wenn zu wenige Teilnehmer vorhanden sind
-- Hintergrundfarben zu den Optionswerten ins Model 
-- show explanations for result bars:
-    .distribution_one_value => visibility
-    .Fragentypen mit options
-    .Fragentyp bei jeder Frage einblenden
-    ."(Anzahl Antworten)" neben Fragetext
+- teacher_lesson.js: Möglichkeit, die Fragen in ein großes Textfeld zurückzuführen, um sie zu sortieren und wieder aufzuteilen.
 
     
 

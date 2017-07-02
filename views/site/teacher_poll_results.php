@@ -297,8 +297,8 @@ teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befrag
 $btn_print = '
 
 
-        <p style="font-size:large; padding-top:2em;margin-bottom:0em; text-align: center;">
-        <a class="btn_print" href="#" onclick=\'
+        <p style="font-size:large; padding-top:2em;margin-bottom:0.8em; text-align: center;">
+        <a class="btn_print mobile_hide" href="#" onclick=\'
             window.open("teacher_results?print=prefix_var&how=printer",null,"height=800,width=800,status=yes,toolbar=no,menubar=no,location=no,scrollbars=yes");return false;
             \'>
         <i class="fa fa-print" aria-hidden="true"></i></a>
@@ -381,6 +381,9 @@ $btn_print = '
         if($show_team_results){
             echo $explanations_html;
             foreach($taskAnswers as $task){
+                if($lesson->taskTypes[$task["type"]]["type"] == "info"){
+                    continue;
+                }
                 $t = "\n<div class='task'>\n";
                 $t .= '<div class="task_text">'.$task["task_text"];
                 $t .= "<span class='num_answers'>";
@@ -410,6 +413,9 @@ $btn_print = '
         if ($show_compared_results){
             echo $explanations_html;
             foreach($taskAnswers as $task){
+                if($lesson->taskTypes[$task["type"]]["type"] == "info"){
+                    continue;
+                }
                 if($task["type"]=="text"){continue;}
                 $t = "\n<div class='task'>\n";
                 $t .= '<div class="task_text">'.$task["task_text"];

@@ -1,3 +1,6 @@
+function isObject(obj) {
+  return obj === Object(obj);
+}
 /**
 function btnGroupToggle(btn, save_with_field, save_val){
     if($("#"+save_with_field).length==0){alert("save_with_field not found");return;}

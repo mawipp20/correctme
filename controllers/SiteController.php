@@ -751,9 +751,14 @@ class SiteController extends \app\components\Controller
             if($print_how == "pdf"){
                 require_once(\Yii::$app->basePath.'/vendor/autoload.php');
                 
+                $filename = preg_replace("[^A-Za-z0-9_-öäüÖÄÜß]", "_", $lesson->title);
+                $filename .= "_".date("Y-m-d");
+                
                 $mpdf = new \mPDF();
+                $mpdf->SetTitle($filename);
                 $mpdf->WriteHTML($this->renderPartial('teacher_poll_results_print', $render_arr));
-                $mpdf->Output();
+
+                $mpdf->Output($filename.".pdf", "I");
                 exit;
             }else{
                 return $this->renderPartial('teacher_poll_results_print', $render_arr);
