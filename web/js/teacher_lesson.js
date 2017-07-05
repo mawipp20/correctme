@@ -23,12 +23,14 @@ $(document).ready(function() {
             addTask(this_question, type = uploadedTasks[this_question], "top");
         }
         $('#lesson_btn_submit').closest('.form-group').show();
+        $("#poll_tasks_input_mode_link").css("visibility", "visible");
     }
     
     if($('#tasks').length > 0){
         var this_input = $('.task_input');
         var this_btn_type = $('.task_type').children("button").first();                
         textarea_autogrow_reduce_height_by = parseInt(this_input.css('height')) - parseInt(this_btn_type.css('height'));
+        console.log(this_input.css('height') + "/" + this_btn_type.css('height'));
         this_input.autoGrow();
         this_input.keydown(function( event ) {
             if (event.ctrlKey && event.which == 86) {
@@ -92,6 +94,8 @@ function taskOnInput(elem){
     var elem = $(elem);
 
     var input_is_empty = elem.val() == "";
+    
+    $("#poll_tasks_input_mode_link").css("visibility", "visible");
     
     var length_before = parseInt(elem.attr("data-text-length"));
     var length_now = elem.val().length;
@@ -157,8 +161,11 @@ function display_btn_task_text_analyse(elem){
 }
 
 function task_remove(elem){
-    var this_task = $(elem).closest('.task');
-
+    if($(elem).hasClass("task")){
+        var this_task = $(elem);
+    }else{
+        var this_task = $(elem).closest('.task');
+    }
     if( $("#tasks").children(".task").length > 1
     ){
         if(this_task.is($("#tasks").children(".task").last())){
@@ -251,6 +258,9 @@ function lesson_exact_validate_tasks(){
     });
     $('#new_tasks').val(JSON.stringify(new_tasks));
     $('#lesson-numtasks').val(this_num);
+    if(ret === true){
+        return new_tasks;
+    }
     return ret;
 }
 function lesson_file_onchange(e){
@@ -264,4 +274,33 @@ function lesson_upload_on_submit(e){
         $('#lessonFile-info').html(_L_lesson["lesson_upload_no_file_picked_warning"]);
         $('#lessonFile-info').css("color", "red");
     }
+}
+function toggle_text_mode(){
+    var elem = $("#poll_tasks_input_mode_link");
+    var target_mode = "text";
+    if(elem.html() == poll_tasks_input_mode["text"]){
+        elem.html(poll_tasks_input_mode["input"]);
+    }else{
+        elem.html(poll_tasks_input_mode["text"]);
+        target_mode = "input";
+    }
+    
+    if(target_mode == "text"){
+        var str = "";
+        var tasks = lesson_exact_validate_tasks();
+        for(var i in tasks){
+            if(tasks[i].type == "sysinfo"){continue;}
+            str += tasks[i].type + " = " + tasks[i].task_text + "\n";
+        }
+        $('#tasks').children('.task').each(function() {
+            task_remove($(this));
+        });
+        $("#tasks").hide();
+        $("#tasks_edit").show();
+        $("#tasks_edit_textarea").val(str);
+        $("#tasks_edit_textarea").autoGrow();
+        
+    }
+    
+    
 }

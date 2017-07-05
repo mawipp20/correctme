@@ -162,11 +162,34 @@ $this->title = Yii::$app->_L->get("poll_title");
     ->label(Yii::$app->_L->get('lesson_title_label'))
     ; ?>
 
-    <h4 style="margin-top: 1.5em; margin-bottom: 1em;"><?= Yii::$app->_L->get('poll_tasks_title'); ?></h4>
-
-
     <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
     <?= $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
+
+    <p style="text-align: right;">
+                <?php
+                $caption_text = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;';
+                $caption_text .= Yii::$app->_L->get('poll_tasks_text_edit_mode_link');
+                
+                $caption_input = '<i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;';
+                $caption_input .= Yii::$app->_L->get('poll_tasks_text_input_fields_mode_link');
+                
+                echo  Html::button($caption_text
+                , [
+                'style' => 'visibility:hidden;',
+                'class' => 'btn btn-default',
+                'id'=>'poll_tasks_input_mode_link',
+                'onclick' => 'toggle_text_mode();'
+                ]) ?>
+                <script>var poll_tasks_input_mode = <?php echo json_encode(array("text"=>$caption_text, "input"=>$caption_input)); ?>;
+                </script>
+    </p>
+
+    <div id="tasks_edit" style="display:none;">
+        <p>
+        <textarea id="tasks_edit_textarea" rows="1" data-text-length="0" class="form-control"
+        style="border-radius: 4px;"></textarea>
+        </p>
+    </div>
       
     
     <div id="tasks">
@@ -207,7 +230,7 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
                 'onclick' => '$("#poll_type").val("single");
-                            if(!lesson_exact_validate_tasks()){return false;}'
+                            if(!lesson_exact_validate_tasks()!==false){return false;}'
                 ]) ?>
 
             <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit_team')
@@ -215,7 +238,7 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
                 'onclick' => '$("#poll_type").val("team");
-                                if(lesson_exact_validate_tasks()){this.form.submit();}'
+                                if(lesson_exact_validate_tasks()!==false){this.form.submit();}'
                 ]) ?>
 
         </div>
@@ -227,6 +250,7 @@ $this->title = Yii::$app->_L->get("poll_title");
 <script>
 var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;
 var _L_poll = <?= json_encode(Yii::$app->_L->get('poll')); ?>;
+var _L_student_think = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;
 var uploadedTasks = <?= json_encode($uploadedTasks); ?>;
 var controller_lesson = <?= json_encode($model); ?>;
 </script>
