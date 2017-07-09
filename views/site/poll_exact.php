@@ -165,7 +165,7 @@ $this->title = Yii::$app->_L->get("poll_title");
     <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
     <?= $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
 
-    <p style="text-align: right;">
+    <p style="text-align: left;">
                 <?php
                 $caption_text = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;';
                 $caption_text .= Yii::$app->_L->get('poll_tasks_text_edit_mode_link');
