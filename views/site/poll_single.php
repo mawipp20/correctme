@@ -88,6 +88,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
                 "end_of_this_week" => Yii::$app->_L->get('teacher_thinkingMinutes_end_of_this_week'),
                 "end_of_next_week" => Yii::$app->_L->get('teacher_thinkingMinutes_end_of_next_week'),
                 "end_of_week_after_next" => Yii::$app->_L->get('teacher_thinkingMinutes_end_of_week_after_next'),
+                "end_of_week_and_90_days" => Yii::$app->_L->get('teacher_thinkingMinutes_end_of_week_and_90_days'),
                 ])
             ->label(Yii::$app->_L->get('teacher_thinkingMinutes_label'))
             ;

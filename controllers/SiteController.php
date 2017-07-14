@@ -989,6 +989,9 @@ class SiteController extends \app\components\Controller
                 case "end_of_week_after_next":
                     $tM = ((14 + $remainingDaysOfWeek) * 24 * 60) + $minutesLeftToday;
                     break;
+                case "end_of_week_and_90_days":
+                    $tM = ($remainingDaysOfWeek * 24 * 60) + (90  * 24 * 60) + $minutesLeftToday;
+                    break;
             }
         }
         return $tM;
