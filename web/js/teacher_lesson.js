@@ -141,7 +141,7 @@ function addTask(text, type, where){
     }else if(isObject(where)){
         this_newTask.insertBefore(where);
     }   
-    this_newTask.find(".task_input").autoGrow();
+    //this_newTask.find(".task_input").autoGrow();
     $('#div_lesson_submit').show();
 }
 
@@ -283,6 +283,7 @@ function toggle_text_mode(){
     }else{
         elem.html(poll_tasks_input_mode["text"]);
         target_mode = "input";
+        
     }
     
     if(target_mode == "text"){

@@ -5,9 +5,6 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
-//print_r(URL::base()); exit;
-
-
 use app\assets\AppAsset;
 AppAsset::register($this);
 
@@ -66,6 +63,11 @@ if($numStudents["mine"] < $countStudentsLimit){
         }
     ?>
 
+<?= Html::hiddenInput('startKey', Yii::$app->getSession()->get("startKey")) ?>
+<script>var restcorrectmePath = "<?= Yii::$app->params["restcorrectmePath"] ?>";</script>
+<input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
+
+
 <div class="alert alert-success" style="margin-top: 0em; margin-bottom: 20px; font-size: large;">
     <?php
         $msg_success = Yii::$app->_L->get('teacher_poll_results_title');
@@ -82,23 +84,7 @@ if($numStudents["mine"] < $countStudentsLimit){
     ?>
 </div>
 
-<?php /**
-
-        $teachersArr = array("countAll"=>count($teachers));
-        $teachersArr["countActive"] = 0;
-        $teachersArr["withStudents"] = 0;
-        $teachersArr["students"] = array();
-
-teacher_poll_results_teachersArr_countInactive = ... nicht aktiv
-teacher_poll_results_teachersArr_countActive = ... aktiv mit weniger als 5 befragten Schüler/innen
-teacher_poll_results_teachersArr_countWithStudents = ... mit mindestens 5 befragten Schüler/innen
-
- 	5rik6u
-
-*/ ?>
-
     <table class="poll_results_teachers">
-
 
 
 <?php if (false & $lesson["poll_type"] != "single"): ?>

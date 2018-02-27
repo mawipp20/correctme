@@ -53,9 +53,10 @@
 .btn_task{
     margin-right: 0.3em;
     margin-bottom: 0.3em;
+    border:1px solid black;
+    border-radius: 0;
 }
 .btn_task:hover{
-    border:1px solid black;
 }
 .btn_task_move{
     color: black;

@@ -35,7 +35,7 @@ class Teacher extends \app\components\ActiveRecord
     public function rules()
     {
         return [
-            [['startKey', 'name', 'studentkey', 'resultkey', 'activationkey', 'status', 'state'], 'required'],
+            [['startKey', 'studentkey', 'resultkey', 'activationkey', 'status', 'state'], 'required'],
             [['name'], 'string', 'max' => 100],
             [['resultkey'], 'string', 'max' => 12],
             [['startKey'], 'string', 'max' => 12],

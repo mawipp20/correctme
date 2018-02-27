@@ -147,6 +147,14 @@ class SiteController extends \app\components\Controller
             
                 $model_upload->lessonFile = UploadedFile::getInstance($model_upload, 'lessonFile');
                 $fileTempName = $model_upload->lessonFile->tempName;
+                
+                if($fileTempName==""){
+                    $model = new LessonUpload();        
+                    return $this->render('lesson_upload', [
+                        'model' => $model,
+                    ]);
+                }
+                
                 $parsedArr = array();
                 $currentSection = "";
                 $unrecognizedLines = array();
@@ -216,6 +224,10 @@ class SiteController extends \app\components\Controller
                         if(isset($config['general']['earlyPairing'])){$model->earlyPairing = $config['general']['earlyPairing'];}
                         if(isset($config['general']['namedPairing'])){$model->namedPairing = $config['general']['namedPairing'];}
                         if(isset($config['general']['title'])){$model->title = $config['general']['title'];}
+                        if(isset($config['general']['description'])){
+                            $this_description = str_replace("<br/>", "\r\n", $config['general']['description']);
+                            $model->description = $this_description;
+                        }
                         if(isset($config['general']['type'])){$model->type = $config['general']['type'];}
                     }
                     if(isset($config['tasks'])){
@@ -580,6 +592,7 @@ class SiteController extends \app\components\Controller
         }
         
         Yii::$app->getSession()->set("resultkey", $teacher->resultkey);
+        Yii::$app->getSession()->set("startKey", $lesson->startKey);
         
         $teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->all();
         $students = Student::find()->where(['startKey'=>$teacher->startKey, 'status'=>'finished'])->all();
@@ -693,7 +706,7 @@ class SiteController extends \app\components\Controller
             
              if($isMyStudent & $this_answer_type=="string"
                 ){
-                    $taskAnswers[$this_answer->taskId]["my_textAnswers"][] = $this_answer->answer_text;
+                    $taskAnswers[$this_answer->taskId]["my_textAnswers"][$this_answer->studentId] = $this_answer->answer_text;
              }
         }
 
@@ -797,6 +810,7 @@ class SiteController extends \app\components\Controller
         $content = file_get_contents($ini_template_file);
         $content .= "\r\n\r\n[general]";
         $content .= "\r\ntitle = ".$lesson["title"];
+        $content .= "\r\ndescription = ".str_replace("\r\n", "<br/>", $lesson["description"]);
         $content .= "\r\ntype = ".$lesson["type"];
         $content .= "\r\n\r\n[tasks]";
         

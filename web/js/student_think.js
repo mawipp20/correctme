@@ -11,7 +11,8 @@
 var lesson = {
     "startKey":""
     ,"lesson.numTasks":""
-    ,"type":""
+    ,"title":""
+    ,"description":""
     ,"numTeamsize":""
     ,"thinkingMinutes":""
     ,"typeTasks":""
@@ -124,10 +125,12 @@ function getTask(){
         var this_text = task.task_text;
         this_text = this_text.replace("#pollStart#", _L["student_think_poll_start_info"]);
         this_text = this_text.replace("#pollTitle#", lesson.title);
+        this_text = this_text.replace("#pollDescription#", lesson.description.replace(new RegExp("\\r\\n", 'g'), '<br/>'));
         if(student.teacherName != ""){
             this_text = this_text.replace("#teacherName#", student.teacherName);
             this_text = this_text.replace("#teacherNameDativ#", student.teacherName.replace("Herr ", "Herrn "));
         }else{
+            this_text = this_text.replace("<br/><b>#teacherName#</b><br/>", "");
             this_text = this_text.replace("#teacherName#", _L["student_think_poll_default_teacher_name"]);
             this_text = this_text.replace("#teacherNameDativ#", _L["student_think_poll_default_teacher_name"]);
         }
@@ -383,7 +386,7 @@ function get_taskDisplay_how_often_true_button(type, key){
         if(answer["answer_text"] == data_val){
             this_btn_css_class += ' task_how_true_often_button_selected';
         }
-        else if(pie_percentage === ''){
+        else if(data_val === 'x'){
             this_btn_css_class += ' task_how_true_often_button_dont_know';
         }
         var btn_start = '<button onclick="task_how_often_true_button_click(this);" data-val="' + data_val + '" type="button" class="' + this_btn_css_class + '">';
@@ -392,7 +395,10 @@ function get_taskDisplay_how_often_true_button(type, key){
             this_class += ' invisible';
         }
         var ret = btn_start + '<span class="' + this_class + '" data-val="' + pie_percentage + '"></span>';
-        ret += '<span class="task_how_true_often_label">' + _L['scale_' + type + '-' + key] + '</span></button>';
+        ret += '<span class="task_how_true_often_label';
+        $this_caption = _L['scale_' + type + '-' + key];
+        //if($this_caption.length <= 4){ret += ' large';}
+        ret += '">' + $this_caption + '</span></button>';
         return ret;
 }
 

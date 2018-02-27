@@ -148,6 +148,9 @@ $this->title = Yii::$app->_L->get("poll_title");
     <input type='hidden' id='poll_type' name='poll_type' value='single'>       
     
     <?php
+
+    /** title */
+
     echo $form->field($model, 'title'
     , [
     'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson'
@@ -160,26 +163,61 @@ $this->title = Yii::$app->_L->get("poll_title");
     , 'autofocus' => true
     ])
     ->label(Yii::$app->_L->get('lesson_title_label'))
-    ; ?>
+    ; 
+
+    /** description */
+    
+    $description_css_display = 'none';
+    if($model->description != ""){$description_css_display = 'inline';}
+    echo $form->field($model, 'description'
+    , [
+    'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson'
+                        , 'style' => 'min-width: 80px; padding-right: 0.5em;' ]
+    ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+    ,'options' => ['style' => 'display:'.$description_css_display.';']
+    ]
+    )->textarea([
+    'placeholder'=>Yii::$app->_L->get('lesson_description_placeholder')
+    , 'value' => $model->description
+    , 'autofocus' => true
+    , 'style' => ''
+    ])
+    ->label(Yii::$app->_L->get('lesson_description_label'))
+    ; 
+    ?>
 
     <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
     <?= $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
 
-    <p style="text-align: left;">
+
+
+    <p>
                 <?php
-                $caption_text = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;';
+                if($model->description==""){
+                    echo  Html::a(Yii::$app->_L->get('poll_descripton_show_textarea_link')
+                    , ['#']
+                    , [ 'onclick' => '$(".field-lesson-description").show();$("#lesson-description").focus();return false;'
+                        ,'id' => 'poll_descripton_show_textarea'
+                      ]
+                    );
+                }
+                ?>
+                
+    </p><p>
+                <?php         
+                $caption_text = "";
+                //$caption_text = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;';
                 $caption_text .= Yii::$app->_L->get('poll_tasks_text_edit_mode_link');
                 
                 $caption_input = '<i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;';
                 $caption_input .= Yii::$app->_L->get('poll_tasks_text_input_fields_mode_link');
                 
-                echo  Html::button($caption_text
-                , [
-                'style' => 'visibility:hidden;',
-                'class' => 'btn btn-default',
-                'id'=>'poll_tasks_input_mode_link',
-                'onclick' => 'toggle_text_mode();'
-                ]) ?>
+                echo  Html::a($caption_text
+                , ['#']
+                , [ 'onclick' => 'toggle_text_mode();return false;'
+                    ,'id' => 'poll_tasks_input_mode_link'
+                  ]
+                ) ?>
                 <script>var poll_tasks_input_mode = <?php echo json_encode(array("text"=>$caption_text, "input"=>$caption_input)); ?>;
                 </script>
     </p>
@@ -201,14 +239,16 @@ $this->title = Yii::$app->_L->get("poll_title");
                 <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"><?= Yii::$app->_L->get('poll_tasks_type_how-true'); ?>
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                    <li><a data-task-type="how-true" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('poll_tasks_type_how-true').'&nbsp;&nbsp;'; ?></a></li>
-                    <li><a data-task-type="how-often" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('poll_tasks_type_how-often').'&nbsp;&nbsp;'; ?></a></li>
-                    <li><a data-task-type="text" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('poll_tasks_type_text').'&nbsp;&nbsp;'; ?></a></li>
-                    <li><a data-task-type="info" href="#"
-                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('poll_tasks_type_info').'&nbsp;&nbsp;'; ?></a></li>
+
+                <?php
+                    foreach($model->taskTypesOrder["poll"] as $this_task_type){
+                        echo '<li><a data-task-type="'.$this_task_type.'" href="#"';
+                        echo 'onclick="dropdown_task_type(this); return false;">';
+                        echo Yii::$app->_L->get('poll_tasks_type_'.$this_task_type).'&nbsp;&nbsp;';
+                        echo "</a></li>";
+                    }
+                
+                ?>
                 </ul>
             </div>
         

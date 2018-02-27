@@ -37,7 +37,10 @@ class Lesson extends \app\components\ActiveRecord
      * @inheritdoc
      */
      
-    public $lessonFile; 
+    public $lessonFile;
+    public $taskTypesOrder = array(   "lesson"=>array("text","","how-true","","info")
+                                    , "poll"=>array("how-true","how-often","plus-minus","text","info")
+                                    ); 
     public $taskTypes = array(  "text"=>array("type" => "string"),
                                 "how-true"=>array(
                                         "type" => "scale",
@@ -161,6 +164,67 @@ class Lesson extends \app\components\ActiveRecord
                                                   "x"=>"",
                                                   ),
                                         ),
+                                "plus-minus"=>array(
+                                        "type" => "scale",
+                                        "max_value" => 4,
+                                        "gap_after" => "3",
+                                        "values" => array(
+                                                  "4"=>4,
+                                                  "3"=>3,
+                                                  "2"=>2,
+                                                  "1"=>1,
+                                                  "x"=>"x",
+                                                  ),
+                                        "symbols" => array(
+                                                  "1"=>"&#x2212;&#x2212;",
+                                                  "2"=>"&#x2212;",
+                                                  "3"=>"+",
+                                                  "4"=>"++",
+                                                  "x"=>"  ",
+                                                  ),
+                                        "background-colors" => array(
+                                                  "1"=>"rgb(240,240,240)",
+                                                  "2"=>"rgb(210,210,210)",
+                                                  "3"=>"rgb(100,100,200)",
+                                                  "4"=>"rgb(0,0,60)",
+                                                  "x"=>"rgb(255,255,255)",
+                                                  ),
+                                        "background-colors-print" => array(
+                                                  "1"=>"rgb(190,190,190)",
+                                                  "2"=>"rgb(230,230,230)",
+                                                  "3"=>"rgb(230,230,230)",
+                                                  "4"=>"rgb(190,190,190)",
+                                                  "x"=>"rgb(255,255,255)",
+                                                  ),
+                                        "background-images-print" => array(
+                                                  "1"=>"minus_minus_print.gif",
+                                                  "2"=>"minus_black.gif",
+                                                  "3"=>"plus.gif",
+                                                  "4"=>"plus_plus.gif",
+                                                  "x"=>"",
+                                                  ),
+                                        "font-colors" => array(
+                                                  "1"=>"black",
+                                                  "2"=>"black",
+                                                  "3"=>"white",
+                                                  "4"=>"white",
+                                                  "x"=>"black",
+                                                  ),
+                                        "background-images" => array(
+                                                  "1"=>"minus_minus_black.gif",
+                                                  "2"=>"minus_black.gif",
+                                                  "3"=>"plus.gif",
+                                                  "4"=>"plus_plus.gif",
+                                                  "x"=>"",
+                                                  ),
+                                        "pie_percentages" => array(
+                                                  "1"=>"",
+                                                  "2"=>"",
+                                                  "3"=>"",
+                                                  "4"=>"",
+                                                  "x"=>"",
+                                                  ),
+                                        ),
                                 "sysinfo"=>array("type" => "info"),
                                 "info"=>array("type" => "info"),
                                 ); 
@@ -180,6 +244,7 @@ class Lesson extends \app\components\ActiveRecord
 
             ['type', 'in', 'range' => ['lesson', 'poll']],
             [['title'], 'string', 'max' => 30, 'message' => Yii::$app->_L->get('lesson_title_max_length')],
+            [['description'], 'string', 'max' => 1000, 'message' => Yii::$app->_L->get('lesson_description_max_length')],
 
             [['numTasks'], 'required', 'message' => Yii::$app->_L->get('numTasks_required')],
             [['numTasks'], 'integer', 'min'=>1, 'max'=>100, 'message' => '1 - 100'],
@@ -211,6 +276,7 @@ class Lesson extends \app\components\ActiveRecord
             'teacherId' => '',
             'type' => '',
             'title' => '',
+            'description' => '',
             'numTasks' => '',
             'numStudents' => '',
             'numTeamsize' => '',

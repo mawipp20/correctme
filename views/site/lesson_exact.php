@@ -117,12 +117,23 @@ $this->title = Yii::$app->_L->get("lesson_title");
                 <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"><?= Yii::$app->_L->get('lesson_tasks_type_text'); ?>
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
+                
+                <?php
+                
+                    foreach($model->taskTypesOrder["lesson"] as $this_task_type){
+                        
+                    }
+                
+                ?>
+                
                     <li><a data-task-type="text" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_text').'&nbsp;&nbsp;'; ?></a></li>
                     <li><a data-task-type="how-often" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how-often').'&nbsp;&nbsp;'; ?></a></li>
                     <li><a data-task-type="how-true" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_how-true').'&nbsp;&nbsp;'; ?></a></li>
+                    <li><a data-task-type="plus-minus" href="#"
+                     onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_plus-minus').'&nbsp;&nbsp;'; ?></a></li>
                     <li><a data-task-type="info" href="#"
                      onclick="dropdown_task_type(this); return false;"><?php echo Yii::$app->_L->get('lesson_tasks_type_info').'&nbsp;&nbsp;'; ?></a></li>
                 </ul>

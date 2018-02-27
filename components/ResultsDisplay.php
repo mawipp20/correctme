@@ -76,8 +76,14 @@ class ResultsDisplay extends Component{
         }elseif($prefix == "my_"){
             if(count($task['my_textAnswers'])>0){
                 $t .= "<ul class='task_text_answers'>";
-                foreach($task['my_textAnswers'] as $text){
-                    $t .= "<li>".$text."</li>";
+                foreach($task['my_textAnswers'] as $studentId => $text){
+                    $t .= "<li>".$text;
+                    $t .= '<a href=""';
+                    $t .= ' data-task-id="'.$task['taskId'].'"';
+                    $t .= ' data-student-id="'.$studentId.'"';
+                    $t .= ' onclick="delete_foul_text_answer(this); return false;">';
+                    $t .= ' <i class="fa fa-trash-o"></i></li>';
+                    $t .= '</a>';
                 }
                 $t .= "</ul>";
             }else{

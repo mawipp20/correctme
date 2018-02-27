@@ -67,6 +67,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ,'enableClientValidation' => false
             ]
             )->textInput([
             'placeholder'=>Yii::$app->_L->get('teacher_my_name_placeholder'),
