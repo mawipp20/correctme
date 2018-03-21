@@ -159,7 +159,7 @@ use yii\helpers\Html;
                 $t .= "</div>";
                
 
-                /** vertical bars according to the % of the answers  */
+                /** horizontal bars according to the % of the answers  */
 
                 $prefix_arr = array();
                 if($print == "my"){$prefix_arr[] = "my_";}
@@ -169,11 +169,14 @@ use yii\helpers\Html;
                 
                 $temp = "";
                 $count_prefix = 0;
+                $first_symbol = "";
+                $last_symbol = "";
                 
                 foreach($prefix_arr as $prefix){               
                 
+                    $count_type_keys = 0;
                     foreach($this_task_type["values"] as $key => $task_type_val){
-                        
+                        $count_type_keys++;
                         if(!is_numeric($task_type_val)){continue;}
                         
                             $q = 0;
@@ -190,6 +193,8 @@ use yii\helpers\Html;
                             $limit_symbols = 6;
                             $limit_symbols_wide = 12;
                             $this_symbol = $this_task_type["symbols"][$key];
+                            if($first_symbol == ""){$first_symbol = $this_symbol;}
+                            $last_symbol = $this_symbol;
                             $q_str = $val;
                             $span_width = "";
                             
@@ -206,17 +211,17 @@ use yii\helpers\Html;
                                     $span_width = "padding-right: 0.1em; ";
                                 }
                             
-                            if($q >= $limit_symbols | $q <= $limit_transparent){
-                                $temp .= "<span style='".$span_width."text-align: center;'>".$this_symbol."&nbsp;</span>\n";
-                            }
-                            
                             $temp .= "<span style=''>".$q_str."</span>";
+                            
+                            if($q >= $limit_symbols | $q <= $limit_transparent){
+                                $temp .= "&nbsp;<span style='".$span_width."text-align: center;'>".$this_symbol."</span>\n";
+                            }
     
                             
                             $temp .= "</div>\n";
                             
                             if($key == $this_task_type["gap_after"]){
-                                $temp .= "<div style='width:100%;height:1px;border-top: 1px dotted black;";
+                                $temp .= "<div style='width:100%;height:1px;border-top: 0px dotted black;";
                                 $temp .= "margin-top:6px;";
                                 $temp .= "margin-bottom:6px;";
                                 $temp .= "'></div>";
@@ -239,8 +244,12 @@ use yii\helpers\Html;
                 $temp .= Yii::$app->_L->get('gen_type');
                 $temp .= "&nbsp;'".Yii::$app->_L->get('scale_'.$task["type"].'-title')."'&nbsp;&nbsp;";
                 
-                $my_distribution = implode("+", $task["val_arr_my_percent"])." = 100% (".$task["my_countNumericAnswers"].")&nbsp;&nbsp;&#216;&nbsp;".$my_quota;
-                $distribution = implode("+", $task["val_arr_all_percent"])." = 100% (".$task["countNumericAnswers"].")&nbsp;&nbsp;&#216;&nbsp;".$quota;
+                //." (".$task["my_countNumericAnswers"]
+                $my_distribution = "(".$first_symbol.")&nbsp;".implode("%&nbsp;", $task["val_arr_my_percent"]);
+                $my_distribution .= "%&nbsp;(".$last_symbol.")&nbsp;&nbsp;&#216;&nbsp;".$my_quota;
+                
+                $distribution = "(".$first_symbol.")&nbsp;".implode("%&nbsp;", $task["val_arr_all_percent"]);
+                $distribution .= "%&nbsp;(".$last_symbol.")&nbsp;&nbsp;&#216;&nbsp;".$quota;
 
                 if($print == "my"){$temp .= $my_distribution;}
                 if($print == "all"){$temp .= $distribution;}
