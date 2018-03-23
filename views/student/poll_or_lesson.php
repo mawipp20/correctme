@@ -10,7 +10,6 @@ AppAsset::register($this);
         include_once(Yii::$app->basePath.'/views/components/_inc_poll_or_lesson_pollButtons.php');
     }
     
-    
     if(Yii::$app->params["correctmeHasLesson"]){
         include_once(Yii::$app->basePath.'/views/components/_inc_poll_or_lesson_lessonButtons.php');
     }

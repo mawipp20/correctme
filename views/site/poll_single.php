@@ -63,6 +63,8 @@ $this->title = Yii::$app->_L->get("teacher_title");
     <?= $form->field($model, 'startKey')->hiddenInput()->label(false); ?>   
 
           <?php
+          
+          if($model->poll_type == "names"){
             echo $form->field($teacher, 'name'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
@@ -75,7 +77,10 @@ $this->title = Yii::$app->_L->get("teacher_title");
             'autofocus' => true,
             ])
             ->label(Yii::$app->_L->get('teacher_my_name_label'))
-            ; ?>
+            ;
+          }
+            ?>
+            
 
           <?php
             echo $form->field($model, 'thinkingMinutes'

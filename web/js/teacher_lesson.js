@@ -117,6 +117,8 @@ function taskOnInput(elem){
 }
 
 function addTask(text, type, where){
+    
+    
     /** type can be "clone" so that the type of the last task is copied  */
     var last_task = $("#tasks").children('.task').last();
     var this_newTask = last_task.clone(true);
@@ -132,6 +134,7 @@ function addTask(text, type, where){
         this_newTask.find(".form-control").addClass("task_type_" + type)
     }
     this_newTask.find(".task_input").attr('placeholder', '');
+    if(type != "info"){this_newTask.find(".task_input").removeClass("task_type_info");}
     this_newTask.find(".btn_analyse_task_text").remove();
     if(where == "bottom"){
         this_newTask.appendTo($('#tasks'));
@@ -141,6 +144,7 @@ function addTask(text, type, where){
     }else if(isObject(where)){
         this_newTask.insertBefore(where);
     }   
+        console.log("test");
     //this_newTask.find(".task_input").autoGrow();
     $('#div_lesson_submit').show();
 }
@@ -195,11 +199,27 @@ function task_start_sort(elem){
     }
 }
 
-function split_task_text(elem){
-    var elem = $(elem);
-    var this_task = $(elem).closest('.task');
-    var this_input = this_task.find(".task_input");
-    var arr = this_input.val().split(/\n/);
+function split_task_text(elem_or_string){
+    
+    var str = elem_or_string;
+    var type_use = "text";
+    var insert_where = "bottom";
+    var res_undefined_types = [];
+    var new_tasks = [];
+    
+    if(typeof elem_or_string == "Object"){
+        var elem = $(elem_or_string);
+        var this_task = $(elem).closest('.task');
+        var this_input = this_task.find(".task_input");    
+        str = this_input.val();
+        type_use = this_task.find(".task_type").attr("data-task-type");
+        insert_where = this_task;
+    }
+    
+    var arr = str.split(/\n/);
+    /** add an empty element at the end */
+    arr[arr.length] = "text = ";
+    
     for(i = 0; i < arr.length; i++){
         var t = arr[i];
         if(t != ""){
@@ -207,22 +227,30 @@ function split_task_text(elem){
             /** numbered tasks texts with dots or bracket are cleaned of these numbers */
             t = t.replace(/^[0-9]{1,}[.)]{0,1}([ ]|[\t])*/g, '');
             
-            var type_use = this_task.find(".task_type").attr("data-task-type");
-            
             /** check if a task-type is given at the start of the line */
+            
             var line_arr = t.split("=");
             if(line_arr.length > 1){
                 if(typeof controller_lesson["taskTypes"][line_arr[0].trim()] != "undefined"){
                     type_use = line_arr[0].trim();
+                }else{
+                    type_use = "info";
+                    res_undefined_types[res_undefined_types.length] = "[" + (i + 1) + "] " + line_arr[0].trim();
                 }
                 line_arr.shift();
             }
-            
-            addTask(line_arr.join("="), type_use, this_task);
-
+            new_tasks[new_tasks.length] = [line_arr.join("=").trim(), type_use, insert_where];
         }
     }
-    this_task.remove();
+    if(res_undefined_types.length > 0){
+        if(!confirm(_L_lesson["lesson_tasks_split_text_msg_task_type_undefined"] + "\n\n" + res_undefined_types.join("\n"))){
+            return false;
+        }
+    }
+    for(i = 0; i < new_tasks.length; i++){
+        addTask(new_tasks[i][0], new_tasks[i][1], new_tasks[i][2]);
+    }
+    return true;
 }
 
 function lesson_exact_validate_tasks(){
@@ -234,7 +262,7 @@ function lesson_exact_validate_tasks(){
     var ret = false;
     var new_tasks = {};
     
-    /** for polls an start info with the title and the teacher will be automatically inserted */
+    /** for polls a start info with the title and the teacher will be automatically inserted */
     if($("#lesson-type").val()=="poll"){
         this_num++;
         var this_task = new taskO();
@@ -276,17 +304,13 @@ function lesson_upload_on_submit(e){
     }
 }
 function toggle_text_mode(){
-    var elem = $("#poll_tasks_input_mode_link");
-    var target_mode = "text";
-    if(elem.html() == poll_tasks_input_mode["text"]){
-        elem.html(poll_tasks_input_mode["input"]);
-    }else{
-        elem.html(poll_tasks_input_mode["text"]);
-        target_mode = "input";
-        
-    }
     
-    if(target_mode == "text"){
+    var elem = $("#poll_tasks_input_mode_link");
+
+    if(elem.html() == poll_tasks_input_mode["text"]){
+        
+        /** into text-area edit mode */
+
         var str = "";
         var tasks = lesson_exact_validate_tasks();
         for(var i in tasks){
@@ -300,7 +324,24 @@ function toggle_text_mode(){
         $("#tasks_edit").show();
         $("#tasks_edit_textarea").val(str);
         $("#tasks_edit_textarea").autoGrow();
+        $("#tasks_edit_textarea").focus();
+        $("#div_lesson_submit").hide();
+        elem.html(poll_tasks_input_mode["input"]);
+        elem.css("font-weight", "bold");
         
+    }else{
+
+        /** split into multiple input fields */
+
+        var str = $("#tasks_edit_textarea").val();
+        if(!split_task_text(str)){return false;}
+        $("#tasks").children('.task').first().remove();
+        $("#tasks_edit").hide();
+        $("#tasks").show();
+        $("#div_lesson_submit").show();
+        $("#tasks").children('.task').last().find(".task_input").focus();
+        elem.html(poll_tasks_input_mode["text"]);
+        elem.css("font-weight", "normal");
     }
     
     

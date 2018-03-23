@@ -3,9 +3,8 @@
 
     <div id="lesson_div" style="">
         <h3 style="margin-top: 3em; margin-bottom: 1em;">
-        <?= Yii::$app->_L->get('poll_or_lesson_headline_lesson'); ?>
+        <?= Yii::$app->_L->get('poll_or_lesson_headline1_lesson'); ?>
         </h3>
-
             <?php
                 foreach(Yii::$app->getSession()->allFlashes as $key => $message) {
                     echo '<div class="alert alert-danger">' . $message . "</div>\n";

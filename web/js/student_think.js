@@ -353,7 +353,7 @@ function displayTasks(){
         $(".text-area").autoGrow();
         $("#answer_text").focus();
     }
-    
+
     if(task_types[task.type]["type"] == "scale"){
         
         $('#student_think_btn_task_finished').css('visibility', 'hidden');
@@ -466,7 +466,7 @@ function displayTaskNavigation(){
     var btn_task_move_forward_caption = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
     if(task.type == "sysinfo" & task.num == 1){btn_task_move_forward_caption = _L["student_think_btn_start_poll"];}
     taskNav_first_left.append($('<button type="button" id="btn_task_move_forward" class="btn btn-lg btn_task btn_task_move1">' + btn_task_move_forward_caption + '</button>'));
-    
+  
     
     /** position info */
     if(!cmConfig.displayTaskNavSecond){
@@ -476,7 +476,7 @@ function displayTaskNavigation(){
     }
 
     
-    if(task.num == lesson.numTasks
+    if( task.num == lesson.numTasks
         |   ((task.type == 'how-true' | task.type == 'how-often')
             & answer.answer_text == '')
     ){
@@ -487,6 +487,10 @@ function displayTaskNavigation(){
             state["goto_taskNum"] = task["num"] + 1;
             getTask();
         });
+    }
+    
+    if(task.type == "info" & task.num == lesson.numTasks){
+        show_btn_finished();
     }
 
     /** back to start button */

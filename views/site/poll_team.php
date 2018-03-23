@@ -124,7 +124,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
                 Yii::$app->_L->get('teacher_info_team_without_names_btn')
                 , [
                     'class' => 'btn btn-primary',
-                    'id'=>'teachers_btn_add_team',
+                    'id'=>'teachers_btn_without_names',
                     'onclick' => 'teachers_submit_team();'
                     ])
                     ?>
@@ -166,7 +166,10 @@ $this->title = Yii::$app->_L->get("teacher_title");
                      >
                 <textarea id="teacher-name-textarea" rows="1" style="display: none;" class="form-control teacher-name" data-text-length="0"></textarea>
                 </div>
-            </div>    
+            </div>
+            
+            
+                
             <div id="div_teachers_submit" class="" style="margin-top: 1em;">
                 <?php 
                     $this_btn_label = '<span id="countTeachers"></span> '.Yii::$app->_L->get('teachers_team_submit');

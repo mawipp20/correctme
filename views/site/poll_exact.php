@@ -196,7 +196,10 @@ $this->title = Yii::$app->_L->get("poll_title");
                 if($model->description==""){
                     echo  Html::a(Yii::$app->_L->get('poll_descripton_show_textarea_link')
                     , ['#']
-                    , [ 'onclick' => '$(".field-lesson-description").show();$("#lesson-description").focus();return false;'
+                    , [ 'onclick' => '$(".field-lesson-description").show();
+                                      $("#lesson-description").focus();
+                                      $("#poll_descripton_show_textarea").hide();
+                                      return false;'
                         ,'id' => 'poll_descripton_show_textarea'
                       ]
                     );

@@ -1,5 +1,3 @@
-
-<!-- start buttons for polls in poll_or_lesson.php -->
         <style>
         .cm-info-well{
         }
@@ -27,6 +25,10 @@
             padding-bottom: 0em;
             border-bottom:4px solid rgb(217,237,247);
         }
+        p.headline2{
+            font-size: 18px;
+            margin-bottom: 1em;
+        }
         p.sequence_info_link{
             margin-top:1.5em;
             cursor: pointer; 
@@ -37,26 +39,7 @@
             list-style-type: "... ";
         }
         </style>
-
-        <p id="id_sequence_info_link" class="sequence_info_link" onclick="
-            $('#sequence-info').toggle();
-            $('#sequence-single-info').hide();
-            $('#id_sequence_single_info_link').css('font-weight', 'normal');
-            $(this).css('font-weight', 'bold');
-            ">
-        <?= Yii::$app->_L->get('info_sequence_link_show') ?>
-        </p>
-        
-        <p id="id_sequence_single_info_link" class="sequence_info_link" onclick="
-            $('#sequence-single-info').toggle();
-            $('#sequence-info').hide();
-            $('#id_sequence_info_link').css('font-weight', 'normal');
-            $(this).css('font-weight', 'bold');
-            ">
-        <?= Yii::$app->_L->get('info_sequence_single_link_show') ?>
-        </p>
-        
-        
+       
         
         <div id="sequence-info" style="display: none; padding: 0.3em; border: 0px solid darkgrey; margin-top:1em;">
            
@@ -139,7 +122,3 @@
             </div>
         </div>    
                 
-                
-                
-                
-<?php // echo Yii::$app->_L->get('gen_student'); ?>

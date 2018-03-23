@@ -48,9 +48,11 @@ function teacher_join_poll_save_name(){
 
 function teachers_add_names(){
     $('#div_team_without_names').hide();
+    $('#teachers_btn_add_team').hide();
+    $('#teachers_btn_add_team').hide();
     $('#team_div').show();
     $('#team_names').find("input").focus();
-    return false
+    return false;
 }
 function teachers_submit_names(){
     $('#lesson-poll_type').val('names');

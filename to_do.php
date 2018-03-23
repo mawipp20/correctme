@@ -1,21 +1,17 @@
 <?php exit; ?>
 
 
-    info-Frage als letztes: "abschließen-Button"
-    lehrer_think: mein Name mit Anrede nicht bei Typ "mit Gesamtergebnis"
-    
-
-SELECT lesson.startKey, teacher.name, teacher.resultkey, teacher.studentkey, count(student.id) as students FROM teacher inner JOIN lesson on lesson.startKey = teacher.startKey inner join student on student.teacher_id = teacher.id WHERE lesson.title like "%2017%" group by teacher.id
-
 ------- sofort ---------------
 
-- teacher_lesson.js: Möglichkeit, die Fragen in ein großes Textfeld zurückzuführen, um sie zu sortieren und wieder aufzuteilen.
+    "allgemeiner Ergebniscode" bei Einzel-Plus-Team: in der Liste Namen+Aktivierungscode eine zusätzliche Zeile
 
-    
 
         
 
 ------- mittelfristig ---------------
+
+
+- Lehrer schließt Befragung ab oder (bei Einzelbefragung) verlängert sie
 
 - Ergebnisbalken mit Hintergrundbild ++ + - --
 - Lehrerinnen können die Umfrage ohne Werte testen
