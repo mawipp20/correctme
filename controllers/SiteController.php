@@ -312,9 +312,11 @@ class SiteController extends \app\components\Controller
         
         $lesson->thinkingMinutes = $this->transformThinkingMinutes($request_params["Lesson"]["thinkingMinutes"]);
         $lesson->poll_type = $request_params["Lesson"]["poll_type"];
+        
         if(!$lesson->save()){
             echo "error 'saving lesson in actionTeacher_poll_codes.'".$lesson->thinkingMinutes;
             if($_SERVER['HTTP_HOST'] == 'localhost'){var_dump($lesson->getErrors());}
+            exit;
         }
     
         /** 
@@ -523,7 +525,9 @@ class SiteController extends \app\components\Controller
                 die("error 'saving lesson in actionTeacher_join_poll.'");
             }
             $teacher->startKey = $lesson->startKey;
-            $teacher->name = $request_params["Teacher"]["name"];
+            if(isset($request_params["Teacher"])){
+                $teacher->name = $request_params["Teacher"]["name"];
+            }
             $teacher->status = "teacher";
             $teacher->state = "active";
         }
@@ -900,10 +904,6 @@ class SiteController extends \app\components\Controller
 
             $request_params = $request->post();
             
-            //var_dump($request_params);
-            //exit;
-            
-
             $this_view_error = 'lesson';
             if(isset($request_params["type"])){
                 if($request_params["type"] == 'poll'){
@@ -918,10 +918,8 @@ class SiteController extends \app\components\Controller
             }
             
             
-            //var_dump($request->post());
-            //exit;
-            
             if ($model->load($request->post()) && $model->save()) {
+                                
                     Yii::$app->getSession()->set("startKey", $model->startKey);
                     Yii::$app->getSession()->set("teacherKey", $model->teacherKey);
                     
@@ -931,7 +929,6 @@ class SiteController extends \app\components\Controller
                     if(isset($post["new_tasks"])){
                         $new_tasks = json_decode($post["new_tasks"]);
                     }
-                    
 
                     /** create the requested numTasks number of tasks */
                     for($i = 1; $i <= $model->numTasks; $i++){
@@ -959,9 +956,8 @@ class SiteController extends \app\components\Controller
                             $model->thinkingMinutes = 'today';
                         }
                     }
-                    
+
                     return $this->render($this_view, [
-                        //'model' => $this->findLesson($model->startKey),
                         'model' => $model,
                         'teacher' => new Teacher(),
                     ]);

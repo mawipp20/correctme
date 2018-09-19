@@ -250,7 +250,7 @@ class Lesson extends \app\components\ActiveRecord
             [['numTasks'], 'integer', 'min'=>1, 'max'=>100, 'message' => '1 - 100'],
             
             [['thinkingMinutes'], 'required', 'message' => Yii::$app->_L->get('thinkingMinutes_required')],
-            [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>30240, 'message' => '2 - 30240'],
+            [['thinkingMinutes'], 'integer', 'min'=>2, 'max'=>172800, 'message' => '2 - 172800'],
 
             [['numTeamsize'], 'required', 'message' => Yii::$app->_L->get('numTeamsize_required')],
             [['numTeamsize'], 'integer', 'min'=>2, 'max'=>6, 'message' => '2 - 6'],
@@ -315,6 +315,8 @@ class Lesson extends \app\components\ActiveRecord
             return true;
         }
     }
+
+/**
     
     public function beforeSave($insert)
     {
@@ -329,6 +331,9 @@ class Lesson extends \app\components\ActiveRecord
             return false;
         }
     }
+*/    
+    
+    
     /**
     public function upload_lesson()
     {

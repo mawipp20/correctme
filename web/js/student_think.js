@@ -72,6 +72,7 @@ var state = {
     ,"howOftenNextTaskDelay":500 /** interval milliseconds when the the rest service is called */
     ,"hasChanges":0
     ,"lastSaved":0
+    ,"answer_text":""
     ,"pollStart":true /** at the start of a poll the title of the poll and the name of the teacher is shown with a start-now-button */
     ,"millisecondsServerMinusClient":false /** difference in time between server and client, used for the minutes countdown */ 
     ,"messageHelpButtonShown":false /** has the info message about the call for help already been shown */ 
@@ -643,6 +644,13 @@ function blanks(numBlanks){
 }
 
 function textarea_oninput(elem){
+    /** protect against copy-paste text of more than 25 characters into answers **/
+    if($("#answer_text").val().length > 25 + state.answer_text.length){
+        $("#answer_text").val(state.answer_text);
+        return;
+    }else{
+        state.answer_text = $("#answer_text").val();        
+    }
     state["hasChanges"] = true;
     var this_answer_status_before = answer["status"];
     if($(elem).val()!=''){

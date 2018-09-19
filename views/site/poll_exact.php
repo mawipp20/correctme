@@ -273,7 +273,7 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
                 'onclick' => '$("#poll_type").val("single");
-                            if(!lesson_exact_validate_tasks()!==false){return false;}'
+                            if(lesson_exact_validate_tasks()===false){return false;}'
                 ]) ?>
 
             <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit_team')
@@ -281,7 +281,7 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
                 'onclick' => '$("#poll_type").val("team");
-                                if(lesson_exact_validate_tasks()!==false){this.form.submit();}'
+                                if(lesson_exact_validate_tasks()===false){return false;}'
                 ]) ?>
 
         </div>

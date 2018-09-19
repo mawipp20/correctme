@@ -145,7 +145,7 @@ function addTask(text, type, where){
         this_newTask.insertBefore(where);
     }   
         console.log("test");
-    //this_newTask.find(".task_input").autoGrow();
+    this_newTask.find(".task_input").autoGrow();
     $('#div_lesson_submit').show();
 }
 
@@ -206,19 +206,25 @@ function split_task_text(elem_or_string){
     var insert_where = "bottom";
     var res_undefined_types = [];
     var new_tasks = [];
+    var input_id = "";
     
-    if(typeof elem_or_string == "Object"){
+    if(typeof elem_or_string == "object"){
         var elem = $(elem_or_string);
         var this_task = $(elem).closest('.task');
         var this_input = this_task.find(".task_input");    
         str = this_input.val();
+        input_id = this_input.attr("id");
+        console.log("input_id:".input_id);
         type_use = this_task.find(".task_type").attr("data-task-type");
         insert_where = this_task;
     }
-    
-    var arr = str.split(/\n/);
+
+    var arr = str.split("\n");
+
     /** add an empty element at the end */
-    arr[arr.length] = "text = ";
+    if(typeof elem_or_string != "object"){
+        arr[arr.length] = "text = ";
+    }
     
     for(i = 0; i < arr.length; i++){
         var t = arr[i];
@@ -250,6 +256,12 @@ function split_task_text(elem_or_string){
     for(i = 0; i < new_tasks.length; i++){
         addTask(new_tasks[i][0], new_tasks[i][1], new_tasks[i][2]);
     }
+    
+    /** add an empty element at the end */
+    if(typeof elem_or_string == "object"){
+        this_task.remove();
+    }
+    
     return true;
 }
 
