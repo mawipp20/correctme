@@ -31,8 +31,8 @@ $this->title = Yii::$app->_L->get("lesson_title");
 <?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>
 
 
-<ul class="nav nav-tabs" style="margin-bottom: 20px;">
-  <li><a href="lesson"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
+<ul class="nav nav-tabs nav-tabs-lesson">
+  <li><a href="lesson_quick"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
   <li class="active"><a href="#"><?= Yii::$app->_L->get('lesson_nav_tab_exact') ?></a></li>
   <li><a href="lesson_upload"><?= Yii::$app->_L->get('lesson_nav_tab_upload') ?></a></li>
 </ul>
@@ -49,63 +49,14 @@ $this->title = Yii::$app->_L->get("lesson_title");
           <?= $form->field($model, 'type')->hiddenInput(['value' => 'lesson'])->label(false); ?>
 
 
-          <?php
-            $autofocus = false;
-            if($model->thinkingMinutes == ""){$autofocus = true;}
-            echo $form->field($model, 'thinkingMinutes'
-            , [
-            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
-            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-            ]
-            )->textInput([
-            'placeholder'=>Yii::$app->_L->get('thinkingMinutes_placeholder')
-            , 'value' => $model->thinkingMinutes
-            , 'autofocus' => $autofocus
-            ])
-            ->label(Yii::$app->_L->get('thinkingMinutes_label'))
-            ;
-            ?>
-
-          <?php
-            $this_autofocus = false;
-            if($model->numTeamsize == "" & !$autofocus){$this_autofocus = true; $autofocus = true;}
-            echo $form->field($model, 'numTeamsize'
-            , [
-            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
-            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-            ]
-            )->textInput([
-            'placeholder'=>Yii::$app->_L->get('numTeamsize_placeholder')
-            , 'value' => $model->numTeamsize
-            , 'autofocus' => $this_autofocus
-            ])
-            ->label(Yii::$app->_L->get('numTeamsize_label'))
-            ; ?>
-
-          <?php
-            $this_autofocus = false;
-            if($model->numStudents == "" & !$autofocus){$this_autofocus = true; $autofocus = true;}
-            echo $form->field($model, 'numStudents'
-            , [
-            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
-            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-            ]
-            )->textInput([
-            'placeholder'=>Yii::$app->_L->get('numStudents_placeholder')
-            , 'value' => $model->numStudents
-            , 'autofocus' => $this_autofocus
-            ])
-            ->label(Yii::$app->_L->get('numStudents_label'))
-            ; ?>
-
-
-
-
     <h4 style="margin-top: 1.5em; margin-bottom: 1em; "><?= Yii::$app->_L->get('lesson_tasks_title'); ?></h4>
 
 
     <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
     <?= $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
+
+
+
       
     
     <div id="tasks">
@@ -151,7 +102,80 @@ $this->title = Yii::$app->_L->get("lesson_title");
 -->    
         </label>    
         </div>
-    </div>    
+    </div>
+    
+    <div style="margin-top: 1.5em;">
+    
+          <?php
+            $this_autofocus = false;
+            if($model->numStudents == "" & !$this_autofocus){$this_autofocus = true; $autofocus = true;}
+            echo $form->field($model, 'numStudents'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ]
+            )->textInput([
+            'placeholder'=>Yii::$app->_L->get('numStudents_placeholder')
+            , 'value' => $model->numStudents
+            , 'autofocus' => $this_autofocus
+            ])
+            ->label(Yii::$app->_L->get('numStudents_label'))
+            ; ?>
+
+          <?php
+            $this_autofocus = false;
+            if($model->numTeamsize == "" & !$this_autofocus){$this_autofocus = true; $autofocus = true;}
+            echo $form->field($model, 'numTeamsize'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ]
+            )->textInput([
+            'placeholder'=>Yii::$app->_L->get('numTeamsize_placeholder')
+            , 'value' => $model->numTeamsize
+            , 'autofocus' => $this_autofocus
+            ])
+            ->label(Yii::$app->_L->get('numTeamsize_label'))
+            ; ?>
+
+    <p>
+                <?php
+                if($model->thinkingMinutes==""){
+                    echo  Html::a(Yii::$app->_L->get('thinkingMinutes_show_input_link')
+                    , ['#']
+                    , [ 'onclick' => '$(".field-lesson-thinkingminutes").show();
+                                      $("#lesson-thinkingminutes").focus();
+                                      $("#thinkingMinutes_show_input_link").hide();
+                                      return false;'
+                        ,'id' => 'thinkingMinutes_show_input_link'
+                      ]
+                    );
+                }
+                ?>
+                
+    </p>
+
+          <?php
+            $autofocus = false;
+            if($model->thinkingMinutes == ""){$autofocus = true;}
+            $this_css_display = 'none';
+            if($model->thinkingMinutes != ""){$this_css_display = 'inline';}
+            echo $form->field($model, 'thinkingMinutes'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ,'options' => ['style' => 'display:'.$this_css_display.';']
+            ]
+            )->textInput([
+            'placeholder'=>Yii::$app->_L->get('thinkingMinutes_placeholder')
+            , 'value' => $model->thinkingMinutes
+            , 'autofocus' => $autofocus
+            ])
+            ->label(Yii::$app->_L->get('thinkingMinutes_label'))
+            ;
+            ?>
+
+
 
         <div class="form-group" style="margin-top: 2em; display: none;">
             <?php echo  Html::submitButton(Yii::$app->_L->get('lesson_btn_submit')
@@ -161,6 +185,8 @@ $this->title = Yii::$app->_L->get("lesson_title");
                 'onsubmit' => 'lesson_exact_onsubmit();'
                 ]) ?>
         </div>
+        
+    </div>
        
     <?php ActiveForm::end(); ?>
 

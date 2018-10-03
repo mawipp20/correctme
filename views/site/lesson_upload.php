@@ -30,7 +30,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
 <div class="Lesson">
 
 <ul class="nav nav-tabs" style="margin-bottom: 20px;">
-  <li><a href="#"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
+  <li><a href="lesson_quick"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
   <li><a href="lesson_exact"><?= Yii::$app->_L->get('lesson_nav_tab_exact') ?></a></li>
   <li class="active"><a href="lesson_upload"><?= Yii::$app->_L->get('lesson_nav_tab_upload') ?></a></li>
 </ul>

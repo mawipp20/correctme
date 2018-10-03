@@ -37,9 +37,12 @@ use yii\widgets\Breadcrumbs;
         'items' => [
             //['label' => Yii::$app->_L->get('top_nav_go_teacher'), 'url' => ['/site/teacher_poll_or_lesson']],
             ['label' => Yii::$app->_L->get('gen_the_start'), 'url' => ['/student/index']],
-            ['label' => Yii::$app->_L->get('gen_student'), 'url' => ['/student/student_join_poll']],
-            ['label' => Yii::$app->_L->get('gen_teacher'), 'url' => ['/site/lesson_exact?lesson_type=poll&show_teacher_join']],
-            ['label' => Yii::$app->_L->get('top_nav_teacher_about'), 'url' => ['/site/about']],
+            ['label' => Yii::$app->_L->get('gen_student')
+                , 'url' => ['/student/student_join_'.Yii::$app->params["cmPollOrLesson"]]],
+            ['label' => Yii::$app->_L->get('gen_teacher')
+                , 'url' => ['/site/lesson_exact?lesson_type='.Yii::$app->params["cmPollOrLesson"].'&show_teacher_join']],
+            ['label' => Yii::$app->_L->get('top_nav_teacher_about')
+                , 'url' => ['/site/about_'.Yii::$app->params["cmPollOrLesson"]]],
         ],
     ]);
     NavBar::end();
@@ -55,7 +58,7 @@ use yii\widgets\Breadcrumbs;
         <p class="pull-left">
         &copy; correctme.de <?= date('Y') ?>
         <span style="padding-left: 1em;">
-        <a href="../site/about" style="color:  black; text-decoration:none;">
+        <a href="../site/about_<?= Yii::$app->params["cmPollOrLesson"]; ?>" style="color:  black; text-decoration:none;">
         ><?= Yii::$app->_L->get('top_nav_teacher_imprint') ?>
         </a>
         </span>

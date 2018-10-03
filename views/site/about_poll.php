@@ -22,25 +22,25 @@ a{
 </style>
 
 <div class="site-about">
-    <h2 style="margin-top: 0em;"><?= Yii::$app->_L->get('about_title') ?></h2>
+    <h2 style="margin-top: 0em;"><?= Yii::$app->_L->get('about_poll_title') ?></h2>
     <div class='well' style="padding: 0.5em; background: rgb(223,240,216);">
-        <?= Yii::$app->_L->get('about_text') ?>
+        <?= Yii::$app->_L->get('about_poll_text') ?>
     </div>
     <p style="line-height:  180%;">
     
-    <a href="#" onclick='about_goto(this, "info_team");return false;'>
+    <a href="#" onclick='about_poll_goto(this, "info_team");return false;'>
     > <?= Yii::$app->_L->get('teachers_info_team_title') ?></a><br />
-    <a href="#" onclick='about_goto(this, "info_single");return false;'>
+    <a href="#" onclick='about_poll_goto(this, "info_single");return false;'>
     > <?= Yii::$app->_L->get('teachers_info_single_title') ?></a><br />
-    <a href="#" onclick='about_goto(this, "imprint");return false;'>
+    <a href="#" onclick='about_poll_goto(this, "imprint");return false;'>
     > <?= Yii::$app->_L->get('about_imprint_title') ?></a><br />
-    <a href='#' onclick='about_goto(this, "mission");return false;'>
+    <a href='#' onclick='about_poll_goto(this, "mission");return false;'>
     > <?= Yii::$app->_L->get('about_mission_title') ?></a><br />
-    <a href="#" onclick='about_goto(this, "privacy");return false;'>
+    <a href="#" onclick='about_poll_goto(this, "data_protection");return false;'>
+    > <?= Yii::$app->_L->get('about_data_protection_title') ?></a><br />
+    <a href="#" onclick='about_poll_goto(this, "privacy");return false;'>
     > <?= Yii::$app->_L->get('about_privacy_title') ?></a><br />
-    <a href="#" onclick='about_goto(this, "privacy_total");return false;'>
-    > <?= Yii::$app->_L->get('about_privacy_total_title') ?></a><br />
-    <a href="#" onclick='about_goto(this, "disclaimer");return false;'>
+    <a href="#" onclick='about_poll_goto(this, "disclaimer");return false;'>
     > <?= Yii::$app->_L->get('about_disclaimer_title') ?></a>
     </p>
 
@@ -179,13 +179,13 @@ a{
     <p>
         <?= Yii::$app->_L->get('about_mission_text') ?>
     </p>
+    <h3 id='data_protection'><?= Yii::$app->_L->get('about_data_protection_title') ?></h3>
+    <p>
+        <?= Yii::$app->_L->get('about_data_protection_text') ?>
+    </p>
     <h3 id='privacy'><?= Yii::$app->_L->get('about_privacy_title') ?></h3>
     <p>
         <?= Yii::$app->_L->get('about_privacy_text') ?>
-    </p>
-    <h3 id='privacy_total'><?= Yii::$app->_L->get('about_privacy_total_title') ?></h3>
-    <p>
-        <?= Yii::$app->_L->get('about_privacy_total_text') ?>
     </p>
     <h3 id='disclaimer'><?= Yii::$app->_L->get('about_disclaimer_title') ?></h3>
     <p>

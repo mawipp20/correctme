@@ -95,13 +95,13 @@ class SiteController extends \app\components\Controller
      *
      * @return string
      */
-    public function actionLesson()
+    public function actionLesson_quick()
     {
 
         $this->layout = 'teacher';
         $model = new Lesson();
         
-        return $this->render('lesson', [
+        return $this->render('lesson_quick', [
             'model' => $model,
         ]);
     }
@@ -599,7 +599,8 @@ class SiteController extends \app\components\Controller
         Yii::$app->getSession()->set("startKey", $lesson->startKey);
         
         $teachers = Teacher::find()->where(['startKey'=>$teacher->startKey])->all();
-        $students = Student::find()->where(['startKey'=>$teacher->startKey, 'status'=>'finished'])->all();
+        //$students = Student::find()->where(['startKey'=>$teacher->startKey, 'status'=>'finished'])->all();
+        $students = Student::find()->where(['startKey'=>$teacher->startKey])->all();
         $tasks = Task::find()->where(['startKey'=>$teacher->startKey])->all();
         $answers = Answer::find()->where(['startKey'=>$teacher->startKey])->all();
         
@@ -866,9 +867,14 @@ class SiteController extends \app\components\Controller
      *
      * @return string
      */
-    public function actionAbout()
+    public function actionAbout_poll()
     {
-        return $this->render('about');
+        return $this->render('about_poll');
+    }
+
+    public function actionAbout_lesson()
+    {
+        return $this->render('about_lesson');
     }
 
 

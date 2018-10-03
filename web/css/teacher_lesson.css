@@ -53,3 +53,9 @@
     margin-left: 0.3em;
     border:1px solid black;
 }
+.nav-tabs-lesson{
+    margin-bottom: 20px;
+}
+@media only screen and (max-width: 320px) {
+    .nav-tabs-lesson li{}
+}

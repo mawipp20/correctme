@@ -130,7 +130,7 @@ $this->title = Yii::$app->_L->get("poll_title");
     ?>
 
 
-    <ul class="nav nav-tabs" style="margin-bottom: 20px;">
+    <ul class="nav nav-tabs nav-tabs-lesson">
       <li class="active"><a href="#"><?= Yii::$app->_L->get('poll_nav_tab_exact') ?></a></li>
       <li><a href="poll_upload"><?= Yii::$app->_L->get('poll_nav_tab_upload') ?></a></li>
     </ul>
@@ -167,14 +167,14 @@ $this->title = Yii::$app->_L->get("poll_title");
 
     /** description */
     
-    $description_css_display = 'none';
-    if($model->description != ""){$description_css_display = 'inline';}
+    $this_css_display = 'none';
+    if($model->description != ""){$this_css_display = 'inline';}
     echo $form->field($model, 'description'
     , [
     'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson'
                         , 'style' => 'min-width: 80px; padding-right: 0.5em;' ]
     ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-    ,'options' => ['style' => 'display:'.$description_css_display.';']
+    ,'options' => ['style' => 'display:'.$this_css_display.';']
     ]
     )->textarea([
     'placeholder'=>Yii::$app->_L->get('lesson_description_placeholder')
@@ -194,13 +194,13 @@ $this->title = Yii::$app->_L->get("poll_title");
     <p>
                 <?php
                 if($model->description==""){
-                    echo  Html::a(Yii::$app->_L->get('poll_descripton_show_textarea_link')
+                    echo  Html::a(Yii::$app->_L->get('poll_description_show_textarea_link')
                     , ['#']
                     , [ 'onclick' => '$(".field-lesson-description").show();
                                       $("#lesson-description").focus();
-                                      $("#poll_descripton_show_textarea").hide();
+                                      $("#poll_description_show_textarea").hide();
                                       return false;'
-                        ,'id' => 'poll_descripton_show_textarea'
+                        ,'id' => 'poll_description_show_textarea'
                       ]
                     );
                 }
@@ -273,7 +273,7 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
                 'onclick' => '$("#poll_type").val("single");
-                            if(lesson_exact_validate_tasks()===false){return false;}'
+                            if(!lesson_exact_validate_tasks()!==false){return false;}'
                 ]) ?>
 
             <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit_team')
@@ -281,7 +281,7 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'class' => 'btn btn-primary',
                 'id'=>'poll_exact_submit',
                 'onclick' => '$("#poll_type").val("team");
-                                if(lesson_exact_validate_tasks()===false){return false;}'
+                                if(lesson_exact_validate_tasks()!==false){this.form.submit();}'
                 ]) ?>
 
         </div>

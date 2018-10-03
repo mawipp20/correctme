@@ -61,7 +61,7 @@ use yii\widgets\Breadcrumbs;
             .'>'
             .Yii::$app->_L->get('top_nav_student_finish_'.$lesson_type).'</button>',
             /**
-            ['label' => 'About', 'url' => ['/site/about']],
+            ['label' => 'About', 'url' => ['/site/about_'.Yii::$app->params["cmPollOrLesson"]]],
             ['label' => 'Contact', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]

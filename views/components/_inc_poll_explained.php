@@ -84,7 +84,7 @@
                     <li  style="background-color: rgb(217,237,247);">
                     <?= Yii::$app->_L->get('info_sequence_team_bottom_li_3') ?>
                     </li>
-                    <li><a href="../web/site/about">
+                    <li><a href="../web/site/about_poll">
                     <?= Yii::$app->_L->get('info_sequence_team_bottom_link_privacy') ?>
                     </a></li>
                 </ul>
@@ -115,7 +115,7 @@
                 <ul>
                     <li><?= Yii::$app->_L->get('info_sequence_single_team_bottom_li_1') ?></li>
                     <li><?= Yii::$app->_L->get('info_sequence_single_team_bottom_li_2') ?></li>
-                    <li><a href="../web/site/about">
+                    <li><a href="../web/site/about_poll">
                     <?= Yii::$app->_L->get('info_sequence_team_bottom_link_privacy') ?>
                     </a></li>
                 </ul>

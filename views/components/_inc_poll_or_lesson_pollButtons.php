@@ -4,10 +4,7 @@
 
     <div id="poll_div" style="">
         <h3 style="margin-top: 0.5em;">
-            <?= Yii::$app->_L->get('poll_or_lesson_headline1_poll')
-                //.'<a href="'.Yii::$app->getUrlManager()->getBaseUrl().'/site/about">'
-                //.'&nbsp;&nbsp;<i class="fa fa-info-circle"></i></a>'
-                ;
+            <?= Yii::$app->_L->get('poll_or_lesson_headline1_poll');
             ?>
         </h3>
         <p class="headline2">

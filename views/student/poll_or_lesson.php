@@ -5,16 +5,15 @@ use yii\helpers\Html;
 use app\assets\AppAsset;
 AppAsset::register($this);
 
-    
-    if(Yii::$app->params["correctmeHasPoll"]){
+    if(Yii::$app->params["cmPollOrLesson"]=="poll"){
         include_once(Yii::$app->basePath.'/views/components/_inc_poll_or_lesson_pollButtons.php');
     }
     
-    if(Yii::$app->params["correctmeHasLesson"]){
+    if(Yii::$app->params["cmPollOrLesson"]=="lesson"){
         include_once(Yii::$app->basePath.'/views/components/_inc_poll_or_lesson_lessonButtons.php');
     }
 
-    if(Yii::$app->params["correctmeHasPoll"]){
+    if(Yii::$app->params["cmPollOrLesson"]=="poll"){
         include_once(Yii::$app->basePath.'/views/components/_inc_poll_explained.php');
     }
     

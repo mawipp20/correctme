@@ -27,7 +27,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
 
 <div class="Lesson">
 
-<ul class="nav nav-tabs" style="margin-bottom: 20px;">
+<ul class="nav nav-tabs nav-tabs-lesson">
   <li class="active"><a href="#"><?= Yii::$app->_L->get('lesson_nav_tab_quick') ?></a></li>
   <li><a href="lesson_exact"><?= Yii::$app->_L->get('lesson_nav_tab_exact') ?></a></li>
   <li><a href="lesson_upload"><?= Yii::$app->_L->get('lesson_nav_tab_upload') ?></a></li>

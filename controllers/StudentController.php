@@ -74,12 +74,18 @@ class StudentController extends \app\components\Controller
      *
      * @return string
      */
-    public function actionStudent_join()
+    public function actionStudent_join_lesson()
     {
-        $model = new StudentJoinForm();
-        return $this->render('student_join', [
+/**        $model = new StudentJoinForm();
+        return $this->render('student_join_lesson', [
             'model' => $model,
         ]);
+*/
+        $teacher = new Teacher();
+        return $this->render('student_join_lesson', [
+            'teacher' => $teacher,
+        ]);
+
     }
 
     /**
@@ -130,9 +136,12 @@ class StudentController extends \app\components\Controller
             $post = $request->post();
             
             $error_page = 'student/student_join_poll';
-            if($post["type"] == "lesson"){$error_page = 'student/student_join';}
+            if($post["type"] == "lesson"){$error_page = 'student/student_join_lesson';}
             
             /** from student_join_poll: get the startKey via studentkey of the teacher */
+            
+            var_dump($post);
+            die();
             
             if(isset($post["Teacher"])){
                 $post["StudentJoinForm"] = array("startKey"=>"", "name"=>Yii::$app->getSecurity()->generateRandomString(32));
@@ -143,7 +152,8 @@ class StudentController extends \app\components\Controller
                     $post["StudentJoinForm"]["teacher_id"] = $teacher->id;
                 }else{
                     /** check if student tried a lesson key as a poll key */
-                    $check_lesson = Lesson::find()->where(['startKey' => $post["Teacher"]["studentkey"]])->one();
+                    $check_lesson = Lesson::find()->where(['startKey' => $post["Teacher"]["studentkey"]
+                                                            ,'type' => $post["type"]])->one();
                     if(is_null($check_lesson)){
                         Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
                         Yii::$app->response->redirect([$error_page]);
@@ -158,6 +168,7 @@ class StudentController extends \app\components\Controller
             /** join collaborative lesson or poll with startKey of the lesson */
             
             if($model->load($post, "StudentJoinForm")){
+                $model->startKey = trim($model->startKey);
                 $lesson = Lesson::find()->where(['startKey' => $model->startKey])->one();
 
                 /** still active or has time run out */
@@ -199,7 +210,7 @@ class StudentController extends \app\components\Controller
             
             
             if (!$model->hasErrors() && $model->save()) {
-                    Yii::$app->getSession()->set("startKey", $model->startKey);
+                    Yii::$app->getSession()->set("startKey", trim($model->startKey));
                     Yii::$app->getSession()->set("studentKey", $model->studentKey);
                     Yii::$app->getSession()->set("status", "working");
                     
@@ -207,7 +218,7 @@ class StudentController extends \app\components\Controller
                     $this->view->params['lesson'] = $lesson;
                     
                     return $this->render('student_think', [
-                        'model' => $this->findStudent($model->startKey, $model->studentKey),
+                        'model' => $this->findStudent($model->startKey, trim($model->studentKey)),
                         'lesson' => $lesson,
                     ]);
             }

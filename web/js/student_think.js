@@ -181,6 +181,8 @@ function rest_service(redirectTo){
 
     /** called by interval every 10 seconds (or more depending on server work load)  */
 
+    if(typeof redirectTo == "undefined"){ redirectTo = "";}
+
     saveAnswer();
     
     if(state['millisecondsServerMinusClient']!==false){
@@ -189,15 +191,19 @@ function rest_service(redirectTo){
 
 
     /* stop if the last query (rest_status) is still going on or when there are no changes */
-    if( typeof redirectTo == "undefined" &
-        (state["rest_status"] == 1
-        | state["hasChanges"] === false
-        )
+    if( redirectTo == ""
+        & state["hasChanges"] === false
     ){
-        console.log("no changes:" + state["rest_status"]);
+        console.log("no changes");
         return;
     }
-
+    
+    
+    /** display warning when the rest service failed too often */
+    
+    if(state["rest_status"] >= 3){
+        state_error_alert_display(_L["student_think_rest_service_warning"], "danger");
+    }
 
     /** connecting to server using restcorrectme REST service to save and get fresh data */
     
@@ -206,12 +212,12 @@ function rest_service(redirectTo){
     query["studentKey"] = student["studentKey"];
     query["answer_all"] = answer_all;
     
+    var this_warning = _L["student_think_rest_service_warning"];
+    if(Object.keys(task_all).length == 0){this_warning = _L["student_think_rest_service_warning_start"];}
+
     console.log(query);
-    
-    var this_do_getTasks_first_time = false;
-    if(state["rest_status"] === ""){this_do_getTasks_first_time = true;}
-    
-    state["rest_status"] = 1;
+       
+    state["rest_status"]++;
     
     var restUrl = "../../../" + cmConfig.restcorrectmePath + "web/student/think";
     
@@ -222,43 +228,74 @@ function rest_service(redirectTo){
         type: 'POST',
         data: query,
         success: function(data) {
-            
-            state["rest_status"] = 0;
-            
-            lesson = data["lesson"];
-            
-            student = data["student"];
-            task_all = data["task_all"];
-            answer_all = data["answer_all"];
-            
-            state["error"] = data["error"];
-            state["debug"] = data["debug"];
-            state["lastSaved"] = data["lastSaved"];
-            
-            if(typeof redirectTo != "undefined"){window.location.href = redirectTo; return;}
 
+        console.log(data);
+    
             
-            state["hasChanges"] = false;
+            if(typeof data["error"] == "undefined"){
+                data["error"] = "";
+            }
             
-            if(this_do_getTasks_first_time){
-                getTask();
+            if(data["error"] != ""){
+                
+                /** nachsichtiges Verhalten: Wenn ein Fehler gemeldet wird,
+                dann wird nach 3 Speicherversuchen eine Meldung einblendet */
+                
+                state_error_alert_display(this_warning, "danger");
+                
+                state["error"] = data["error"];
+                                   
+            }else{
+                
+                //console.log(data);
+                
+                if(redirectTo != ""){window.location.href = redirectTo; return;}
+                
+                state["hasChanges"] = false;
+                state["rest_status"] = 0;
+                
+                /** if there was a rest service warning before, display a revoke-success for some sconds */
+                
+                if(state["error"] != ""){
+                    state_error_alert_display(_L["student_think_rest_service_warning_revoked"], "success", 6000);
+                }
+
+                var this_do_getTasks_first_time = false;
+                if(Object.keys(task_all).length == 0){this_do_getTasks_first_time = true;}
+
+                lesson = data["lesson"];
+                student = data["student"];
+                task_all = data["task_all"];
+                answer_all = data["answer_all"];
+                state["debug"] = data["debug"];
+                state["lastSaved"] = data["lastSaved"];
+                if(this_do_getTasks_first_time){
+                    getTask();
+                }
+                if(state['millisecondsServerMinusClient']===false){
+                    var this_now_client = new Date();
+                    var this_now_server = Date.parse(state["lastSaved"]);
+                    state['millisecondsServerMinusClient'] = this_now_server - this_now_client.getTime();
+                }
+                
             }
-            if(state['millisecondsServerMinusClient']===false){
-                var this_now_client = new Date();
-                var this_now_server = Date.parse(state["lastSaved"]);
-                state['millisecondsServerMinusClient'] = this_now_server - this_now_client.getTime();
-            }
+            
             
         },
 
         error: function(xhr, status, error) {
-            state["rest_status"] = 0;
-            var err = eval("(" + xhr.responseText + ")");
+
+            /** nachsichtiges Verhalten: Wenn ein Fehler gemeldet wird,
+            dann wird immer weiter versucht. Nach 5 Versuchen im 4-Sekundenabstand wir eine Meldung einblendet */
+            
+            state_error_alert_display(this_warning, "danger");
+
+            if(redirectTo != ""){setTimeout(rest_service(redirectTo), 4000);}
+            
             if(state["program_version"]=="dev"){
-                state["error"] = 'server error';
-            }else{
-                state["error"] = err.Message;
+                state["error"] = "ajax-error: " + xhr.responseText;
             }
+            
         }
     });
     
@@ -277,11 +314,8 @@ function displayTasks(){
     /** clear container */
     $("#displayTasks").html("");
     
-    /** in case there is an error */
-    if(state["error"] != "" ){
-        var msg = $('<div class="alert alert-danger"></div>');
-        msg.html(state["error"]);
-        $("#displayTasks").append(msg);
+    if(state["error"] == ""){
+        $("#state_error_alert").remove();
     }
     
     /** for debugging by developers */
@@ -715,7 +749,10 @@ function whenPollFinished(){
     if(state["goto_taskNum"] == lesson.numTasks){
         if(cmConfig.studentRedirectAfterLastAnswer){
             rest_service('poll_finished');
-            $('#taskNav_first').html('<div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i></div>');
+            //$('#taskNav_first').html('<div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i></div>');
+            
+            
+            
             /**
                 <div id="displayTasks">
         <div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i></div>
@@ -751,4 +788,40 @@ function task_how_often_true_button_click(elem){
         state["goto_taskNum"] = task["num"] + 1;
         getTask();
     }, state["howOftenNextTaskDelay"])
+}
+
+
+function state_error_alert_display(text, alert_type, timeout){
+
+    state["error"] = text;
+    
+    if(typeof timeout == "undefined"){
+        timeout = 0;
+    }
+
+    var new_alert = true;
+    if($("#state_error_alert").length > 0){
+        $("#state_error_alert").remove();
+        new_alert = false;
+    }
+    
+    if(state["error"]==""){return;}
+    
+    var msg = $('<div id="state_error_alert" class="alert alert-' + alert_type +'"></div>');
+    msg.html(text);
+    
+    if(new_alert){msg.hide();}
+    
+    $("#displayTasks").append(msg);
+        
+    if(new_alert){$( "#state_error_alert" ).fadeIn( "normal", function() {});}   
+    
+    if(timeout > 0){
+        setTimeout(function(){
+            state["error"] = "";
+            $("#state_error_alert").fadeOut("normal", function() {
+                    $(this).remove();
+            });
+        }, timeout);
+    }
 }

@@ -25,6 +25,8 @@ use yii\widgets\Breadcrumbs;
 <div class="wrap">
     <?php
     
+    $this_lesson_type = Yii::$app->params["cmPollOrLesson"];
+        
     NavBar::begin([
         'brandLabel' => Yii::$app->_L->get('top_nav_site_home'),
         //'brandUrl' => Yii::$app->homeUrl,
@@ -37,8 +39,11 @@ use yii\widgets\Breadcrumbs;
         'items' => [
             //['label' => Yii::$app->_L->get('top_nav_teacher_new'), 'url' => ['/site/teacher_poll_or_lesson']],
             ['label' => Yii::$app->_L->get('top_nav_teacher_new'), 'url' => ['/site/index']],
-            ['label' => Yii::$app->_L->get('top_nav_teacher_about'), 'url' => ['/site/about']],
-            ['label' => Yii::$app->_L->get('top_nav_teacher_running'), 'url' => ['site/lesson_exact?lesson_type=poll&show_teacher_join']],
+            ['label' => Yii::$app->_L->get('top_nav_teacher_about')
+                , 'url' => ['/site/about_'.Yii::$app->params["cmPollOrLesson"]]],
+            ['label' => Yii::$app->_L->get('top_nav_teacher_running')
+                , 'url' => ['site/lesson_exact?lesson_type='.Yii::$app->params["cmPollOrLesson"]
+                            .'&show_teacher_join']],
         ],
     ]);
     NavBar::end();

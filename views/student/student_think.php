@@ -6,6 +6,8 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\bootstrap\Modal;
 
+use app\components\MyHelpers;
+
 use app\assets\AppAsset;
 AppAsset::register($this);
 
@@ -65,7 +67,18 @@ foreach($lesson->taskTypes as $key => $val){
 var _L = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;
 var task_types = <?= json_encode($lesson->taskTypes); ?>;
 function cmConfigO(){
-    this.restcorrectmeBaseUrl = '';
+
+    this.restcorrectmeBaseUrl = <?= MyHelpers::cmConfigJsValue("restcorrectmeBaseUrl") ?>;
+    this.restcorrectmePath = <?= MyHelpers::cmConfigJsValue("restcorrectmePath") ?>;
+
+    this.displayThinkingMinutes = <?= MyHelpers::cmConfigJsValue("cmConfig_displayThinkingMinutes") ?>;
+    this.displayTaskNavSecond = <?= MyHelpers::cmConfigJsValue("cmConfig_displayTaskNavSecond") ?>;
+    this.displayTaskLabelNum = <?= MyHelpers::cmConfigJsValue("cmConfig_displayTaskLabelNum") ?>;
+    this.displayBtnHelp = <?= MyHelpers::cmConfigJsValue("cmConfig_displayBtnHelp") ?>;
+    this.studentRedirectAfterLastAnswer = <?= MyHelpers::cmConfigJsValue("cmConfig_studentRedirectAfterLastAnswer") ?>;
+    this.taskFinishedButtonMoveOn = <?= MyHelpers::cmConfigJsValue("cmConfig_taskFinishedButtonMoveOn") ?>;
+/**    
+
     this.displayThinkingMinutes = false;
     this.displayTaskNavSecond = false;
     this.displayTaskLabelNum = false;
@@ -74,6 +87,9 @@ function cmConfigO(){
     this.taskFinishedButtonMoveOn = true;
     this.restcorrectmeBaseUrl = '<?= Yii::$app->params["restcorrectmeBaseUrl"] ?>';
     this.restcorrectmePath = '<?= Yii::$app->params["restcorrectmePath"] ?>';
+*/
+
+
 }
 var cmConfig = new cmConfigO();
 </script>
