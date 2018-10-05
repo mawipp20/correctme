@@ -81,9 +81,11 @@ class StudentController extends \app\components\Controller
             'model' => $model,
         ]);
 */
-        $teacher = new Teacher();
+        $lesson = new Lesson();
+        $student = new Student();
         return $this->render('student_join_lesson', [
-            'teacher' => $teacher,
+            'lesson' => $lesson
+            ,'student' => $student
         ]);
 
     }
@@ -123,7 +125,7 @@ class StudentController extends \app\components\Controller
     public function actionThink()
     {
                 
-        $model = new Student();
+        $student = new Student();
         $this->layout = 'student';
 
         $request = Yii::$app->request;
@@ -139,10 +141,7 @@ class StudentController extends \app\components\Controller
             if($post["type"] == "lesson"){$error_page = 'student/student_join_lesson';}
             
             /** from student_join_poll: get the startKey via studentkey of the teacher */
-            
-            var_dump($post);
-            die();
-            
+                       
             if(isset($post["Teacher"])){
                 $post["StudentJoinForm"] = array("startKey"=>"", "name"=>Yii::$app->getSecurity()->generateRandomString(32));
                 $teacher = Teacher::find()->where(['studentkey' => $post["Teacher"]["studentkey"]])->one();
@@ -165,38 +164,48 @@ class StudentController extends \app\components\Controller
                 }
             }
             
-            /** join collaborative lesson or poll with startKey of the lesson */
+            /** from student_join_lesson: join collaborative lesson or poll with startKey of the lesson */
             
-            if($model->load($post, "StudentJoinForm")){
-                $model->startKey = trim($model->startKey);
-                $lesson = Lesson::find()->where(['startKey' => $model->startKey])->one();
+            if(isset($post["Lesson"]) & isset($post["Student"])){
+                //if($student->load($post, "StudentJoinForm")){
+                    
+                    $startKey = trim($post["Lesson"]["startKey"]);
+                    $name = trim($post["Student"]["name"]);
+                    
+                    $lesson = Lesson::find()->where(['startKey' => $startKey])->one();
+    
+                    if(is_null($lesson)){
+                        Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
+                        Yii::$app->response->redirect([$error_page]);
+                        return;
+                    }
+                    /** still active or has time run out */
+                    if($lesson->thinkingMinutes > 0){
+                        $deadline = new \DateTime($lesson->insert_timestamp);
+                        $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
+                        if(new \DateTime() >= $deadline){
+                            $msg_deadline = Yii::$app->_L->get('student_join_poll_login_error_time');
+                            $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline, 'dd. MMM').'</b>', $msg_deadline);
+                            $msg_deadline = str_replace('#lesson-title#', '"<b>'.$lesson->title.'</b>"', $msg_deadline);                    
+                            Yii::$app->getSession()->setFlash('login_error', $msg_deadline);
+                            Yii::$app->response->redirect([$error_page]);
+                            return;
+                        }
+                    }
 
-                /** still active or has time run out */
-                $deadline = new \DateTime($lesson->insert_timestamp);
-                $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
-                if(new \DateTime() >= $deadline){
-                    $msg_deadline = Yii::$app->_L->get('student_join_poll_login_error_time');
-                    $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline, 'dd. MMM').'</b>', $msg_deadline);
-                    $msg_deadline = str_replace('#lesson-title#', '"<b>'.$lesson->title.'</b>"', $msg_deadline);                    
-                    Yii::$app->getSession()->setFlash('login_error', $msg_deadline);
-                    Yii::$app->response->redirect([$error_page]);
-                    return;
-                }
-                
-                if(is_null($lesson)){
-                    Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
-                    Yii::$app->response->redirect([$error_page]);
-                    return;
-                }
-                $student_with_the_same_name = Student::find()->where(
-                                [    'startKey'=>$model->startKey
-                                    ,'name'=>$model->name
-                                ]
-                                )->one();
-                if(!is_null($student_with_the_same_name)){
-                            //$student_with_the_same_name->delete();
-                            $model->addErrors(array(Yii::$app->_L->get('student_join_name_already_existing')));    
-                }
+                    $student->startKey = $startKey;
+                    $student->name = $name;
+                    
+                    $student_with_the_same_name = Student::find()->where(
+                                    [    'startKey'=>$student->startKey
+                                        ,'name'=>$student->name
+                                    ]
+                                    )->one();
+                    if(!is_null($student_with_the_same_name)){
+                                //$student_with_the_same_name->delete();
+                                $student->addErrors(array(Yii::$app->_L->get('student_join_name_already_existing')));    
+                    }
+                //}
             }
                         
             /** poll browser sessions that have been concluded can't be repeated by a page refresh or entering the start key again */
@@ -204,28 +213,26 @@ class StudentController extends \app\components\Controller
                & $lesson["type"] == "poll"
                & $_SERVER['HTTP_HOST'] != 'localhost'
                 ){
-                $model->addErrors(array(Yii::$app->_L->get('student_join_error_poll_is_finished')));    
+                $student->addErrors(array(Yii::$app->_L->get('student_join_error_poll_is_finished')));    
             }
             
-            
-            
-            if (!$model->hasErrors() && $model->save()) {
-                    Yii::$app->getSession()->set("startKey", trim($model->startKey));
-                    Yii::$app->getSession()->set("studentKey", $model->studentKey);
+            if (!$student->hasErrors() && $student->save()) {
+                    Yii::$app->getSession()->set("startKey", trim($student->startKey));
+                    Yii::$app->getSession()->set("studentKey", $student->studentKey);
                     Yii::$app->getSession()->set("status", "working");
                     
-                    $this->view->params['model'] = $model;
+                    $this->view->params['model'] = $student;
                     $this->view->params['lesson'] = $lesson;
                     
                     return $this->render('student_think', [
-                        'model' => $this->findStudent($model->startKey, trim($model->studentKey)),
+                        'model' => $this->findStudent($student->startKey, trim($student->studentKey)),
                         'lesson' => $lesson,
                     ]);
             }
             
-            if($model->hasErrors()) {
+            if($student->hasErrors()) {
                     $this_errors = array();
-                    foreach($model->getErrors() as $this_error){
+                    foreach($student->getErrors() as $this_error){
                         $this_errors = array_merge($this_errors, $this_error);
                     }
                     Yii::$app->getSession()->setFlash('error_save', implode("<br>", $this_errors));
@@ -237,7 +244,7 @@ class StudentController extends \app\components\Controller
 
         if ($request->isGet)  {
             $request_params = $request->get("Lesson");
-            $model->load($request->get());
+            $student->load($request->get());
             $row = Student::find()->where(
                     [    'startKey'=>$request_params["startKey"]
                         ,'studentKey'=>$request_params["studentKey"]
@@ -249,7 +256,7 @@ class StudentController extends \app\components\Controller
                     'model' => $row,
                 ]);
             } else {
-                $this_errors = $model->getErrors();
+                $this_errors = $student->getErrors();
                 Yii::$app->getSession()->setFlash('error_save', Yii::$app->_L->get("join_session_login_error_flash"));
                 Yii::$app->response->redirect(['student/student_rejoin']);
             }

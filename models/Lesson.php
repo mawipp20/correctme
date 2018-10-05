@@ -302,8 +302,13 @@ class Lesson extends \app\components\ActiveRecord
             if($this->type == ""){
                 $this->type = 'lesson';
             }
+            
+            if($this->type == "lesson" & $this->thinkingMinutes == ""){
+                $this->thinkingMinutes = 11520;
+            }
+            
             if($this->typeTasks == ""){
-                $this->typeTasks = 'textarea';
+                $this->typeTasks = 'text';
             }
             if($this->type == "poll"){
                 $this->numStudents = 2;

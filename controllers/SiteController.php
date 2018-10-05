@@ -883,6 +883,8 @@ class SiteController extends \app\components\Controller
         $model = new Lesson();
 
         $request = Yii::$app->request;
+            //var_dump($request->post());
+            //die("test");
         
         if ($request->isGet)  {
 

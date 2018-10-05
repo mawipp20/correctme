@@ -7,20 +7,35 @@
 }
 
 .well-correctme-as-button{
-    color: darkblue;
+    background-color:  rgb(51,122,183);
+    color: white;
     margin-bottom: 0.6em;
     font-size: large;
     padding: 0.6em;
     font-weight: bold;
+    max-width: 400px;
+}
+@media(min-width:600px) {
+    .well-correctme-as-button{
+        padding-left:2em;        
+    }
 }
 .well-correctme-as-button:hover{
-    background-color:  rgb(51,122,183);
-    color: white;
+    color:  rgb(51,122,183);
+    background-color: white;
     cursor: pointer;
     font-size: large;
     padding: 0.6em;
     font-weight: bold;
+    border-color: black;
+    border-width: 1px;
 }
+
+.input-group-addon-student-join{
+    text-align: right;
+    min-width:140px;
+}
+
 
 @media(max-width:600px) {
     .hide_on_small_display{

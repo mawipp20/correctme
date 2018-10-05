@@ -49,7 +49,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
           <?= $form->field($model, 'type')->hiddenInput(['value' => 'lesson'])->label(false); ?>
 
 
-    <h4 style="margin-top: 1.5em; margin-bottom: 1em; "><?= Yii::$app->_L->get('lesson_tasks_title'); ?></h4>
+    <h4 style="margin-top: 0.8em; margin-bottom: 0.8em; "><?= Yii::$app->_L->get('lesson_tasks_title'); ?></h4>
 
 
     <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
@@ -64,7 +64,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
         <div class='input-group task'>
         <label class="input-group-addon input-group-addon-tasks">
 
-            <div class="dropdown task_type" data-task-type="textarea">
+            <div class="dropdown task_type" data-task-type="text">
                 <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"><?= Yii::$app->_L->get('lesson_tasks_type_text'); ?>
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
@@ -182,7 +182,8 @@ $this->title = Yii::$app->_L->get("lesson_title");
             , [
                 'class' => 'btn btn-primary',
                 'id'=>'lesson_btn_submit',
-                'onsubmit' => 'lesson_exact_onsubmit();'
+                //'onclick' => 'return lesson_exact_validate_tasks();'
+                'onclick' => 'if(lesson_exact_validate_tasks()!==false){this.form.submit();}'
                 ]) ?>
         </div>
         

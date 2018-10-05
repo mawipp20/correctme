@@ -10,10 +10,6 @@
     background:transparent;
     border-width: 0px
 }
-.input-group-addon-student-join{
-    text-align: right;
-    min-width:140px;
-}
 .input-group-addon-teacher{
     text-align: right;
     min-width:180px;

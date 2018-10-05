@@ -4,7 +4,7 @@ var init_title_validation = false;
 
 function taskO(){
     this.num = "1";
-    this.type = "textarea";
+    this.type = "text";
     this.task_text = "";
 }
 
@@ -218,7 +218,7 @@ function split_task_text(elem_or_string){
         type_use = this_task.find(".task_type").attr("data-task-type");
         insert_where = this_task;
     }
-
+    
     var arr = str.split("\n");
 
     /** add an empty element at the end */
@@ -228,6 +228,7 @@ function split_task_text(elem_or_string){
     
     for(i = 0; i < arr.length; i++){
         var t = arr[i];
+        var this_type_use = type_use;
         if(t != ""){
             
             /** numbered tasks texts with dots or bracket are cleaned of these numbers */
@@ -238,21 +239,26 @@ function split_task_text(elem_or_string){
             var line_arr = t.split("=");
             if(line_arr.length > 1){
                 if(typeof controller_lesson["taskTypes"][line_arr[0].trim()] != "undefined"){
-                    type_use = line_arr[0].trim();
-                }else{
+                    this_type_use = line_arr[0].trim();
+                }
+                /**
+                else{
                     type_use = "info";
                     res_undefined_types[res_undefined_types.length] = "[" + (i + 1) + "] " + line_arr[0].trim();
                 }
+                */
                 line_arr.shift();
             }
-            new_tasks[new_tasks.length] = [line_arr.join("=").trim(), type_use, insert_where];
+            new_tasks[new_tasks.length] = [line_arr.join("=").trim(), this_type_use, insert_where];
         }
     }
+    /**
     if(res_undefined_types.length > 0){
         if(!confirm(_L_lesson["lesson_tasks_split_text_msg_task_type_undefined"] + "\n\n" + res_undefined_types.join("\n"))){
             return false;
         }
     }
+    */
     for(i = 0; i < new_tasks.length; i++){
         addTask(new_tasks[i][0], new_tasks[i][1], new_tasks[i][2]);
     }
@@ -266,6 +272,8 @@ function split_task_text(elem_or_string){
 }
 
 function lesson_exact_validate_tasks(){
+    
+    try{
     
     /** in case of quick lesson without specific task texts: skip tasks validation */
     if($('#tasks').length == 0){return true;}
@@ -283,7 +291,6 @@ function lesson_exact_validate_tasks(){
         this_task.num = this_num;
         new_tasks[this_num] = this_task;
     }    
-    
     $('#tasks').children('.task').each(function() {
         var this_text = $(this).find(".task_input").val();
         if(this_text != ''){
@@ -302,7 +309,9 @@ function lesson_exact_validate_tasks(){
         return new_tasks;
     }
     return ret;
+    }catch(err) {console.log(err);return false;}
 }
+
 function lesson_file_onchange(e){
     $('#lessonFile-info').css("color", "black");
     $('#lessonFile-info').html($(e).val());

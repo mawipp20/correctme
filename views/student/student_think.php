@@ -77,18 +77,6 @@ function cmConfigO(){
     this.displayBtnHelp = <?= MyHelpers::cmConfigJsValue("cmConfig_displayBtnHelp") ?>;
     this.studentRedirectAfterLastAnswer = <?= MyHelpers::cmConfigJsValue("cmConfig_studentRedirectAfterLastAnswer") ?>;
     this.taskFinishedButtonMoveOn = <?= MyHelpers::cmConfigJsValue("cmConfig_taskFinishedButtonMoveOn") ?>;
-/**    
-
-    this.displayThinkingMinutes = false;
-    this.displayTaskNavSecond = false;
-    this.displayTaskLabelNum = false;
-    this.displayBtnHelp = false;
-    this.studentRedirectAfterLastAnswer = true;
-    this.taskFinishedButtonMoveOn = true;
-    this.restcorrectmeBaseUrl = '<?= Yii::$app->params["restcorrectmeBaseUrl"] ?>';
-    this.restcorrectmePath = '<?= Yii::$app->params["restcorrectmePath"] ?>';
-*/
-
 
 }
 var cmConfig = new cmConfigO();

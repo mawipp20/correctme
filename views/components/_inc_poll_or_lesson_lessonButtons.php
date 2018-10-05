@@ -2,7 +2,7 @@
 <!-- start buttons for cooperative lessons in poll_or_lesson.php -->
 
     <div id="lesson_div" style="">
-        <h3 style="margin-top: 3em; margin-bottom: 1em;">
+        <h3 style="margin-top: 1.5em; margin-bottom: 1em;">
         <?= Yii::$app->_L->get('poll_or_lesson_headline1_lesson'); ?>
         </h3>
             <?php
