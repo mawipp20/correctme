@@ -8,6 +8,7 @@ use app\models\Language;
 /**
  * This is the model class for table "lesson".
  *
+ * @property integer $schoolId
  * @property string $startKey
  * @property string $teacherKey
  * @property integer $teacherId
@@ -271,6 +272,7 @@ class Lesson extends \app\components\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'schoolId' => '',
             'startKey' => '',
             'teacherKey' => '',
             'teacherId' => '',

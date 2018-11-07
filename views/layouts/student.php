@@ -55,27 +55,11 @@ use yii\widgets\Breadcrumbs;
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            //['label' => Yii::$app->_L->get('top_nav_student_cancel'), 'url' => ['/student/cancel']],
             '<button class="btn btn-success navbar-btn navbar-student-btn"'
-            .' onclick=\'window.location.href="'.\Yii::$app->getUrlManager()->getBaseUrl().'/student/cancel";\''
+            //.' onclick=\'window.location.href="'.\Yii::$app->getUrlManager()->getBaseUrl().'/student/commit_single";\''
+            .' onclick=\'commit_dialog();\''
             .'>'
             .Yii::$app->_L->get('top_nav_student_finish_'.$lesson_type).'</button>',
-            /**
-            ['label' => 'About', 'url' => ['/site/about_'.Yii::$app->params["cmPollOrLesson"]]],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-            */
         ],
     ]);
     NavBar::end();

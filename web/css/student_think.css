@@ -21,6 +21,9 @@
 .task_how_true_often_button_selected{
     background-color: rgb(0,153,0);
 }
+.task_how_true_often_button_selected:hover{
+    background-color: rgb(0,153,0);
+}
 .task_how_true_often_button_dont_know{
     border-width: 2px;
     background-color: white;
@@ -54,7 +57,7 @@
     margin-right: 0.3em;
     margin-bottom: 0.3em;
     border:1px solid black;
-    border-radius: 0;
+    border-radius: 3px;
 }
 .btn_task:hover{
 }
@@ -118,10 +121,18 @@
 #student_think_btn_task_help{
     margin-left: 2em;
 }
+.student_think_btn_edit{
+    b/order: 2px solid rgb(92, 184, 92);
+}
+.student-think-commit-dialog-modal-header-span{
+    font-weight:bold
+}
+.student_think_textarea_finished{
+    border: 2px solid rgb(92, 184, 92);
+}
 .fa-check-cm{
     color:rgb(92,184,92)    
 }
-
 
 .invisible{visibility: hidden;}
 .background_yellow{background-color: yellow;}
@@ -131,5 +142,6 @@
 .no_padding_left{padding-left: 0em;}
 .display_none{display:none;}
 .display_inline{display:inline;}
+.b/order_width_0{border-width:0px;}
 
 

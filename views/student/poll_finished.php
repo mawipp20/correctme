@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h3><?= Yii::$app->_L->get('poll_finished_student_title') ?></h3>
 
 
-    <p>
+    <p style="margin-top: 2em;">
         <?= Yii::$app->_L->get('poll_finished_student_message') ?>
     </p>
 

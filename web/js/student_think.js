@@ -69,7 +69,7 @@ var state = {
     ,"numNavButtons":5 /** is adapted to window width */
     ,"rest_status":"" /** empty string means display tasks for the first time; 0 = not in connection; 1 waiting for rest answer */
     ,"restInterval_seconds":5000 /** interval millisecondes when the the rest service is called */
-    ,"howOftenNextTaskDelay":500 /** interval milliseconds when the the rest service is called */
+    ,"nextTaskDelay":500 /** interval milliseconds when the the rest service is called */
     ,"hasChanges":0
     ,"lastSaved":0
     ,"answer_text":""
@@ -94,6 +94,10 @@ $(document).ready(function() {
 });
 
 function getTask(){
+    
+    if(task.num > lesson.numTasks){
+        state["goto_taskNum"] = lesson.numTasks;
+    }
         
     /** taskNav: spinning loading sign next to position of last click */
     
@@ -137,7 +141,15 @@ function getTask(){
         }
         task.task_text = this_text;
     }
-  
+    
+    // #(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))
+    
+    var link_matches = task.task_text.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+    if(link_matches != null){
+        for(var i = 0; i < link_matches.length; i++){
+            task.task_text.replace(link_matches[i], "<a href='" + link_matches[i] + "' target='_blank'>" + link_matches[i] + "</a>");
+        }
+    }
 
     if(typeof answer_all[state["goto_taskNum"]] != "undefined"){
         answer = answer_all[state["goto_taskNum"]];
@@ -211,6 +223,8 @@ function rest_service(redirectTo){
     query["startKey"] = lesson["startKey"];
     query["studentKey"] = student["studentKey"];
     query["answer_all"] = answer_all;
+    query["student.status"] = student.status;
+    
     
     var this_warning = _L["student_think_rest_service_warning"];
     if(Object.keys(task_all).length == 0){this_warning = _L["student_think_rest_service_warning_start"];}
@@ -247,7 +261,7 @@ function rest_service(redirectTo){
                                    
             }else{
                 
-                //console.log(data);
+console.log("my__data:" + redirectTo);
                 
                 if(redirectTo != ""){window.location.href = redirectTo; return;}
                 
@@ -381,12 +395,17 @@ function displayTasks(){
     }
 
     if(task.type == "text"){
-        var str = '<textarea class="form-control text-area" rows="1"';
+        
+        var this_class = "form-control text-area";
+        if(answer.status == "finished"){this_class += " student_think_textarea_finished"}
+        var str = '<textarea class="' + this_class + '" rows="1"';
         str += ' id="answer_text" oninput="textarea_oninput(this);">';
         str += answer["answer_text"] + '</textarea>';
         taskDisplay.append($(str));
         $(".text-area").autoGrow();
-        $("#answer_text").focus();
+        if(answer.status != "finished"){
+            $("#answer_text").focus();
+        }
     }
 
     if(task_types[task.type]["type"] == "scale"){
@@ -461,7 +480,7 @@ function displayTaskNavigation(){
     if(lesson.numTasks == 1){return;}
     
     /** horizontal align */
-    if(task.type == 'text'){
+    if(task.type == 'text' | task.type == 'info' | task.type == 'sysinfo'){
         taskNav_first_left.addClass('text-center');
     }else{
         taskNav_first_left.removeClass('text-center');
@@ -481,7 +500,7 @@ function displayTaskNavigation(){
             & task.answer_text == '')
         ){
         taskNav_first_left.children("button").last().addClass('btn_task_inactive');
-        taskNav_first_left.children("button").last().addClass('display_none');
+        //taskNav_first_left.children("button").last().addClass('display_none');
     }else{
         taskNav_first_left.children("button").last().on("click", "", function( event ) {
             state["eventPageX"] = event.pageX;
@@ -701,31 +720,24 @@ function textarea_oninput(elem){
 function show_btn_finished(){
     
     taskNav_first_left = $('#taskNav_first_left');
-    
-    /** check the status of the current task */   
-    this_answer_is_finished = false;
-    if(typeof answer_all[task.num] != 'undefined'){
-        if(answer_all[task.num]["status"] == 'finished'){
-            this_answer_is_finished = true;
-        }
-    }
         
-    /** finish and save button */
-    btn_class = 'btn btn-lg btn_task';
-    if(this_answer_is_finished){
-        btn_class += ' btn-success';
+   /** finish or edit-again button */
+    var btn_class = 'btn btn-lg btn_task';
+    if(task.type == "info"){btn_class += " display_none"}
+    var finished_edit_symbol = '<i class="fa fa-check fa-check-cm aria-hidden="true"></i>';
+    if(answer["status"] == "finished" & lesson.type == "lesson"){
+        btn_class += ' student_think_btn_edit';
+        finished_edit_symbol = '<i class="fa fa-edit aria-hidden="true"></i>';
     }
+
     
     var this_step = 0;
     if(cmConfig.taskFinishedButtonMoveOn){
         this_step = 1;
     }
-    var str = '<button type="button" id="student_think_btn_task_finished" class="' + btn_class + '">';
-    
-    str += '<i class="fa fa-check';
-    if(!this_answer_is_finished){str += ' fa-check-cm';}
-    str += '" aria-hidden="true"></i>';
-    str += '</button>';
+
+    var str = '<button type="button" id="student_think_btn_task_finished" class="' + btn_class + '">';    
+    str += finished_edit_symbol + '</button>';
     taskNav_first_left.append($(str));
     taskNav_first_left.children("button").last().on("click", "", function( event ) {
         if(answer["status"] == "finished"){
@@ -740,32 +752,81 @@ function show_btn_finished(){
         state["hasChanges"] = true;
         saveAnswer();
         state["eventPageX"] = event.pageX;
-        if(whenPollFinished()){return;}
-        state["goto_taskNum"] = task["num"] + this_step;
-        getTask();
-    });    
-}
-function whenPollFinished(){
-    if(state["goto_taskNum"] == lesson.numTasks){
-        if(cmConfig.studentRedirectAfterLastAnswer){
-            rest_service('poll_finished');
-            //$('#taskNav_first').html('<div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i></div>');
-            
-            
-            
-            /**
-                <div id="displayTasks">
-        <div id="taskNavWait"><i class="fa fa-circle-o-notch fa-spin"></i></div>
-    </div>
-    <div id="taskNav_first" class="row"></div>
-    <div class="lessonInfo" id="lessonInfo"></div>
-    <div id="taskNav_second"></div>
+        if(answer["status"] == "finished"
+         ){
+            $("#answer_text").addClass("student_think_textarea_finished");
+            if(task.num < lesson.numTasks){
+                setTimeout(function(){
+                    state["goto_taskNum"] = task["num"] + this_step;
+                    getTask();
+                }, state["nextTaskDelay"]);
+            }else{
+                    getTask();
+            }
+        }else{
+            getTask();
+        }
+    });
 
-            */
-            return true;
+    if(task.num == lesson.numTasks & (task.type == "info" | whenAllFinished())){
+        if(lesson.type == "lesson"){
+            commit_dialog(true);
+        }else if(lesson.type == "poll" & task.type == "info"){
+            var this_btn = "<button class='btn btn-success' onclick='";
+            this_btn += "saveAnswer();rest_service(\"poll_finished\");'>";
+            this_btn += _L["student_think_finished_button"] + "</button>";
+            $('#taskNav_first_left').append(this_btn);
         }
     }
-    return false;
+
+
+}
+
+function commit_dialog(show_btn){
+    
+        var this_answer_status = get_answer_status();
+        if(this_answer_status.unfinished == 0){
+            $(".student-think-commit-dialog-modal-header-span").html(_L["student_think_commit_header_ready"]);
+            $(".student-think-commit-dialog-modal-content-span").html(_L["student_think_commit_content_ready"]);
+        }else{
+            var this_text = _L["student_think_commit_header_warning"].replace("#unfinished#", this_answer_status.unfinished);
+            $(".student-think-commit-dialog-modal-header-span").html(this_text);
+            $(".student-think-commit-dialog-modal-content-span").html(_L["student_think_commit_content_warning"]);
+        }
+        if(show_btn){
+            if($('#taskNav_first #student_think_btn_commit_toggle').length == 0){
+                var this_btn = $("#student_think_btn_commit_toggle").clone();
+                $('#taskNav_first_left').append(this_btn);
+                this_btn.show();
+            }
+        }else{
+            $("#student_think_btn_commit_toggle").click();
+        }
+        $("#student_think_btn_commit_confirmed").on("click", "", function( event ) {
+            cm_spinner();
+            if(lesson.type == "lesson"){
+                window.location.href = 'commit_single';
+            }else{
+                window.location.href = 'poll_finished';
+            }
+        });
+    
+}
+
+function whenAllFinished(){
+    var this_answer_status = get_answer_status();
+    if(this_answer_status["unfinished"] == 0 & task.type != "info"){
+        if(cmConfig.studentRedirectAfterLastAnswer){
+            if(lesson.type == "poll"){
+                rest_service('poll_finished');
+            }else{
+                rest_service('commit_single');
+            }
+        }
+        return true;
+    }else{
+        return false;
+    }
 }
 
 function task_how_often_true_button_click(elem){
@@ -775,19 +836,28 @@ function task_how_often_true_button_click(elem){
     state["hasChanges"] = true;
     saveAnswer();
     
-    if(whenPollFinished()){return;}
-    
-    $('.task_label').css('background-color', 'white');
-    $('.task_how_true_often_button').each(function() {
-        if(!$(this).is(elem)){
-            $(this).addClass("invisible");
+    if(task.num == lesson.numTasks){
+        if(lesson.type == "lesson"){
+            /** display commit button */
+            getTask();
+            commit_dialog(true);
+        }else{
+            whenAllFinished();
+            return;
         }
-    });
+    }else{
+        $('.task_label').css('background-color', 'white');
+        $('.task_how_true_often_button').each(function() {
+            if(!$(this).is(elem)){
+                $(this).addClass("invisible");
+            }
+        });
+        setTimeout(function() {
+            state["goto_taskNum"] = task["num"] + 1;
+            getTask();
+        }, state["nextTaskDelay"])
+    }
     
-    setTimeout(function() {
-        state["goto_taskNum"] = task["num"] + 1;
-        getTask();
-    }, state["howOftenNextTaskDelay"])
 }
 
 
@@ -824,4 +894,33 @@ function state_error_alert_display(text, alert_type, timeout){
             });
         }, timeout);
     }
+}
+
+function get_answer_status(){
+        //var empty_answers_count = 0;
+        var working_answers_count = 0;
+        var finished_answers_count = 0;
+        var task_count = 0;
+
+        for(key in task_all){
+            if(task_all[key]["type"] != "info"
+               & task_all[key]["type"] != "sysinfo"){
+                    task_count++;}
+        }
+
+        
+        for(key in answer_all){
+            //if(task_all[key]["type"] == "info"){console.log("info!");continue;}
+            if(answer_all[key]["status"] == "working"){working_answers_count++;}
+            if(answer_all[key]["status"] == "finished"){finished_answers_count++;}
+        }
+        
+console.log(task_count + "//" + finished_answers_count);        
+        
+    return {"all": task_count,
+            "working": working_answers_count,
+            "finished": finished_answers_count,
+            "unfinished": task_count - finished_answers_count,
+            "empty": lesson.numTasks - finished_answers_count - working_answers_count, 
+            }
 }

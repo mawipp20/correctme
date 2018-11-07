@@ -31,29 +31,66 @@ $this->title = Yii::$app->_L->get("teacher_title");
          
         $deadline = new DateTime($lesson->insert_timestamp);
         $deadline->modify('+' . $lesson->thinkingMinutes . ' minutes');
+        $deadline_str = "<span style='white-space:nowrap;'>".Yii::$app->formatter->asDate($deadline)."</span>";
         
         $msg_deadline = Yii::$app->_L->get('teacher_join_poll_one_activation_key_success_deadline');
-        $msg_deadline = str_replace('#deadline#', '<b>'.Yii::$app->formatter->asDate($deadline).'</b>', $msg_deadline);
+        $msg_deadline = str_replace('#deadline#', '<b>'.$deadline_str.'</b>', $msg_deadline);
          
         $deadline_results = $deadline;
         $deadline_results->modify('+2 week');
+        $deadline_results_str = "<span style='white-space:nowrap;'>".Yii::$app->formatter->asDate($deadline_results)."</span>";
         
         $msg_deadline_results = Yii::$app->_L->get('teacher_join_poll_one_activation_key_success_deadline_results');
-        $msg_deadline_results = str_replace('#deadline_results#', '<b>'.Yii::$app->formatter->asDate($deadline_results).'</b>', $msg_deadline_results);
+        $msg_deadline_results = str_replace('#deadline_results#', '<b>'.$deadline_results_str.'</b>', $msg_deadline_results);
          
         echo $msg_success."<br /><br />".$msg_deadline."<br />".$msg_deadline_results;      
     ?>
 </div>
 
+
+
+
 <h4 style="margin-bottom: 1em; margin-top: 2em;">
-<?php echo Yii::$app->_L->get('teacher_poll_codes_common_key'); ?>
+<?php echo Yii::$app->_L->get('teacher_poll_codes_activation_key'); ?>
 </h4>
 
-<h2 style="margin-bottom: 1em; margin-top: 1em; font-size: 36pt; padding-left: 4em;">
-<?php echo $template_teacher->activationkey; ?>
-</h2>
+<div class="alert alert-info" style="margin-bottom: 2em; margin-top: 0.5em; padding-left: 3em; padding-top: 0.1em; padding-bottom:0.1em; color: black;">
+<?php  
+    echo "<span style='font-size: 32pt;'>";
+    echo $template_teacher->activationkey;
+    echo "</span><span style='font-size: 16pt; color: black;'>";
+    echo "&nbsp;&nbsp;&nbsp;&nbsp; ".Yii::$app->_L->get('gen_valid_until')." ".$deadline_str;
+    echo "</span>";
+?>
+</div>
 
-    <blockquote>
-    <p><?= Yii::$app->_L->get('teacher_poll_codes_explanation') ?></p>
-    </blockquote>
+<h4 style="margin-bottom: 1em; margin-top: 2em;">
+<?php echo Yii::$app->_L->get('teacher_poll_codes_result_key'); ?>
+</h4>
+
+<div class="alert alert-warning" style="margin-bottom: 2em; margin-top: 0.5em; padding-left: 3em; padding-top: 0.1em; padding-bottom:0.1em;">
+
+<?php  
+    echo "<span style='font-size: 32pt; color: black;'>";
+    echo $template_teacher->resultkey;
+    echo "</span><span style='font-size: 16pt; color: black;'>";
+    echo "&nbsp;&nbsp;&nbsp;&nbsp; ".Yii::$app->_L->get('gen_valid_until')." ".$deadline_results_str;
+    echo "</span>";
+?>
+</div>
+
+<div class="no-print">
+    <button class="btn btn-primary" onclick='
+        window.print();
+    '>
+        <i class="fa fa-print" aria-hidden="true"></i>
+        Diese Seite
+    </button>
+    <button class="btn btn-primary" onclick='
+        window.location.href = "teacher_poll_code_single_print";
+    '>
+        <i class="fa fa-print" aria-hidden="true"></i>
+        Infos für Lehrer/innen
+    </button>
+</div>
 

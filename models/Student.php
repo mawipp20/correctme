@@ -16,6 +16,7 @@ if(!function_exists("_L")){include_once(\Yii::$app->basePath.'\language\language
  * @property string $teacher_id
  * @property string $name
  * @property string $studentKey
+ * @property string $remote_ip
  * @property integer $position
  * @property string $stats
  * @property string $status
@@ -50,7 +51,7 @@ class Student extends \app\components\ActiveRecord
             [['startKey', 'name', 'studentKey'], 'required'],
             [['position'], 'integer'],
             [['teacher_id'], 'integer'],
-            [['stats', 'status'], 'string'],
+            [['stats', 'status', 'remote_ip'], 'string'],
             [['lastchange', 'insert_timestamp'], 'safe'],
             [['startKey', 'studentKey'], 'string', 'max' => 12],
             [['name'], 'string', 'max' => 100],
@@ -70,6 +71,7 @@ class Student extends \app\components\ActiveRecord
             'teacher_id' => '',
             'name' => '',
             'studentKey' => '',
+            'remote_ip' => '',
             'position' => '',
             'stats' => '',
             'status' => '',
@@ -84,8 +86,9 @@ class Student extends \app\components\ActiveRecord
             if($this->status == ""){
                 $this->status = "empty";
             }
+            if(isset($_SERVER["REMOTE_ADDR"])){$this->remote_ip = $_SERVER["REMOTE_ADDR"];}
             if($this->studentKey == ""){
-                $this->studentKey = "s-".$this->generateUniqueRandomString("studentKey", 6);
+                $this->studentKey = "s-".$this->generateUniqueRandomString("studentKey", 8);
             }
             if($this->name == ""){
                 $this->name = $this->generateUniqueRandomString("name", 10);

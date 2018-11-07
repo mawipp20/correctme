@@ -24,12 +24,13 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 //exit();
 
+$team_poll_results_limit = 3;
 
 
 $show_team_results = false;
 if ($lesson["poll_type"] != "single"
             //& $numStudents["mine"] >= $countStudentsLimit
-            & $teachersArr["withStudents"] >= 3
+            & $teachersArr["withStudents"] >= $team_poll_results_limit
             ){
             $show_team_results = true;
             }
@@ -42,7 +43,7 @@ if ( $show_team_results
             }
 
 $msg_team_result_not_yet = "";
-if($teachersArr["withStudents"] < 3){
+if($teachersArr["withStudents"] < $team_poll_results_limit){
     $msg_team_result_not_yet .= Yii::$app->_L->get('teacher_poll_results_not_enough_teachers')." ";
 }
 if($numStudents["mine"] < $countStudentsLimit){

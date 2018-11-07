@@ -37,8 +37,36 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
         ]);
         echo "<div id='modalContent'>".Yii::$app->_L->get('student_think_messageHelpText')."</div>";
-        echo '<div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">'.Yii::$app->_L->get('gen_btn_close_dialog').'</button></div>';
+        echo '<div class="modal-footer modal-footer-cm"><button type="button" class="btn btn-primary" data-dismiss="modal">'.Yii::$app->_L->get('gen_btn_close_dialog').'</button></div>';
         Modal::end();
+        
+        
+        Modal::begin([
+            'header' => "<span class='student-think-commit-dialog-modal-header-span'></span>",
+            'id'=>'student_think_btn_commit',
+            'toggleButton' => ['label' => Yii::$app->_L->get('student_think_finished_button')
+                                ,'class' => 'btn btn-success display_none'
+                                //,'style' => ["border-width" => "0px", "font-size" => "14px"]
+                                ,'id' => 'student_think_btn_commit_toggle'
+                                ],
+        ]);
+        echo "<div id='modalContent'><span class='student-think-commit-dialog-modal-content-span'></span></div>";
+        echo '<div class="modal-footer modal-footer-cm">';
+        echo '<button type="button" class="btn btn-default" data-dismiss="modal">'.Yii::$app->_L->get('gen_cancel').'</button>';
+        echo  Html::button(Yii::$app->_L->get('student_think_finished_button')
+            , [
+                'class' => 'btn btn-success',
+                'data-dismiss' => 'modal',
+                'id'=>'student_think_btn_commit_confirmed',
+                //'onclick' => 'window.location.href = "'.Yii::$app->getUrlManager()->getBaseUrl().'/student/commit_single',
+                ]);
+        echo '</div>';
+        Modal::end();
+        
+        
+        
+        
+        
     ?>
 
 
@@ -62,6 +90,21 @@ foreach($lesson->taskTypes as $key => $val){
 }
 
 ?>
+
+    <?php
+        Modal::begin([
+            'header' => Yii::$app->_L->get('gen_complete'),
+            'toggleButton' => [ 'style' => 'display:none;','id' => 'modal_spinner'],
+            'size' => "modal-sm"
+        ]);
+        echo '<div id="modalContent">';
+        echo '<p style="text-align:center">';
+        echo '<i style="font-size:24pt" class="fa fa-spinner fa-spin" aria-hidden="true"></i>';
+        echo '<p/></div>';
+        Modal::end();
+    ?>
+
+
 
 <script>
 var _L = <?= json_encode(Yii::$app->_L->get('student_think')); ?>;

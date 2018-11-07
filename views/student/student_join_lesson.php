@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\bootstrap\Modal;
+
 
 use app\assets\AppAsset;
 AppAsset::register($this);
@@ -17,6 +19,7 @@ $this->title = Yii::$app->_L->get("student_join_".Yii::$app->params["cmPollOrLes
             echo '<div class="alert alert-danger">' . $message . "</div>\n";
         }
     ?>
+
 
 <div class="Lesson">
 
@@ -56,11 +59,30 @@ $this->title = Yii::$app->_L->get("student_join_".Yii::$app->params["cmPollOrLes
             ; ?>
 
         <div class="form-group" style="margin-top: 1em;">
-            <?= Html::submitButton(Yii::$app->_L->get('student_join_lesson_btn_submit'), ['class' => 'btn btn-primary', 'id'=>'student_join_btn_submit']) ?>
+            <?= Html::submitButton(Yii::$app->_L->get('student_join_lesson_btn_submit'),
+             ['class' => 'btn btn-primary'
+             , 'id'=>'student_join_btn_submit'
+             , 'onclick' => 'cm_spinner();'
+             ]) ?>
         </div>
+
+
+    <?php
+        Modal::begin([
+            'header' => Yii::$app->_L->get('gent_to_start'),
+            'toggleButton' => [ 'style' => 'display:none;','id' => 'modal_spinner'],
+            'size' => "modal-sm"
+        ]);
+        echo '<div id="modalContent">';
+        echo '<p style="text-align:center">';
+        echo '<i style="font-size:24pt" class="fa fa-spinner fa-spin" aria-hidden="true"></i>';
+        echo '<p/></div>';
+        Modal::end();
+    ?>
+
+
+
     <?php ActiveForm::end(); ?>
 
 </div>
 <script>var _L_lesson = <?= json_encode(Yii::$app->_L->get('lesson')); ?>;</script>
-
-<!-- Lesson -->

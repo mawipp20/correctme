@@ -12,109 +12,9 @@ LessonAsset::register($this);
 
 $this->title = Yii::$app->_L->get("poll_title");
 
-        
 ?>
 
-<div id='switch_activate_create' class='well well-lg  well-correctme-as-button'
-    style="margin-top: 1em; margin-bottom: 3em;<?php if(!$show_teacher_join){echo 'display:none;';} ?>"
-    onclick='   
-        $("#switch_activate_create").hide();
-        $("#activate_poll").hide();
-        $("#lesson_div").show();
-        $("#lesson-title").focus();
-        '
->
-    <?= Yii::$app->_L->get('lesson_switch_activate_create') ?>
-</div>
-
-
-
-<div id='activate_poll' style="<?php if(!$show_teacher_join){echo 'display:none;';} ?>">
-
-
-    <h3 style="margin-bottom: 20px;"><?= Yii::$app->_L->get('lesson_teacher_join_poll_title') ?></h3>
-
-        <!-- activate poll -->
-        
-        <?php $form1 = ActiveForm::begin([
-                    'action' => ['teacher_join_poll'],
-                    'method' => "get",    
-                    'validateOnChange'=>true,
-                    'validateOnBlur'=>false,
-        ]);        
-        ?>
-
-          <?= $form1->field($model, 'type')->hiddenInput(['value' => 'poll'])->label(false); ?>
-
-        <?php if(Yii::$app->session->hasFlash('login_error')): ?>
-            <div class="alert alert-danger" role="alert">
-                <?php echo Yii::$app->session->getFlash('login_error'); ?>
-            </div>
-        <?php endif; ?>
-
-        <div class="row">
-
-            <div  class="col-md-4">
-                <?php
-                echo $form1->field($teacher, 'activationkey'
-                , [
-                'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
-                ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-                ]
-                )->textInput([
-                'autofocus' => true,
-                ])
-                ->label('<b>'.Yii::$app->_L->get('lesson_teacher_join_activationkey_label').'</b>')
-                ;
-                ?>
-            </div>
-
-            <div class="col-md-8">
-                <?= Html::submitButton(Yii::$app->_L->get('lesson_teacher_join_poll_btn_submit_activationkey'), ['class' => 'btn btn-primary']) ?>
-            </div>
-        </div>
-        <?php ActiveForm::end(); ?>
-        
-        <!-- get results -->
-
-        <?php $form2 = ActiveForm::begin([
-                    'action' => ['teacher_results'],
-                    'method' => "get",    
-                    'validateOnChange'=>true,
-                    'validateOnBlur'=>false,
-        ]);
-        ?>
-        <?php if(Yii::$app->session->hasFlash('results_error')): ?>
-            <div class="alert alert-danger" role="alert">
-                <?= Yii::$app->session->getFlash('results_error') ?>
-            </div>
-        <?php endif; ?>
-        <div class="row" style="margin-top: 1em;">
-
-            <div  class="col-md-4">
-                <?php
-                echo $form2->field($teacher, 'resultkey'
-                , [
-                'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
-                ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
-                ]
-                )->textInput([
-                ])
-                ->label('<b>'.Yii::$app->_L->get('lesson_teacher_join_resultkey_label').'</b>')
-                ;
-                ?>
-            </div>
-
-            <div class="col-md-8">
-                <?= Html::submitButton(Yii::$app->_L->get('lesson_teacher_join_poll_btn_submit_resultkey'), ['class' => 'btn btn-primary']) ?>
-            </div>
-        </div>
-        <?php ActiveForm::end(); ?>
-
-</div>
-
-
-<div class="Lesson" id="lesson_div" style="<?php if($show_teacher_join){echo 'display:none;';} ?>">
+<div class="Lesson" id="lesson_div" style="">
 
 
     <h3 style="margin-top: 0em; margin-bottom: 20px; line-height:150%;"><?= Yii::$app->_L->get('poll_welcome') ?></h3>
@@ -266,7 +166,7 @@ $this->title = Yii::$app->_L->get("poll_title");
         </div>
     </div>    
 
-        <div id="div_lesson_submit" class="" style="margin-top: 2em; display: none;">
+        <div id="div_lesson_submit" class="" style="margin-top: 2em; display: none; vertical-align:bottom;">
                 
             <?php echo  Html::submitButton(Yii::$app->_L->get('poll_submit_single')
                 , [
@@ -283,6 +183,8 @@ $this->title = Yii::$app->_L->get("poll_title");
                 'onclick' => '$("#poll_type").val("team");
                                 if(lesson_exact_validate_tasks()!==false){this.form.submit();}'
                 ]) ?>
+
+        <a style="font-size: 24pt;" href="about_poll" target="_blank"><i class="fa fa-question-circle-o"></i></a>
 
         </div>
        

@@ -9,6 +9,9 @@ AppAsset::register($this);
 use app\assets\LessonAsset;
 LessonAsset::register($this);
 
+use yii\bootstrap\Modal;
+
+
 $this->title = Yii::$app->_L->get("lesson_title");
 
 ?>
@@ -29,6 +32,22 @@ $this->title = Yii::$app->_L->get("lesson_title");
 <div class="Lesson">
 
 <?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>
+
+
+
+    <?php
+        Modal::begin([
+            'header' => Yii::$app->_L->get('lesson_initialize_spinner'),
+            'toggleButton' => [ 'style' => 'display:none;','id' => 'modal_spinner'],
+            'size' => "modal-sm"
+        ]);
+        echo '<div id="modalContent">';
+        echo '<p style="text-align:center">';
+        echo '<i style="font-size:24pt" class="fa fa-spinner fa-spin" aria-hidden="true"></i>';
+        echo '<p/></div>';
+        Modal::end();
+    ?>
+
 
 
 <ul class="nav nav-tabs nav-tabs-lesson">
@@ -53,11 +72,41 @@ $this->title = Yii::$app->_L->get("lesson_title");
 
 
     <input type='hidden' id='new_tasks' name='new_tasks' value=''>       
-    <?= $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
+    <?php echo $form->field($model, 'numTasks',[])->hiddenInput(['value'=>1])->label(false); ?>
 
+    <p>
+                <?php
+                if($model->description==""){
+                    echo  Html::a(Yii::$app->_L->get('description_show_input_link')
+                    , ['#']
+                    , [ 'onclick' => '$(".field-lesson-description").show();
+                                      $("#lesson-description").focus();
+                                      $("#description_show_input_link").hide();
+                                      return false;'
+                        ,'id' => 'description_show_input_link'
+                      ]
+                    );
+                }
+                ?>
 
+          <?php
+            $this_css_display = 'none';
+            if($model->description != ""){$this_css_display = 'inline';}
+            echo $form->field($model, 'description'
+            , [
+            'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
+            ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
+            ,'options' => ['style' => 'display:'.$this_css_display.';']
+            ]
+            )->textInput([
+            'placeholder'=>Yii::$app->_L->get('description_placeholder')
+            , 'value' => $model->description
+            ])
+            ->label(Yii::$app->_L->get('description_label'))
+            ;
+            ?>
 
-      
+    </p>
     
     <div id="tasks">
         
@@ -105,10 +154,11 @@ $this->title = Yii::$app->_L->get("lesson_title");
     </div>
     
     <div style="margin-top: 1.5em;">
+
     
           <?php
             $this_autofocus = false;
-            if($model->numStudents == "" & !$this_autofocus){$this_autofocus = true; $autofocus = true;}
+            //if($model->numStudents == "" & !$this_autofocus){$this_autofocus = true; $autofocus = true;}
             echo $form->field($model, 'numStudents'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
@@ -124,7 +174,7 @@ $this->title = Yii::$app->_L->get("lesson_title");
 
           <?php
             $this_autofocus = false;
-            if($model->numTeamsize == "" & !$this_autofocus){$this_autofocus = true; $autofocus = true;}
+            //if($model->numTeamsize == "" & !$this_autofocus){$this_autofocus = true; $autofocus = true;}
             echo $form->field($model, 'numTeamsize'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-lesson' ]
@@ -152,7 +202,6 @@ $this->title = Yii::$app->_L->get("lesson_title");
                     );
                 }
                 ?>
-                
     </p>
 
           <?php
@@ -182,8 +231,8 @@ $this->title = Yii::$app->_L->get("lesson_title");
             , [
                 'class' => 'btn btn-primary',
                 'id'=>'lesson_btn_submit',
-                //'onclick' => 'return lesson_exact_validate_tasks();'
-                'onclick' => 'if(lesson_exact_validate_tasks()!==false){this.form.submit();}'
+                'onclick' => 'if(lesson_exact_validate_tasks()!==false){
+                    cm_spinner();this.form.submit();}'
                 ]) ?>
         </div>
         
@@ -198,7 +247,3 @@ var uploadedTasks = <?= json_encode($uploadedTasks); ?>;
 var controller_lesson = <?= json_encode($model); ?>;
 </script>
 
-<?php //echo '<div class="alert alert-waring">' . print_r($uploadedTasks) . "</div>\n"; // print_r($uploadedTasks, true) ?>
-
-
-<!-- Lesson -->

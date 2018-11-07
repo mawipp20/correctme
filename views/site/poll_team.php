@@ -26,8 +26,8 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 <h3 style="margin-top: 0em; margin-bottom: 20px;">
     <?php 
-    if($model->title != ""){
-        echo $model->title;
+    if($lesson->title != ""){
+        echo $lesson->title;
     }else{
         echo Yii::$app->_L->get('student_join_poll_title');
     }
@@ -40,9 +40,9 @@ $this->title = Yii::$app->_L->get("teacher_title");
     <a class='btn btn-default' href="download_questions">
         <i class="fa fa-save" aria-hidden="true"></i>
         &nbsp;&nbsp;
-        <?= $model->numTasks ?>
-        <?= Yii::$app->_L->get('poll_save_questions') ?>
-        <?= Yii::$app->_L->get('gen_save') ?>
+        <?php echo $lesson->numTasks ?>
+        <?php echo Yii::$app->_L->get('poll_save_questions') ?>
+        <?php echo Yii::$app->_L->get('gen_save') ?>
     </a> 
 </div>
 
@@ -59,8 +59,8 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 
     <input type='hidden' id='teachers_collected' name='teachers_collected' value=''>       
-    <?= $form->field($model, 'poll_type')->hiddenInput()->label(false); ?>
-    <?= $form->field($teacher, 'name')->hiddenInput(["value"=>"template_teacher"])->label(false); ?>
+    <?php echo $form->field($lesson, 'poll_type')->hiddenInput()->label(false); ?>
+    <?php echo $form->field($teacher, 'name')->hiddenInput(["value"=>"template_teacher"])->label(false); ?>
     
 
           <?php
@@ -81,7 +81,7 @@ $this->title = Yii::$app->_L->get("teacher_title");
             ?>
 
           <?php
-            echo $form->field($model, 'thinkingMinutes'
+            echo $form->field($lesson, 'thinkingMinutes'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
@@ -98,26 +98,26 @@ $this->title = Yii::$app->_L->get("teacher_title");
             ;
             ?>
 
-            <h3>
-                <?= Yii::$app->_L->get('teachers_info_team_title') ?>
-            </h3>
+                                                        <h3 style="display: none;">
+                                                            <?php echo Yii::$app->_L->get('teachers_info_team_title') ?>
+                                                        </h3>
 
 
-            <div id='teacher_info_team' style="margin-top: 1em; margin-bottom: 2em;">
-                <p><?= Yii::$app->_L->get('teacher_info_team') ?></p>
+            <div id='teacher_info_team' style="margin-top: 2em; margin-bottom: 3em;">
+                <p><?php echo Yii::$app->_L->get('teacher_info_team') ?></p>
             </div>
             
 
 
             <div id="div_team_without_names">
-                <div id='teacher_info_team_with_names'>
-                    <p>
-                    <span style="">
-                        <?= Yii::$app->_L->get('teacher_info_team_without_names_title') ?>
-                    </span>
-                        <?= Yii::$app->_L->get('teacher_info_team_without_names') ?>
-                    </p>
-                </div>
+                                                        <div id='teacher_info_team_with_names' style="display: none;">
+                                                            <p>
+                                                            <span style="">
+                                                                <?php echo Yii::$app->_L->get('teacher_info_team_without_names_title') ?>
+                                                            </span>
+                                                                <?php echo Yii::$app->_L->get('teacher_info_team_without_names') ?>
+                                                            </p>
+                                                        </div>
                 <?php 
                 echo  Html::button(
                 Yii::$app->_L->get('teacher_info_team_without_names_btn')
@@ -129,33 +129,34 @@ $this->title = Yii::$app->_L->get("teacher_title");
                     ?>
             </div>
 
-            <div id='teacher_info_team_without_names' style="margin-top:  3em;">
-                <p>
-                <span style="">
-                    <?= Yii::$app->_L->get('teacher_info_team_with_names_title') ?>
-                </span>
-                    <?= Yii::$app->_L->get('teacher_info_team_with_names') ?>
-                </p>
-            </div>
+                                                        <div id='teacher_info_team_with_names' style="margin-top:  3em; display: none;">
+                                                            <p>
+                                                            <span style="">
+                                                                <?php echo Yii::$app->_L->get('teacher_info_team_with_names_title') ?>
+                                                            </span>
+                                                                <?php echo Yii::$app->_L->get('teacher_info_team_with_names') ?>
+                                                            </p>
+                                            
+                                                        <?php 
+                                                        echo  Html::button(
+                                                            '<i class="fa fa-user-plus" aria-hidden="true"></i>'
+                                                            .'&nbsp;&nbsp;&nbsp;&nbsp;'
+                                                            .Yii::$app->_L->get('teacher_info_team_with_names_btn')
+                                                        , [
+                                                            'class' => 'btn btn-primary',
+                                                            'id'=>'teachers_btn_add_team',
+                                                            'onclick' => 'teachers_add_names();'
+                                                            ])
+                                                            ?>
+                                                        </div>
 
-            <?php 
-            echo  Html::button(
-                '<i class="fa fa-user-plus" aria-hidden="true"></i>'
-                .'&nbsp;&nbsp;&nbsp;&nbsp;'
-                .Yii::$app->_L->get('teacher_info_team_with_names_btn')
-            , [
-                'class' => 'btn btn-primary',
-                'id'=>'teachers_btn_add_team',
-                'onclick' => 'teachers_add_names();'
-                ])
-                ?>
 
         <div id="team_div" style="display: none; margin-top: 1em;">
 
             <div id="team_names">
                 <div class='input-group teacher' style="">
                 <label class="input-group-addon">
-                    <?= Yii::$app->_L->get('teacher_team_member_label') ?>
+                    <?php echo Yii::$app->_L->get('teacher_team_member_label') ?>
                 </label>
                 <input type="text"
                      class="form-control teacher-name"
@@ -189,5 +190,5 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 </div>
 <script>
-var _L_lesson = <?= json_encode(Yii::$app->_L->get('teacher')); ?>;
+var _L_lesson = <?php echo json_encode(Yii::$app->_L->get('teacher')); ?>;
 </script>

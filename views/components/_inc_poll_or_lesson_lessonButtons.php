@@ -17,7 +17,7 @@
             </div>
     
             <div class='well well-lg well-correctme-as-button'
-                onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/site/lesson_exact'; ?>"'><?= Yii::$app->_L->get('poll_or_lesson_teacher_btn_goto_lesson'); ?>
+                onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/site/index_teacher'; ?>"'><?= Yii::$app->_L->get('poll_or_lesson_teacher_btn_goto_lesson'); ?>
             </div>
     </div>
         

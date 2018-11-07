@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
         Modal::end();
     ?>
 
-<?= $model->startKey ?> 
+<?= $lesson->startKey ?> 
 
     <div style="float:right;">
 

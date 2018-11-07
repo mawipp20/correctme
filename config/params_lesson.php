@@ -14,7 +14,7 @@ return [
     ,'cmConfig_displayTaskNavSecond' => false
     ,'cmConfig_displayTaskLabelNum' => false
     ,'cmConfig_displayBtnHelp' => false
-    ,'cmConfig_studentRedirectAfterLastAnswer' => true
+    ,'cmConfig_studentRedirectAfterLastAnswer' => false
     ,'cmConfig_taskFinishedButtonMoveOn' => true
 
 ];

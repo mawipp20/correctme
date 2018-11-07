@@ -12,6 +12,7 @@ AboutAsset::register($this);
 
 $this->title = 'About';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 
 
@@ -19,12 +20,64 @@ $this->params['breadcrumbs'][] = $this->title;
 a{
     text-decoration: none;
 }
+ul.about_poll_text{
+    list-style-type: none;
+    padding-left: 3em;
+    text-indent: -3em; 
+}
+span.info_more{
+    font-style: italic;
+    display:none;
+}
+.about_poll_text li:before{
+   font-family: FontAwesome;
+   padding-right: 10px;
+   font-size: 18pt;
+}
+.about_poll_text li.li_a:before{
+   /* <i class="fa fa-terminal" aria-hidden="true"></i> */  
+   content: "\f120";
+}
+.about_poll_text li.li_b:before{
+   /* <i class="fa fa-user-o" aria-hidden="true"></i> */ 
+   content: "\f2c0";
+}
+.about_poll_text li.li_c:before{
+   /* <i class="fa fa-users" aria-hidden="true"></i>  */ 
+   content: "\f0c0";
+}
+.about_poll_text li.li_d:before{
+   /* <i class="fa fa-address-card" aria-hidden="true"></i> */ 
+   content: "\f046";
+}
 </style>
+
+<script>
+var _L = <?= json_encode(Yii::$app->_L->get('general')); ?>;
+</script>
 
 <div class="site-about">
     <h2 style="margin-top: 0em;"><?= Yii::$app->_L->get('lesson_welcome') ?></h2>
     <div class='well' style="padding: 0.5em; background: rgb(223,240,216);">
-        <?= Yii::$app->_L->get('about_lesson_text') ?>
+        <ul class="about_poll_text">
+        <li class="li_a">&nbsp;&nbsp;<?= Yii::$app->_L->get('about_lesson_text_a') ?>
+            <a href="" onclick="info_span_expand(this, true);return false;">...<?= Yii::$app->_L->get('gen_in_detail') ?></a>
+            <span class="info_more"><br><?= Yii::$app->_L->get('about_lesson_text_more_a') ?></span>
+        </li>
+        
+        <li class="li_b">&nbsp;&nbsp;<?= Yii::$app->_L->get('about_lesson_text_b') ?>
+            <a href="" onclick="info_span_expand(this, true);return false;">...<?= Yii::$app->_L->get('gen_in_detail') ?></a>
+            <span class="info_more"><br><?= Yii::$app->_L->get('about_lesson_text_more_b') ?></span>
+        </li>
+        <li class="li_c">&nbsp;<?= Yii::$app->_L->get('about_lesson_text_c') ?>
+            <a href="" onclick="info_span_expand(this, true);return false;">...<?= Yii::$app->_L->get('gen_in_detail') ?></a>
+            <span class="info_more"><br><?= Yii::$app->_L->get('about_lesson_text_more_c') ?></span>
+        </li>
+        <li class="li_d">&nbsp;<?= Yii::$app->_L->get('about_lesson_text_d') ?>
+            <a href="" onclick="info_span_expand(this, true);return false;">...<?= Yii::$app->_L->get('gen_in_detail') ?></a>
+            <span class="info_more"><br><?= Yii::$app->_L->get('about_lesson_text_more_d') ?></span>
+        </li>
+        </ul>
     </div>
     <p style="line-height:  180%;">
     
@@ -99,9 +152,6 @@ a{
     <p>
         <?= Yii::$app->_L->get('about_disclaimer_text') ?>
     </p>
-
-
-
 
 
 </div>

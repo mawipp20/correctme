@@ -40,7 +40,7 @@ use yii\widgets\Breadcrumbs;
             ['label' => Yii::$app->_L->get('gen_student')
                 , 'url' => ['/student/student_join_'.Yii::$app->params["cmPollOrLesson"]]],
             ['label' => Yii::$app->_L->get('gen_teacher')
-                , 'url' => ['/site/lesson_exact?lesson_type='.Yii::$app->params["cmPollOrLesson"].'&show_teacher_join']],
+                , 'url' => ['/site/index_teacher']],
             ['label' => Yii::$app->_L->get('top_nav_teacher_about')
                 , 'url' => ['/site/about_'.Yii::$app->params["cmPollOrLesson"]]],
         ],

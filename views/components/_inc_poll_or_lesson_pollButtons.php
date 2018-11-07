@@ -4,7 +4,10 @@
 
     <div id="poll_div" style="">
         <h3 style="margin-top: 0.5em;">
-            <?= Yii::$app->_L->get('poll_or_lesson_headline1_poll');
+            <?= Yii::$app->_L->get('poll_or_lesson_headline1_poll')
+                //.'<a href="'.Yii::$app->getUrlManager()->getBaseUrl().'/site/about">'
+                //.'&nbsp;&nbsp;<i class="fa fa-info-circle"></i></a>'
+                ;
             ?>
         </h3>
         <p class="headline2">
@@ -22,6 +25,6 @@
             </div>
     
             <div class='well well-lg well-correctme-as-button'
-                onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/site/lesson_exact?lesson_type=poll&show_teacher_join'; ?>"'><?= Yii::$app->_L->get('gen_teacher') ?>
+                onclick='window.location.href = "<?= Yii::$app->getUrlManager()->getBaseUrl().'/site/index_teacher'; ?>"'><?= Yii::$app->_L->get('gen_teacher') ?>
             </div>
     </div>

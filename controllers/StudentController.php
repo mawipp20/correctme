@@ -10,6 +10,9 @@ use app\models\StudentJoinForm;
 use app\models\Student;
 use app\models\Teacher;
 use app\models\Lesson;
+use app\models\Task;
+use app\models\Answer;
+
 //use yii\tcpdf\TCPDF;
 
 class StudentController extends \app\components\Controller
@@ -91,7 +94,7 @@ class StudentController extends \app\components\Controller
     }
 
     /**
-     * Displays the student lesson Login page.
+     * Cancels the session without saving
      *
      * @return string
      */
@@ -102,6 +105,83 @@ class StudentController extends \app\components\Controller
         return $this->render('poll_or_lesson', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * Saves the tasks the session without saving
+     *
+     * @return string
+     */
+    public function actionCommit_single()
+    {
+        
+        $student = Student::find()->where(
+            ['studentkey' => Yii::$app->getSession()->get("studentKey")
+            ,'startKey' => Yii::$app->getSession()->get("startKey")]
+            )->one();
+        if(is_null($student)){
+            Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_lesson_rejoin_error'));
+            Yii::$app->response->redirect(['student/student_join_lesson']);
+            return;
+        }
+        $student->status = "finished";
+        $student->save();
+
+        $request_params = Yii::$app->request->get();
+
+        $lesson = Lesson::find()->where(['startKey'=>$student->startKey])->one();
+               
+        $tasks = Task::find()->where(['startKey'=>$student->startKey])->orderBy('num')->all();
+        $answers = Answer::find()->where(['startKey'=>$student->startKey])->all();
+        $answers_taskIds = array();
+        foreach($answers as $this_answer){
+            $answers_taskIds[$this_answer["taskId"]] = $this_answer;
+        }
+        $tasks_answers = array();
+        for($i = 0; $i < count($tasks); $i++){
+            $tasks_answers[$i] = $tasks[$i]->toArray();
+            $this_answer = $answers_taskIds[$tasks[$i]["taskId"]]->toArray();
+            $this_type = $tasks_answers[$i]["type"];
+            if(isset($lesson->taskTypes[$this_type])){
+                if($lesson->taskTypes[$this_type]["type"]=="scale"){
+                    $this_answer["answer_text"] = Yii::$app->_L->get('scale_'.$this_type.'-'.$this_answer["answer_text"]);
+                }
+            }
+            $tasks_answers[$i]["answer"] = $this_answer;
+        }
+        
+        $render_arr = [
+            'student' => $student,
+            'lesson' => $lesson,
+            'tasks_answers' => $tasks_answers,
+            'print' => false
+            ];
+
+        //$debug_pdf = true;
+        //if($debug_pdf){            
+        if(isset($request_params["print"])){
+            //if($debug_pdf){
+            if($request_params["print"] == "pdf"){
+                $render_arr["print"] = true;
+                
+                require_once(\Yii::$app->basePath.'/vendor/autoload.php');
+                
+                $filename = preg_replace("[^A-Za-z0-9_-öäüÖÄÜß]", "_", $lesson->description);
+                if(strlen($filename)>30){$filename = substr($filename,0,30);}
+                
+                $filename .= "_".date("Y-m-d");
+                
+                $mpdf = new \mPDF();
+                $mpdf->SetTitle($filename);
+                $mpdf->WriteHTML($this->renderPartial('student_think_finished', $render_arr));
+    
+                $mpdf->Output($filename.".pdf", "I");
+                exit;
+            }
+        }
+
+        
+        return $this->render('student_think_finished', $render_arr);
     }
 
     /**
@@ -149,6 +229,12 @@ class StudentController extends \app\components\Controller
                 if(!is_null($teacher)){
                     $post["StudentJoinForm"]["startKey"] = $teacher->startKey;
                     $post["StudentJoinForm"]["teacher_id"] = $teacher->id;
+                    
+                    $student->startKey = $teacher->startKey;
+                    $student->teacher_id = $teacher->id;
+                    $lesson = Lesson::find()->where(['startKey' => $student->startKey])->one();
+                    
+                    
                 }else{
                     /** check if student tried a lesson key as a poll key */
                     $check_lesson = Lesson::find()->where(['startKey' => $post["Teacher"]["studentkey"]
@@ -164,17 +250,31 @@ class StudentController extends \app\components\Controller
                 }
             }
             
-            /** from student_join_lesson: join collaborative lesson or poll with startKey of the lesson */
+            /** from student_join_lesson: join collaborative lesson with startKey of the lesson */
             
             if(isset($post["Lesson"]) & isset($post["Student"])){
-                //if($student->load($post, "StudentJoinForm")){
                     
                     $startKey = trim($post["Lesson"]["startKey"]);
+                    
                     $name = trim($post["Student"]["name"]);
                     
                     $lesson = Lesson::find()->where(['startKey' => $startKey])->one();
     
                     if(is_null($lesson)){
+                        /** to rejoin a lesson the student can enter the personal access key
+                         *  that he has noted and which also the teacher can give him
+                         */
+                        $student = Student::find()->where(['studentKey' => $startKey])->one();
+                        if(!is_null($student)){
+                            $startKey = $student->startKey;
+                            Yii::$app->getSession()->set("studentKey", $student->studentKey);
+                            Yii::$app->getSession()->set("startKey", $startKey);
+                            $lesson = Lesson::find()->where(['startKey' => $startKey])->one();
+                        } 
+                        
+                    }
+                    
+                    if(is_null($lesson)){    
                         Yii::$app->getSession()->setFlash('login_error', Yii::$app->_L->get('student_join_login_error'));
                         Yii::$app->response->redirect([$error_page]);
                         return;
@@ -192,9 +292,11 @@ class StudentController extends \app\components\Controller
                             return;
                         }
                     }
-
-                    $student->startKey = $startKey;
-                    $student->name = $name;
+                    
+                    if($student->startKey == ""){
+                        $student->startKey = $startKey;
+                        $student->name = $name;
+                    }
                     
                     $student_with_the_same_name = Student::find()->where(
                                     [    'startKey'=>$student->startKey
@@ -202,8 +304,15 @@ class StudentController extends \app\components\Controller
                                     ]
                                     )->one();
                     if(!is_null($student_with_the_same_name)){
-                                //$student_with_the_same_name->delete();
-                                $student->addErrors(array(Yii::$app->_L->get('student_join_name_already_existing')));    
+                                if($_SERVER["REMOTE_ADDR"] == $student_with_the_same_name->remote_ip){
+                                    $student = $student_with_the_same_name;    
+                                    if($student->status == "finished"){
+                                        Yii::$app->response->redirect("commit_single");
+                                        return;
+                                    }
+                                }else{
+                                    $student->addErrors(array(Yii::$app->_L->get('student_join_name_already_existing')));    
+                                }
                     }
                 //}
             }
@@ -217,6 +326,7 @@ class StudentController extends \app\components\Controller
             }
             
             if (!$student->hasErrors() && $student->save()) {
+
                     Yii::$app->getSession()->set("startKey", trim($student->startKey));
                     Yii::$app->getSession()->set("studentKey", $student->studentKey);
                     Yii::$app->getSession()->set("status", "working");
@@ -260,11 +370,7 @@ class StudentController extends \app\components\Controller
                 Yii::$app->getSession()->setFlash('error_save', Yii::$app->_L->get("join_session_login_error_flash"));
                 Yii::$app->response->redirect(['student/student_rejoin']);
             }
-            
         }
-        
-
-
     }
 
 

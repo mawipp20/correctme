@@ -11,6 +11,12 @@ function taskO(){
 $(document).ready(function() {
 
     lesson_type = $('#lesson-type').val();
+    
+    /** focus on first task_input */
+    
+    if($("#tasks").is(":visible")){
+        $("#tasks").children('.task').last().find(".task_input").focus();
+    }
 
     if(typeof uploadedTasks != "undefined"){
             
@@ -124,6 +130,9 @@ function addTask(text, type, where){
     var this_newTask = last_task.clone(true);
     this_newTask.find(".task_input").val(text);
     this_newTask.find(".task_input").attr('data-text-length', text.length);
+    if("info" == this_newTask.find(".task_type").attr("data-task-type")){
+        type = "text";
+    }
     if(type != "clone"){
         this_newTask.find(".task_type").attr("data-task-type", type);
         var this_html = _L_lesson['lesson_tasks_type_' + type];

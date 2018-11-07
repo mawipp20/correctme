@@ -70,7 +70,6 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 "team" => "site/team",
-                //"teacher" => "site/lesson_exact?lesson_type=poll&show_teacher_join",
             /**
                 "UserForm" => "site/userform",
                 "hello" => "site/hello",

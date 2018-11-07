@@ -27,8 +27,8 @@ $this->title = Yii::$app->_L->get("teacher_title");
 
 <h3 style="margin-top: 0em; margin-bottom: 20px;">
     <?php 
-    if($model->title != ""){
-        echo $model->title;
+    if($lesson->title != ""){
+        echo $lesson->title;
     }else{
         echo Yii::$app->_L->get('student_join_poll_title');
     }
@@ -41,11 +41,12 @@ $this->title = Yii::$app->_L->get("teacher_title");
     <a class='btn btn-default' href="download_questions">
         <i class="fa fa-save" aria-hidden="true"></i>
         &nbsp;&nbsp;
-        <?= $model->numTasks ?>
+        <?= $lesson->numTasks ?>
         <?= Yii::$app->_L->get('poll_save_questions') ?>
         <?= Yii::$app->_L->get('gen_save') ?>
     </a> 
 </div>
+
 
 <div class="Teachers">
 
@@ -59,12 +60,12 @@ $this->title = Yii::$app->_L->get("teacher_title");
     ]); ?>
 
 
-    <?= $form->field($model, 'poll_type')->hiddenInput()->label(false); ?>
-    <?= $form->field($model, 'startKey')->hiddenInput()->label(false); ?>   
+    <?= $form->field($lesson, 'poll_type')->hiddenInput()->label(false); ?>
+    <?= $form->field($lesson, 'startKey')->hiddenInput()->label(false); ?>   
 
           <?php
           
-          if($model->poll_type == "names"){
+          if($lesson->poll_type == "names"){
             echo $form->field($teacher, 'name'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
@@ -80,10 +81,13 @@ $this->title = Yii::$app->_L->get("teacher_title");
             ;
           }
             ?>
+
+
+
             
 
           <?php
-            echo $form->field($model, 'thinkingMinutes'
+            echo $form->field($lesson, 'thinkingMinutes'
             , [
             'labelOptions' => [ 'class' => 'input-group-addon input-group-addon-teacher' ]
             ,'template' => "<div class='input-group input-group-lesson'>{label}\n{input}\n{hint}\n{error}</div>"
